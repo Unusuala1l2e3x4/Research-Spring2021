@@ -1,0 +1,58 @@
+# Emission factors in g species per kg dry matter (DM) burned. Note that NOx is as NO   
+# 						     
+# Emission factors based mostly on Akagi et al. (2011, http://www.atmos-chem-phys.net/11/4039/2011/acp-11-4039-2011.html),   
+# but additional data sources were used as well.   
+# 						     
+# Please see the accompanying Excel sheet for more information, also for how the lumping is done:  
+# http://www.falw.vu/~gwerf/GFED/GFED4/ancill/GFED4_Emission_Factors.xlsx  
+# 						     
+# SAVA: Savanna, grassland, and shrubland fires	     
+# BORF: Boreal forest fires                          
+# TEMF: Temperate forest fires                       
+# DEFO: Tropical deforestation & degradation         
+# PEAT: Peat fires	                             
+# AGRI: Agricultural waste burning                   
+# 						     
+# SPECIE            SAVA     BORF     TEMF     DEFO     PEAT     AGRI 
+# 		  ----------------------------------------------------    
+DM                  1000     1000     1000     1000     1000     1000 
+C                488.273  464.989  489.416  491.751  570.055  480.352 
+CO2                 1686     1489     1647     1643     1703     1585 
+CO                    63      127       88       93      210      102 
+CH4                 1.94     5.96     3.36     5.07     20.8     5.82 
+NMHC                 3.4      8.4      8.4      1.7      1.7      9.9 
+H2                   1.7     2.03     2.03     3.36     3.36     2.59 
+NOx                  3.9      0.9     1.92     2.55        1     3.11 
+N2O                  0.2     0.41     0.16      0.2      0.2      0.1 
+PM2.5               7.17     15.3     12.9      9.1      9.1     6.26 
+TPM                  8.5     17.6     17.6       13       13     12.4 
+TPC                    3     10.1     10.1     5.24     6.06     3.05 
+OC                  2.62      9.6      9.6     4.71     6.02      2.3 
+BC                  0.37      0.5      0.5     0.52     0.04     0.75 
+SO2                 0.48      1.1      1.1      0.4      0.4      0.4 
+C2H6                0.66     1.79     0.63     0.71     0.71     0.91 
+CH3OH               1.18     2.82     1.74     2.43     8.46     3.29 
+C2H5OH             0.024    0.055      0.1    0.037    0.037    0.035 
+C3H8                 0.1     0.44     0.22    0.126    0.126     0.28 
+C2H2                0.24     0.18     0.26     0.44     0.06     0.27 
+C2H4                0.82     1.42     1.17     1.06     2.57     1.46 
+C3H6                0.79     1.13     0.61     0.64     3.05     0.68 
+C5H8               0.039     0.15    0.099     0.13     1.38     0.38 
+C10H16             0.081    2.003    2.003     0.15     0.15    0.005 
+C7H8                0.08     0.48     0.19     0.26     1.55     0.19 
+C6H6                 0.2     1.11     0.27     0.39     3.19     0.15 
+C8H10              0.014     0.18     0.13     0.11     0.11    0.114 
+Toluene_lump       0.270    1.626    0.540    0.697    4.360    0.415 
+Higher_Alkenes     0.133    0.385    0.369    0.267    0.267    0.333 
+Higher_Alkanes     0.055    0.349    0.225    0.072    0.072    0.340 
+CH2O                0.73     1.86     2.09     1.73      1.4     2.08 
+C2H4O               0.57     0.77     0.77     1.55     3.27     1.24 
+C3H6O               0.16     0.75     0.54     0.63     1.25     0.45 
+NH3                 0.52     2.72     0.84     1.33     1.33     2.17 
+C2H6S             0.0013  0.00465    0.008  0.00135  0.00135   0.0013 
+HCN                 0.41     1.52     0.72     0.42     8.11     0.29 
+HCOOH               0.21     0.57     0.28     0.79     0.38        1 
+CH3COOH             3.55     4.41     2.13     3.05     8.97     5.59 
+MEK                0.181     0.22     0.13      0.5      0.5      0.9 
+CH3COCHO            0.73     0.73     0.73     0.73     0.73     0.73 
+HOCH2CHO            0.25     0.86     0.86     0.74     0.74     0.71 

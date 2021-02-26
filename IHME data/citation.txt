@@ -1,0 +1,6 @@
+GBD Results tool:
+Use the following to cite data included in this download:
+Global Burden of Disease Collaborative Network.
+Global Burden of Disease Study 2019 (GBD 2019) Results.
+Seattle, United States: Institute for Health Metrics and Evaluation (IHME), 2020.
+Available from http://ghdx.healthdata.org/gbd-results-tool.
