@@ -13,7 +13,7 @@ temp = {
     {
       "type": "Feature",
       "properties": {
-        "ADMIN": "-",
+        # "ADMIN": "-",
         "id": "-"
       },
       "geometry": {
@@ -40,7 +40,7 @@ def geojson_filenames(filenames):
 def folder_filenames(filenames):
   ret = []
   for filename in filenames:
-    if '.' not in filename:
+    if ' - ' in filename:
       ret.append(filename)
   return ret
 
@@ -83,12 +83,15 @@ if __name__ == "__main__":
         # print(c)
 
     
-    union = combineBorders([cDict[item] for item in cDict.keys()])
+    temp2 = copy.deepcopy(temp)
+    name = r.split(' ')[0]
+    temp2['features'][0]['geometry'] = combineBorders([cDict[item] for item in cDict.keys()])
+    temp2['features'][0]['properties']['id'] = name
 
-    print('---' + str(len(union)))
+    # print('---' + str(len(union)))
 
-    # with open(regionsDir + r.split(' ')[0] + '.geo.json', 'w') as o:
-    #   geojson.dump(union, o)
+    with open(regionsDir + name + '.geo.json', 'w') as o:
+      geojson.dump(temp2, o)
 
 
 

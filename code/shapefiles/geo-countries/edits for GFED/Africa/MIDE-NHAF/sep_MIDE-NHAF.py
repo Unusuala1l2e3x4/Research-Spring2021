@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
   for area in areas:
     name = areas[area]['features'][0]['properties']['id']
-    with open(dir + 'result/' + name + '.geo.json', 'w') as outfile:
+    with open(dir + 'results/' + name + '.geo.json', 'w') as outfile:
       json.dump(areas[area], outfile)
 
 
