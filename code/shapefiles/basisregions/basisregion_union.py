@@ -19,10 +19,14 @@ feature = {
   }
 }
 
-combined = {
+featurecollection = {
   "type": "FeatureCollection",
   "features": []
 }
+
+
+
+
 
 areas = dict()
 regions = ['MIDE','NHAF']
@@ -55,6 +59,9 @@ def combineBorders(*geoms):
 
 
 if __name__ == "__main__":
+  combined = copy.deepcopy(featurecollection)
+
+
   regionsDir = str(pathlib.Path(__file__).parent.absolute()) + '/'
 
   regions = folder_filenames( os.listdir(regionsDir) )
@@ -83,7 +90,7 @@ if __name__ == "__main__":
 
     
     temp = copy.deepcopy(feature)
-    single = copy.deepcopy(combined)
+    single = copy.deepcopy(featurecollection)
     
     temp['geometry'] = combineBorders([cDict[item] for item in cDict.keys()])
     temp['properties']['id'] = name
