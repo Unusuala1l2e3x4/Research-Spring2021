@@ -24,6 +24,7 @@
 import h5py
 import numpy as np
 
+import json
 import geopandas
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -193,9 +194,13 @@ def add_year(start):
 def next_jan1(start):
   return dt.date(start.year + 1, 1, start.day) # next jan
 
+
+def read_json(path):
+  return json.load(open(path, 'r'))
+
+
+
 world = geopandas.read_file(geopandas.datasets.get_path("naturalearth_lowres"))
-
-
 
 if __name__ == "__main__":
   startYear, startMonth = int(sys.argv[1]), int(sys.argv[2])
@@ -208,6 +213,11 @@ if __name__ == "__main__":
   imagesDir = str(pathlib.Path(__file__).parent.absolute()) + '/read_gfed4s-images/'
   dataframesDir = str(pathlib.Path(__file__).parent.absolute()) + '/read_gfed4s-dataframes/'
   shapefilesDir = str(pathlib.Path(__file__).parent.absolute()) + '/shapefiles/'
+
+  basisregionsDir = shapefilesDir + 'basisregions/'
+  GFED_basisregions = read_json( basisregionsDir + 'GFED_basis_regions.geo.json')
+
+  # C:\Users\Alex\Documents\GitHub\Research-Spring2021\code\shapefiles\basisregions\GFED_basis_regions.geo.json
   
   filenames = os.listdir(gfedDir)
   
