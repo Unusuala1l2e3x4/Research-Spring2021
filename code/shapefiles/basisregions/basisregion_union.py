@@ -7,23 +7,21 @@ import pathlib
 import os
 import geojson
 
-temp = {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        # "ADMIN": "-",
-        "id": "-"
-      },
-      "geometry": {
-        "type": "MultiPolygon",
-        "coordinates": [
 
-        ]
-      }
-    }
-  ]
+feature = {
+  "type": "Feature",
+  "properties": {
+    "id": "-"
+  },
+  "geometry": {
+    "type": "MultiPolygon",
+    "coordinates": []
+  }
+}
+
+combined = {
+  "type": "FeatureCollection",
+  "features": []
 }
 
 areas = dict()
@@ -65,7 +63,8 @@ if __name__ == "__main__":
 
 
   for r in regions:
-    
+    name = r.split(' ')[0]
+
     rDir = regionsDir + r + '/'
     countries = geojson_filenames( os.listdir(rDir) )
     # if len(countries) == 1:
@@ -83,16 +82,23 @@ if __name__ == "__main__":
         # print(c)
 
     
-    temp2 = copy.deepcopy(temp)
-    name = r.split(' ')[0]
-    temp2['features'][0]['geometry'] = combineBorders([cDict[item] for item in cDict.keys()])
-    temp2['features'][0]['properties']['id'] = name
+    temp = copy.deepcopy(feature)
+    single = copy.deepcopy(combined)
+    
+    temp['geometry'] = combineBorders([cDict[item] for item in cDict.keys()])
+    temp['properties']['id'] = name
+
+    combined['features'].append(temp)
+    single['features'].append(temp)
 
     # print('---' + str(len(union)))
 
 
     with open(regionsDir + 'results/' +  name + '.geo.json', 'w') as o:
-      geojson.dump(temp2, o)
+      geojson.dump(single, o)
+
+  with open(regionsDir + 'GFED_basis_regions' + '.geo.json', 'w') as o:
+    geojson.dump(combined, o)
 
 
 
