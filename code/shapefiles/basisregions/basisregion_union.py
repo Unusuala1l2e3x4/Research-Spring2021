@@ -101,7 +101,7 @@ if __name__ == "__main__":
     # print('---' + str(len(union)))
 
 
-    with open(regionsDir + 'results/' +  name + '.geo.json', 'w') as o:
+    with open(regionsDir + name + '.geo.json', 'w') as o:
       geojson.dump(single, o)
 
   with open(regionsDir + 'GFED_basis_regions' + '.geo.json', 'w') as o:

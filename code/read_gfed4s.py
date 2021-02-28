@@ -38,9 +38,14 @@ import sys
 import time
 import datetime as dt
 
+# https://shapely.readthedocs.io/en/latest/manual.html
+from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
+from shapely.ops import unary_union
 
 # ['ancill', 'biosphere', 'burned_area', 'emissions', 'lat', 'lon']
 
+
+regionNums = {'BONA':1, 'TENA':2, 'CEAM':3, 'NHSA':4, 'SHSA':5, 'EURO':6, 'MIDE':7, 'NHAF':8, 'SHAF':9, 'BOAS':10, 'CEAS':11, 'SEAS':12, 'EQAS':13, 'AUST':14}
 
 def month_str(month):
   if month < 10:
@@ -173,11 +178,13 @@ def save_plt(plt, dest, name, now):
   plt.savefig(dest + name + '-' + now + '.png')
 
 
-def save_df(df, cldf, dest, name, now):
+def save_df(df, cldf, stats, dest, name, now):
   fd = pd.HDFStore(dest + name + '-' + now + '.hdf5')
   del df['color']
+  del df['region']
   fd.put('data', df, format='table', data_columns=True)
   fd.put('colormap', cldf, format='table', data_columns=True)
+  fd.put('stats', stats, format='table', data_columns=True)
   fd.close()
 
   
@@ -200,6 +207,12 @@ def read_json(path):
 
 
 
+def are_points_inside(basisregion, df):
+  return [ basisregion.contains(Point(row.lon, row.lat)) for row in df.itertuples() ]
+  
+
+
+
 world = geopandas.read_file(geopandas.datasets.get_path("naturalearth_lowres"))
 
 if __name__ == "__main__":
@@ -209,16 +222,28 @@ if __name__ == "__main__":
   dataset = sys.argv[6]
   cmap = sys.argv[7]
 
+  regionName = None
+  title = None
+
+  if len(sys.argv) == 9:
+    regionName = sys.argv[8]
+    title = regionName + '_' + month_str(startMonth) + '-' + str(startYear) + '_' + month_str(endMonth) + '-' + str(endYear) + '_' + dataset
+  else:
+    title = month_str(startMonth) + '-' + str(startYear) + '_' + month_str(endMonth) + '-' + str(endYear) + '_' + dataset
+  
+  print(title)
+
+
+
   gfedDir = str(pathlib.Path(__file__).parent.parent.absolute()) + '/GFED4s/'
   imagesDir = str(pathlib.Path(__file__).parent.absolute()) + '/read_gfed4s-images/'
   dataframesDir = str(pathlib.Path(__file__).parent.absolute()) + '/read_gfed4s-dataframes/'
   shapefilesDir = str(pathlib.Path(__file__).parent.absolute()) + '/shapefiles/'
-
-  basisregionsDir = shapefilesDir + 'basisregions/'
-  GFED_basisregions = read_json( basisregionsDir + 'GFED_basis_regions.geo.json')
-
-  # C:\Users\Alex\Documents\GitHub\Research-Spring2021\code\shapefiles\basisregions\GFED_basis_regions.geo.json
   
+  # basisregion = shape( read_json(shapefilesDir + 'basisregions/' + regionName + '.geo.json')['features'][0]['geometry'] )
+  
+
+
   filenames = os.listdir(gfedDir)
   
   filenames = sorted(gfed_filenames(filenames))
@@ -231,8 +256,7 @@ if __name__ == "__main__":
   # cmap = 'cool'
   # end params
 
-  # title = month_str(startMonth) + '-' + str(startYear) + '_' + month_str(endMonth) + '-' + str(endYear) + '_' + group + '_' + dataset
-  title = month_str(startMonth) + '-' + str(startYear) + '_' + month_str(endMonth) + '-' + str(endYear) + '_' + dataset
+  
 
   startDate = dt.date(startYear, startMonth, 1)
   endDate = dt.date(endYear, endMonth, 1)
@@ -240,8 +264,10 @@ if __name__ == "__main__":
   currentDate = startDate
 
   t0 = timer_start()
+  t1 = t0
 
   df = None
+  regionIndices = None
 
   for filename in filenames:
     if currentDate > endDate:
@@ -261,30 +287,79 @@ if __name__ == "__main__":
       if endDate < next_year or currentDate == endDate:
         curr_endMonth = endDate.month
 
-      temp_val = [ sum(l) for l in zip(*[flatten_list(fd[group][month_str(month_it)][dataset]) for month_it in range(curr_startMonth, curr_endMonth + 1) ]) ]
+      temp_val = pd.DataFrame([ sum(l) for l in zip(*[flatten_list(fd[group][month_str(month_it)][dataset]) for month_it in range(curr_startMonth, curr_endMonth + 1) ]) ], columns = ['val'])
 
       if df is None:
-        df = pd.DataFrame(None, columns = ['lat', 'lon', 'val'])
+        df = pd.DataFrame(None, columns = ['lat', 'lon', 'area', 'val', 'region'])
         df.lat = flatten_list(fd['lat'])
         df.lon = flatten_list(fd['lon'])
-        df.val = temp_val
+        df.region = flatten_list(fd['ancill/basis_regions'])
+        df.area = flatten_list(fd['ancill/grid_cell_area'])
+        df.val = temp_val.val
+
+        # find indices in region, remove the rest
+
+        # df = df[are_points_inside(basisregion, df)]
+        df = df[df.region == regionNums[regionName]]
+        # regionIndices = df.index
+        
+        print('-first-')
+        t0 = timer_restart(t0)
+
       else: # add to df.val
-        df.val = [x + y for x, y in zip(df.val, temp_val)]
+
+        # find matching indices
+        df.val = [x + y for x, y in zip(df.val, temp_val[temp_val.index.isin(df.index)].val ) ]
 
       currentDate = next_year
       
       fd.close()
       
     
-    
+  
+  t0 = timer_restart(t0)
 
+  stats = pd.DataFrame()
+  region_area = np.sum(df.area)
+  stats['region_area'] = [region_area]
 
   # after reading all months/years
-  df = df[df.val != 0.0] # remove zero val
-  numMonths = (endDate.year - startDate.year)*12 + (endDate.month - startDate.month) + 1
-  df.val = [v / numMonths for v in df.val] # take average
+  # df = df[df.val != 0.0] # remove zero vals
 
+  stats['region_area_nonzero_val'] = [np.sum(df[df.val != 0.0].area) ]
+
+  t0 = timer_restart(t0)
+
+  # df = df[are_points_inside(basisregion, df)]
+
+  # t0 = timer_restart(t0)
+  
+  numMonths = (endDate.year - startDate.year)*12 + (endDate.month - startDate.month) + 1
+  numYears = float(numMonths) / 12
+  print('numYears =',numYears)
+  stats['month_count'] = [numMonths]
+
+  # (g C / m^2 period) per cell
+  
+  
+  df.val = [v / numMonths for v in df.val] # take average
+  # (g C / m^2 month) per cell
+  
+  if dataset != 'burned_fraction':
+    df['cell_total_val'] = [x*y for x,y in zip(df.val, df.area)] 
+    # (g C / month) per cell
+    stats['region_yearly_avg_val'] = [np.sum(df['cell_total_val']) / numYears]
+    # (g C / year)
+  else:
+    df['burned_area'] = [x*y for x,y in zip(df.val, df.area)]
+    # (m^2 / month) per cell
+    stats['region_monthly_avg_burned_fraction'] = [np.sum(df['burned_area']) / region_area ]
+    # (m^2 / month)
+
+    
   print(len(df.val))
+
+  t0 = timer_restart(t0)
 
   color_buf = 0 # 1e8
   color_min = min(df.val) - color_buf
@@ -298,9 +373,8 @@ if __name__ == "__main__":
   # https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html
   mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
   # https://matplotlib.org/stable/api/cm_api.html#matplotlib.cm.ScalarMappable
-  # https://matplotlib.org/3.1.1/tutorials/colors/colormaps.html
+  # https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
-  t0 = timer_restart(t0)
 
   df['color'] = [mapper.to_rgba(v) for v in df.val]
 
@@ -308,6 +382,8 @@ if __name__ == "__main__":
   cldf['min'] = [color_min]
   cldf['max'] = [color_max]
   cldf['cmap'] = [cmap]
+
+
 
   print(cldf)
 
@@ -328,8 +404,11 @@ if __name__ == "__main__":
     xlim1 = plt.xlim()
     ylim1 = plt.ylim()
 
-    # plt.xlim((-126,-66)) # custom
-    # plt.ylim((23,50)) # custom
+    # bounds = basisregion.bounds # (minx, miny, maxx, maxy) 
+    bounds = (min(df.lon), min(df.lat), max(df.lon), max(df.lat))
+
+    plt.xlim((bounds[0],bounds[2]))
+    plt.ylim((bounds[1],bounds[3]))
 
     ms = marker_size(plt, xlim1, ylim1)
     # print(ms)
@@ -339,12 +418,12 @@ if __name__ == "__main__":
     now = utc_time_filename()
 
     save_plt(plt, imagesDir, title, now)
+    # t0 = timer_restart(t0)
+    save_df(df, cldf, stats, dataframesDir, title, now)
 
     t0 = timer_restart(t0)
-
-    save_df(df, cldf, dataframesDir, title, now)
-
-    t0 = timer_restart(t0)
+    print('total time: ')
+    t1 = timer_restart(t1)
 
     plt.show()
 
