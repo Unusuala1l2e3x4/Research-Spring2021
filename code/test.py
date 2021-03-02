@@ -28,3 +28,5 @@ print(d)
 # temp_val = [ sum(a) for a in zip(*l)  ]
 
 # print(temp_val)
+
+print(list(range(1,12)))

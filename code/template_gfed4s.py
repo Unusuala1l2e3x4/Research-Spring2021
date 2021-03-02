@@ -82,6 +82,7 @@ def emissions(fd, month, dataset_name):
 
       /C
 
+
       /small_fire_fraction
 
       /daily_fraction [2003 onwards]
