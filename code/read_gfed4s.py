@@ -31,7 +31,7 @@ def month_str(month):
 def gfed_filenames(filenames):
   ret = []
   for filename in filenames:
-    if 'GFED' in filename:
+    if '.hdf5' in filename:
       ret.append(filename)
   return ret
 
@@ -102,11 +102,13 @@ def read_json(path):
 def are_points_inside(basisregion, df):
   return [ basisregion.contains(Point(row.lon, row.lat)) for row in df.itertuples() ]
 
+# 'DM_AGRI', 'DM_BORF', 'DM_DEFO', 'DM_PEAT', 'DM_SAVA', 'DM_TEMF'
+# 'C_AGRI', 'C_BORF', 'C_DEFO', 'C_PEAT', 'C_SAVA', 'C_TEMF'
 
 def get_unit(dataset):
-  if dataset in ['DM', 'DM_AGRI', 'DM_BORF', 'DM_DEFO', 'DM_PEAT', 'DM_SAVA', 'DM_TEMF']:
+  if dataset == 'DM':
     return 'kg-DM'
-  elif dataset in ['C', 'BB', 'NPP', 'Rh', 'C_AGRI', 'C_BORF', 'C_DEFO', 'C_PEAT', 'C_SAVA', 'C_TEMF']:
+  elif dataset in ['C', 'BB', 'NPP', 'Rh']:
     return 'g-C'
   elif dataset == 'burned_fraction':
     return 'm^2'
@@ -200,12 +202,6 @@ if __name__ == "__main__":
         curr_endMonth = endDate.month
 
 
-
-
-
-      
-
-
       if df is None:
         df = pd.DataFrame(None, columns = ['lat', 'lon', 'area', unit_div_area, 'region'])
         df.lat = flatten_list(fd['lat'])
@@ -213,7 +209,7 @@ if __name__ == "__main__":
         df.region = flatten_list(fd['ancill/basis_regions'])
         df.area = flatten_list(fd['ancill/grid_cell_area'])
 
-        temp_val = pd.DataFrame([ sum(l) for l in zip(*[ flatten_list(fd[group][month_str(month_it)][dataset]) for month_it in range(curr_startMonth, curr_endMonth + 1) ]) ], columns = [unit_div_area])
+        # temp_val = pd.DataFrame([ sum(l) for l in zip(*[ flatten_list(fd[group][month_str(month_it)][dataset]) for month_it in range(curr_startMonth, curr_endMonth + 1) ]) ], columns = [unit_div_area])
         # g C 
         
         # df[unit] = [x*y for x,y in zip(df[unit_div_area], df.area)]
