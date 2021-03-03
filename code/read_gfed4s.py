@@ -17,7 +17,7 @@ import datetime as dt
 
 from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
 from shapely.ops import unary_union
-
+# https://shapely.readthedocs.io/en/latest/manual.html
 
 regionNums = {'BONA':1, 'TENA':2, 'CEAM':3, 'NHSA':4, 'SHSA':5, 'EURO':6, 'MIDE':7, 'NHAF':8, 'SHAF':9, 'BOAS':10, 'CEAS':11, 'SEAS':12, 'EQAS':13, 'AUST':14}
 # GFED file groups: ['ancill', 'biosphere', 'burned_area', 'emissions', 'lat', 'lon']

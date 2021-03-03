@@ -57,64 +57,83 @@ def save_df(df, cldf, stats, dest, name):
 # 'C_AGRI', 'C_BORF', 'C_DEFO', 'C_PEAT', 'C_SAVA', 'C_TEMF'
 
 
+def fslash(a, b):
+  return a + '/' + b
+
+
+
+  
+
+
+# dname = name.split('/')[-1]
+# if dname in ['small_fire_fraction', 'lat', 'lon', 'basis_regions', 'grid_cell_area', 'source'] or 'day_' in dname or 'UTC' in dname or 'C_' in dname or 'DM_' in dname:
+#   return
+
+
+
+
+def visitor_func(name, node):
+  
+  if isinstance(node, h5py.Dataset):
+    # node is a dataset
+    return
+  else:
+    namesplitted = name.split('/')
+    if len(namesplitted) in [1, 3]:
+      return
+    # group = namesplitted[-1]
+    groupParent = namesplitted[-2]
+    for key in node.keys():
+      if groupParent == 'emissions' and key not in ['C', 'DM'] or groupParent == 'burned_area' and key == 'source':
+        continue
+      # print(key)
+
+      path = fslash(name, key)
+      # print(path)
+
+      # newdata = np.matrix(fd[path])
+      # print('\t',np.max(newdata))
+      newdata = np.multiply(np.matrix(fd[path]), grid_cell_area)
+      # print('\t',np.max(newdata))
+
+      del fd[path]
+      fd.create_dataset(path, data=newdata)
+
+      # print(name)
+
+
 
 
 if __name__ == "__main__":
 
+# https://www.christopherlovell.co.uk/blog/2016/04/27/h5py-intro.html
+# https://stackoverflow.com/questions/31146036/how-do-i-traverse-a-hdf5-file-using-h5py
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
-  dir_in = os.path.join(ppPath, 'GFED4s')
-  dir_out = os.path.join(ppPath, 'GFED4s_timesArea')
+  dir = os.path.join(ppPath, 'GFED4s_timesArea')
 
-
-  filenames = os.listdir(dir_in)
+  filenames = os.listdir(dir)
   filenames = sorted(gfed_filenames(filenames))
 
-  # print(filenames)
 
-  # https://www.christopherlovell.co.uk/blog/2016/04/27/h5py-intro.html
-
-  for filename in filenames[10:11]:
-    filenameNew = filename.split('.hdf5')[0] + '_timesArea' + '.hdf5'
-
-    print(filenameNew)
-
-
-    in_fd = h5py.File(os.path.join(dir_in, filename), 'r')
-    out_fd = h5py.File(os.path.join(dir_out, filenameNew), 'w')
-
-
-    for g1 in in_fd.keys():
-      print(g1)
-      if g1 in ['lon', 'lat']:
-        out_fd.create_dataset(g1, data = in_fd[g1])
-        continue
-      group = out_fd.create_group(g1)
-      for g2 in in_fd[g1].keys():
-        print(g2)
-        if g1 == 'ancill':
-          group.create_dataset(g2, data = in_fd[g1 + '/' + g2])
-          continue
-        # for g3 in in_fd[g1 + '/' + g2].keys():
-        #   print(g3)
+  grid_cell_area = h5py.File(os.path.join(dir, filenames[10]), 'r')['ancill/grid_cell_area']
+  grid_cell_area = np.matrix(grid_cell_area)
   
-
-    # ancill = out_fd.create_group('ancill')
-    # ancill.create_dataset('basis_regions', data = in_fd['ancill/basis_regions'])
-    # ancill.create_dataset('grid_cell_area', data = in_fd['ancill/grid_cell_area'])
+  for filename in filenames[10:11]:
 
 
+    print(filename)
 
-    # biosphere = out_fd.create_group('ancill')
+    fd = h5py.File(os.path.join(dir, filename), 'r+')
 
+    # print(fd)
+    fd.visititems(visitor_func)
+    
 
+    # print(l)
 
-
-
-
-     
-    in_fd.close()
-    out_fd.close()
+      
+    fd.close()
 
 
 

@@ -30,5 +30,8 @@ import pandas as pd
 a = np.matrix([[4, 5, 7],[9, 3, 2],[3, 9, 1]])
 b = np.matrix([[5, 2, 9],[8, 4, 2],[1, 7, 4]])
 
+
+print(a)
+print(b)
 ab = np.multiply(a, b)
 print(ab)
