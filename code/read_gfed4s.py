@@ -161,6 +161,7 @@ if __name__ == "__main__":
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
   gfedDir = os.path.join(ppPath, 'GFED4s')
+  gfedDir_timesArea = os.path.join(ppPath, 'GFED4s')
   outputDir = os.path.join(pPath, 'read_gfed4s-outfiles')
   shapefilesDir = os.path.join(pPath, 'shapefiles')
   
