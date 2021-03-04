@@ -14,8 +14,8 @@ def gfed_filenames(filenames):
 def fslash(a, b):
   return a + '/' + b
 
+# https://docs.h5py.org/en/latest/high/group.html#h5py.Group.visititems
 def visit_timesArea(name, node):
-  
   if isinstance(node, h5py.Dataset):
     return
   else:
@@ -48,7 +48,7 @@ if __name__ == "__main__":
   for filename in filenames:
     print(filename)
     fd = h5py.File(os.path.join(dir, filename), 'r+')
-    fd.visititems(visit_timesArea) # https://docs.h5py.org/en/latest/high/group.html#h5py.Group.visititems
+    fd.visititems(visit_timesArea)
     fd.close()
 
 

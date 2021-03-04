@@ -3,6 +3,7 @@ import numpy as np
 
 import json
 import geopandas
+from numpy.lib.function_base import extract
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
@@ -14,12 +15,13 @@ import sys
 
 import time
 import datetime as dt
+import copy
 
 from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
 from shapely.ops import unary_union
 # https://shapely.readthedocs.io/en/latest/manual.html
 
-regionNums = {'BONA':1, 'TENA':2, 'CEAM':3, 'NHSA':4, 'SHSA':5, 'EURO':6, 'MIDE':7, 'NHAF':8, 'SHAF':9, 'BOAS':10, 'CEAS':11, 'SEAS':12, 'EQAS':13, 'AUST':14}
+regionNums = {None:0, 'BONA':1, 'TENA':2, 'CEAM':3, 'NHSA':4, 'SHSA':5, 'EURO':6, 'MIDE':7, 'NHAF':8, 'SHAF':9, 'BOAS':10, 'CEAS':11, 'SEAS':12, 'EQAS':13, 'AUST':14}
 # GFED file groups: ['ancill', 'biosphere', 'burned_area', 'emissions', 'lat', 'lon']
 
 def month_str(month):
@@ -38,19 +40,45 @@ def gfed_filenames(gfed_fnames):
 def flatten_list(regular_list):
   return [item for sublist in regular_list for item in sublist]
 
-
-  
 def add_matrices(list):
   return np.sum(list, axis=0)
 
+def get_bounds_regionsMasked(regions, regionVal):
+  """
+  for all regions: regionVal = 0
+  for 1 region: 1 <= regionVal <= 14
+  """
+  rowcol = regions.shape
+  regionBoundedMasked = copy.deepcopy(regions)
+  bounds = {'minLonIndex':regions.shape[1]-1, 'minLatIndex':regions.shape[0]-1, 'maxLonIndex':0, 'maxLatIndex':0}
+  # print(bounds)
+  for lat in range(rowcol[0]):
+    for lon in range(rowcol[1]):
+      if (regionVal and regions[lat,lon] == regionVal) or (not regionVal and regions[lat,lon] != 0):
+        regionBoundedMasked[lat,lon] = 1
+        if lon > bounds['maxLonIndex']:
+          bounds['maxLonIndex'] = lon
+        if lat > bounds['maxLatIndex']:
+          bounds['maxLatIndex'] = lat
+      else:
+        regionBoundedMasked[lat,lon] = 0
+  for lat in range(bounds['maxLatIndex'],-1,-1):
+    for lon in range(bounds['maxLonIndex'],-1,-1):
+      if (regionVal and regions[lat,lon] == regionVal) or (not regionVal and regions[lat,lon] != 0):
+        if lon < bounds['minLonIndex']:
+          bounds['minLonIndex'] = lon
+        if lat < bounds['minLatIndex']:
+          bounds['minLatIndex'] = lat
+  return bounds, regionBoundedMasked[bounds['minLatIndex']:bounds['maxLatIndex']+1, bounds['minLonIndex']:bounds['maxLonIndex']+1]
+
+def extract_matrix_for_region(mat, bounds, regionBoundedMasked):
+  return np.multiply( mat[bounds['minLatIndex']:bounds['maxLatIndex']+1, bounds['minLonIndex']:bounds['maxLonIndex']+1], regionBoundedMasked)
 
 
 def timer_start():
   return time.time()
-
 def timer_elapsed(t0):
   return time.time() - t0
-
 def timer_restart(t0, msg):
   # print(timer_elapsed(t0), msg)
   return timer_start()
@@ -71,16 +99,18 @@ def marker_size(plt, xlim1, ylim1):
 def utc_time_filename():
   return dt.datetime.utcnow().strftime('%Y.%m.%d-%H.%M.%S')
   
+
+def fslash(a, b):
+  return a + '/' + b
+
 def save_plt(plt, dest, name):
   plt.savefig(os.path.join(dest, name + '.png'))
 
 def save_df(df, cldf, stats, dest, name):
-  fd = pd.HDFStore(os.path.join(dest, name + '.hdf5'))
-  # del df['color']
-  del df['region']
-  fd.put('data', df, format='table', data_columns=True)
-  fd.put('colormap', cldf, format='table', data_columns=True)
-  fd.put('stats', stats, format='table', data_columns=True)
+  fd = h5py.File(os.path.join(dest, name + '.hdf5'), 'w')
+  fd.create_dataset('data', data=df)
+  fd.create_dataset('colormap', data=cldf)
+  fd.create_dataset('stats', data=stats)
   fd.close()
 
 def save_df_plt(plt, df, cldf, stats, dest, name):
@@ -105,8 +135,6 @@ def next_jan1(start):
 def read_json(path):
   return json.load(open(path, 'r'))
 
-def are_points_inside(basisregion, df):
-  return [ basisregion.contains(Point(row.lon, row.lat)) for row in df.itertuples() ]
 
 # 'DM_AGRI', 'DM_BORF', 'DM_DEFO', 'DM_PEAT', 'DM_SAVA', 'DM_TEMF'
 # 'C_AGRI', 'C_BORF', 'C_DEFO', 'C_PEAT', 'C_SAVA', 'C_TEMF'
@@ -132,7 +160,6 @@ def get_unit(dataset):
     
 
 
-
 world = geopandas.read_file(geopandas.datasets.get_path("naturalearth_lowres"))
 
 if __name__ == "__main__":
@@ -151,8 +178,8 @@ if __name__ == "__main__":
   # cmap = 'cool'
   # end params
 
-  regionName = None
-
+  regionName, df, bounds, regionBoundedMasked, lats, lons = None, None, None, None, None, None
+  
   unit_timesArea = get_unit_timesArea(dataset)
   unit = get_unit(dataset)
   
@@ -160,6 +187,7 @@ if __name__ == "__main__":
   if numArgs == 9:
     regionName = sys.argv[8]
     title = regionName + '_' + title
+
   
   print(title)
 
@@ -182,11 +210,19 @@ if __name__ == "__main__":
   numMonths = (endDate.year - startDate.year)*12 + (endDate.month - startDate.month) + 1
   numYears = float(numMonths) / 12
 
+
+  hist_month = pd.DataFrame(None, columns=['year', 'month', unit, unit_timesArea])
+  hist_year = pd.DataFrame(None, columns=['year', unit, unit_timesArea])
+
+
+  stats = pd.DataFrame(None, columns=['month_count', 'year_count', 'region_area'])
+  stats.month_count = [numMonths]
+  stats.year_count = [numYears]
+  
+
   t0 = timer_start()
   t1 = t0
 
-  df = None
-  year_ = None
 
   for filename in gfed_fnames:
     if currentDate > endDate:
@@ -200,98 +236,93 @@ if __name__ == "__main__":
       fd = h5py.File(os.path.join(gfedDir, filename), 'r')
       fd_timesArea = h5py.File(os.path.join(gfedDir_timesArea, filename), 'r')
 
-
-
       next_year = next_jan1(currentDate)
-
       curr_startMonth = currentDate.month
       curr_endMonth = 12 # default
       if endDate < next_year or currentDate == endDate:
         curr_endMonth = endDate.month
 
-      # for month_it in range(curr_startMonth, curr_endMonth + 1):
-
-      # temp_val = pd.DataFrame([ sum(l) for l in zip(*[ flatten_list(fd[group][month_str(month_it)][dataset]) for month_it in range(curr_startMonth, curr_endMonth + 1) ]) ], columns = [unit])
-      temp_val = add_matrices([ fd[group][month_str(month_it)][dataset] for month_it in range(curr_startMonth, curr_endMonth + 1) ])
+      # temp_val = add_matrices([ fd[group][month_str(month_it)][dataset] for month_it in range(curr_startMonth, curr_endMonth + 1) ])
 
       if df is None:
-        df = pd.DataFrame(None, columns = ['lat', 'lon', 'area', unit, 'region'])
-        df.lat = np.matrix(fd['lat'])
-        df.lon = np.matrix(fd['lon'])
-        df.region = np.matrix(fd['ancill/basis_regions'])
-        df.area = np.matrix(fd['ancill/grid_cell_area'])
+        # df = pd.DataFrame(None, columns = ['lat', 'lon', 'grid_cell_area', unit_timesArea, 'basis_regions'])
+        df = dict()
+        bounds, regionBoundedMasked = get_bounds_regionsMasked(np.matrix(fd['ancill/basis_regions']), regionNums[regionName])
 
-        if regionName:
-          df = df[df.region == regionNums[regionName]]  # specific region
-        else:
-          df = df[df.region != 0] # all regions
+        lats = np.matrix(fd['lat'])
+        lons = np.matrix(fd['lon'])
 
+        df['grid_cell_area'] = extract_matrix_for_region(np.matrix(fd['ancill/grid_cell_area']), bounds, regionBoundedMasked)
+        df['lat'] = extract_matrix_for_region(lats, bounds, regionBoundedMasked)
+        df['lon'] = extract_matrix_for_region(lons, bounds, regionBoundedMasked)
 
-        # print(len(df[unit]))
-        t0 = timer_restart(t0, '1st year')
+        stats.region_area = [np.sum(df['grid_cell_area'])]
+      
+      print(stats.region_area[0])
 
-      # else: # add to df[unit]
+      monthly_totals_timesArea = [ np.sum(  extract_matrix_for_region(np.matrix(fd[group][month_str(month_it)][dataset]), bounds, regionBoundedMasked) ) for month_it in range(curr_startMonth, curr_endMonth + 1) ]
+      monthly_totals = np.divide(monthly_totals_timesArea, stats.region_area[0])
+      
+      temp_df = pd.DataFrame({
+        'year': [currentDate.year]*12,
+        'month': [month_str(m) for m in range(1,13)],
+        unit: monthly_totals,
+        unit_timesArea: monthly_totals_timesArea
+      })
 
-      #   # find matching indices
-      #   df[unit] = [x + y for x, y in zip(df[unit], temp_val[temp_val.index.isin(df.index)][unit] ) ]
+      print(temp_df)
 
       currentDate = next_year
-      
       fd.close()
 
+  exit()
 
-  t0 = timer_restart(t0, '2nd-last year')
+  # t0 = timer_restart(t0, '2nd-last year')
   
-  region_yearly_val = pd.DataFrame(None, columns = ['year', unit])
-  region_yearly_val.year = list(range(startYear, endYear + 1))
+  # region_yearly_val = pd.DataFrame(None, columns = ['year', unit])
+  # region_yearly_val.year = list(range(startYear, endYear + 1))
 
-  # after reading all months/years
-  df_nonzero = df[df[unit] != 0.0]
-  # print(len(df_nonzero[unit]))
-  # print(len(df[unit]))
+  # # after reading all months/years
+  # df_nonzero = df[df[unit] != 0.0]
+  # # print(len(df_nonzero[unit]))
+  # # print(len(df[unit]))
 
+  # # stats['region_area_nonzero_cell'] = [np.sum(df_nonzero['grid_cell_area'])]
 
-  stats = pd.DataFrame()
-  stats['month_count'] = [numMonths]
-  region_area = np.sum(df.area)
-  stats['region_area'] = [region_area]
-  stats['region_area_nonzero_cell'] = [np.sum(df_nonzero.area)]
+  # # (g C / m^2 period) per cell
   
-
-  # (g C / m^2 period) per cell
-  
-  df[unit] = [v / numYears for v in df[unit]] # take average
-  # (g C / m^2 month) per cell
+  # df[unit] = [v / numYears for v in df[unit]] # take average
+  # # (g C / m^2 month) per cell
   
 
 
 
-  t0 = timer_restart(t0, 'stats')
+  # t0 = timer_restart(t0, 'stats')
 
 
-  color_buf = 0 # 1e8
-  color_min = min(df_nonzero[unit]) - color_buf
-  color_max = max(df_nonzero[unit]) + color_buf
-  # color_min = 0
-  # color_max = 1
+  # color_buf = 0 # 1e8
+  # color_min = min(df_nonzero[unit]) - color_buf
+  # color_max = max(df_nonzero[unit]) + color_buf
+  # # color_min = 0
+  # # color_max = 1
 
-  # print(color_min)
-  # print(color_max)
-  norm = cl.Normalize(vmin=color_min, vmax=color_max, clip=False) # clip=False is default
-  # https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html
-  mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
-  # https://matplotlib.org/stable/api/cm_api.html#matplotlib.cm.ScalarMappable
-  # https://matplotlib.org/stable/tutorials/colors/colormaps.html
+  # # print(color_min)
+  # # print(color_max)
+  # norm = cl.Normalize(vmin=color_min, vmax=color_max, clip=False) # clip=False is default
+  # # https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html
+  # mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
+  # # https://matplotlib.org/stable/api/cm_api.html#matplotlib.cm.ScalarMappable
+  # # https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
-  df_nonzero['color'] = [mapper.to_rgba(v) for v in df_nonzero[unit]]
+  # df_nonzero['color'] = [mapper.to_rgba(v) for v in df_nonzero[unit]]
 
-  cldf = pd.DataFrame()
-  cldf['min'] = [color_min]
-  cldf['max'] = [color_max]
-  cldf['cmap'] = [cmap]
+  # cldf = pd.DataFrame()
+  # cldf['min'] = [color_min]
+  # cldf['max'] = [color_max]
+  # cldf['cmap'] = [cmap]
 
-  # print(cldf)
-  t0 = timer_restart(t0, 'colormap')
+  # # print(cldf)
+  # t0 = timer_restart(t0, 'colormap')
 
 
   # plot result
@@ -310,20 +341,19 @@ if __name__ == "__main__":
     xlim1 = plt.xlim()
     ylim1 = plt.ylim()
 
-    # bounds = basisregion.bounds # (minx, miny, maxx, maxy) 
-    bounds = (min(df_nonzero.lon), min(df_nonzero.lat), max(df_nonzero.lon), max(df_nonzero.lat))
-
-    plt.xlim((bounds[0],bounds[2]))
-    plt.ylim((bounds[1],bounds[3]))
+    lonBounds = [lons[0,bounds['minLonIndex']], lons[0,bounds['maxLonIndex']]]
+    latBounds = [lats[bounds['minLatIndex'],0], lats[bounds['maxLatIndex'],0]]
+    plt.xlim((min(lonBounds), max(lonBounds)))
+    plt.ylim((min(latBounds), max(latBounds)))
 
     ms = marker_size(plt, xlim1, ylim1)
     # print(ms)
-    plt.scatter(df_nonzero.lon, df_nonzero.lat, s=ms, c=df_nonzero.color, alpha=1, linewidths=0, marker='s')
-    plt.colorbar(mapper)
+    # plt.scatter(df_nonzero['lon'], df_nonzero['lat'], s=ms, c=df_nonzero.color, alpha=1, linewidths=0, marker='s')
+    # plt.colorbar(mapper)
 
     # now = utc_time_filename()
     t0 = timer_restart(t0, 'create plot')
-    save_df_plt(plt, df, cldf, stats, outputDir, title + '-' + utc_time_filename())
+    # save_df_plt(plt, df, cldf, stats, outputDir, title + '-' + utc_time_filename())
 
     t0 = timer_restart(t0, 'save outfiles')
     t1 = timer_restart(t1, 'total time')
