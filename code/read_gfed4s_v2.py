@@ -39,6 +39,12 @@ def flatten_list(regular_list):
   return [item for sublist in regular_list for item in sublist]
 
 
+  
+def add_matrices(list):
+  return np.sum(list, axis=0)
+
+
+
 def timer_start():
   return time.time()
 
@@ -124,7 +130,6 @@ def get_unit(dataset):
   else:
     return 'm^-2'
     
-  
 
 
 
@@ -165,10 +170,9 @@ if __name__ == "__main__":
   outputDir = os.path.join(pPath, 'read_gfed4s-outfiles')
   shapefilesDir = os.path.join(pPath, 'shapefiles')
   
-  # basisregion = shape( read_json(shapefilesDir + 'basisregions/' + regionName + '.geo.json')['features'][0]['geometry'] )
   
   gfed_fnames = os.listdir(gfedDir)
-  gfed_fnames = sorted(gfed_filenames(gfed_fnames))
+  gfed_fnames = sorted(gfed_filenames(gfed_fnames)) # same as in gfedDir_timesArea
 
   startDate = dt.date(startYear, startMonth, 1)
   endDate = dt.date(endYear, endMonth, 1)
@@ -194,6 +198,9 @@ if __name__ == "__main__":
       # by year
 
       fd = h5py.File(os.path.join(gfedDir, filename), 'r')
+      fd_timesArea = h5py.File(os.path.join(gfedDir_timesArea, filename), 'r')
+
+
 
       next_year = next_jan1(currentDate)
 
@@ -202,24 +209,18 @@ if __name__ == "__main__":
       if endDate < next_year or currentDate == endDate:
         curr_endMonth = endDate.month
 
+      # for month_it in range(curr_startMonth, curr_endMonth + 1):
+
+      # temp_val = pd.DataFrame([ sum(l) for l in zip(*[ flatten_list(fd[group][month_str(month_it)][dataset]) for month_it in range(curr_startMonth, curr_endMonth + 1) ]) ], columns = [unit])
+      temp_val = add_matrices([ fd[group][month_str(month_it)][dataset] for month_it in range(curr_startMonth, curr_endMonth + 1) ])
 
       if df is None:
         df = pd.DataFrame(None, columns = ['lat', 'lon', 'area', unit, 'region'])
-        df.lat = flatten_list(fd['lat'])
-        df.lon = flatten_list(fd['lon'])
-        df.region = flatten_list(fd['ancill/basis_regions'])
-        df.area = flatten_list(fd['ancill/grid_cell_area'])
+        df.lat = np.matrix(fd['lat'])
+        df.lon = np.matrix(fd['lon'])
+        df.region = np.matrix(fd['ancill/basis_regions'])
+        df.area = np.matrix(fd['ancill/grid_cell_area'])
 
-        # temp_val = pd.DataFrame([ sum(l) for l in zip(*[ flatten_list(fd[group][month_str(month_it)][dataset]) for month_it in range(curr_startMonth, curr_endMonth + 1) ]) ], columns = [unit])
-        # g C 
-        
-        # df[unit_timesArea] = [x*y for x,y in zip(df[unit], df.area)]
-        
-        # df[unit] = temp_val[unit]
-
-        # find indices in region, remove the rest
-
-        # df = df[are_points_inside(basisregion, df)] # specific region, geojson
         if regionName:
           df = df[df.region == regionNums[regionName]]  # specific region
         else:
@@ -249,8 +250,6 @@ if __name__ == "__main__":
   # print(len(df_nonzero[unit]))
   # print(len(df[unit]))
 
-  # df = df[are_points_inside(basisregion, df)]
-  # t0 = timer_restart(t0, 'are_points_inside')
 
   stats = pd.DataFrame()
   stats['month_count'] = [numMonths]
@@ -264,19 +263,7 @@ if __name__ == "__main__":
   df[unit] = [v / numYears for v in df[unit]] # take average
   # (g C / m^2 month) per cell
   
-  # if dataset == 'burned_fraction':
-  #   df[unit_timesArea] = [x*y for x,y in zip(df[unit], df.area)]
-  #   # (m^2 / month) per cell
-  #   stats['region_monthly_avg_burned_fraction'] = [np.sum(df['burned_area']) / region_area ]
-  #   # fraction / month)
-  # else:
-  #   df[unit_timesArea] = [x*y for x,y in zip(df[unit], df.area)] 
-  #   # (g C / month) per cell
-  #   sum_cell_total_val = np.sum(df['cell_total_val'])
-  #   stats['region_monthly_avg_val'] = [sum_cell_total_val / numMonths]
-  #   stats['region_yearly_avg_val'] = [sum_cell_total_val / numYears]
-  #   stats['region_period_sum_val'] = [sum_cell_total_val]
-  #   # (g C / year)
+
 
 
   t0 = timer_restart(t0, 'stats')
@@ -341,11 +328,5 @@ if __name__ == "__main__":
     t0 = timer_restart(t0, 'save outfiles')
     t1 = timer_restart(t1, 'total time')
 
-    # plt.show()
-
-    
-
-  # after plot
-
-
+    plt.show()
 
