@@ -41,7 +41,6 @@ if __name__ == "__main__":
   t0 = timer_start()
 
 
-  run(dir, 'read_gfed4s_v2.py', [2016, 1, 2016, 12, 'emissions', 'C', 'YlOrRd', 'TENA'])
 
   # run(dir, 'read_gfed4s_v2.py', [1997, 1, 2016, 12, 'burned_area', 'burned_fraction', 'YlOrRd', 'TENA'])
   # t0 = timer_restart(t0, '')
@@ -49,7 +48,7 @@ if __name__ == "__main__":
   # t0 = timer_restart(t0, '')
   # run(dir, 'read_gfed4s_v2.py', [1997, 1, 2016, 12, 'emissions', 'C', 'YlOrRd', 'TENA'])
   # t0 = timer_restart(t0, '')
-  # run(dir, 'read_gfed4s_v2.py', [1997, 1, 2016, 12, 'emissions', 'C', 'YlOrRd'])
+  run(dir, 'read_gfed4s_v2.py', [1997, 1, 2016, 12, 'emissions', 'C', 'YlOrRd'])
   # t0 = timer_restart(t0, '')
   # run(dir, 'read_gfed4s_v2.py', [1997, 1, 2016, 12, 'emissions', 'DM', 'YlOrRd', 'TENA'])
   # t0 = timer_restart(t0, '')

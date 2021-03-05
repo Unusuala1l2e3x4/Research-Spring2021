@@ -43,18 +43,19 @@ def flatten_list(regular_list):
 def add_matrices(list):
   return np.sum(list, axis=0)
 
-def get_bounds_regionsMasked(regions, regionVal):
+def get_bounds_regionsMasked(regions, regionVal, entireGlobe=False):
   """
   for all regions: regionVal = 0
   for 1 region: 1 <= regionVal <= 14
+  for region being the entire globe: set entireGlobe = True
   """
   rowcol = regions.shape
   regionBoundedMasked = copy.deepcopy(regions)
   bounds = {'minLonIndex':regions.shape[1]-1, 'minLatIndex':regions.shape[0]-1, 'maxLonIndex':0, 'maxLatIndex':0}
-  # print(bounds)
+
   for lat in range(rowcol[0]):
     for lon in range(rowcol[1]):
-      if (regionVal and regions[lat,lon] == regionVal) or (not regionVal and regions[lat,lon] != 0):
+      if (regionVal and regions[lat,lon] == regionVal) or (not regionVal and regions[lat,lon] != 0) or entireGlobe:
         regionBoundedMasked[lat,lon] = 1
         if lon > bounds['maxLonIndex']:
           bounds['maxLonIndex'] = lon
@@ -62,6 +63,11 @@ def get_bounds_regionsMasked(regions, regionVal):
           bounds['maxLatIndex'] = lat
       else:
         regionBoundedMasked[lat,lon] = 0
+
+  if entireGlobe:
+    bounds = {'minLonIndex':0, 'minLatIndex':0, 'maxLonIndex':regions.shape[1]-1, 'maxLatIndex':regions.shape[0]-1}
+    return bounds, regionBoundedMasked
+
   for lat in range(bounds['maxLatIndex'],-1,-1):
     for lon in range(bounds['maxLonIndex'],-1,-1):
       if (regionVal and regions[lat,lon] == regionVal) or (not regionVal and regions[lat,lon] != 0):
@@ -80,7 +86,7 @@ def timer_start():
 def timer_elapsed(t0):
   return time.time() - t0
 def timer_restart(t0, msg):
-  # print(timer_elapsed(t0), msg)
+  print(timer_elapsed(t0), msg)
   return timer_start()
 
 def lim_length(lim):
@@ -141,9 +147,9 @@ def read_json(path):
 
 def get_unit_timesArea(dataset):
   if dataset == 'DM':
-    return 'kg-DM'
+    return 'kg_DM'
   elif dataset in ['C', 'BB', 'NPP', 'Rh']:
-    return 'g-C'
+    return 'g_C'
   elif dataset == 'burned_fraction':
     return 'm^2'
   else:
@@ -153,11 +159,12 @@ def get_unit(dataset):
   unit = get_unit_timesArea(dataset)
   if unit == 'm^2':
     return 'fraction'
-  elif unit in ['g-C', 'kg-DM']:
-    return unit + '-m^-2'
+  elif unit in ['g_C', 'kg_DM']:
+    return unit + '_m^-2'
   else:
     return 'm^-2'
-    
+
+
 
 
 world = geopandas.read_file(geopandas.datasets.get_path("naturalearth_lowres"))
@@ -178,8 +185,10 @@ if __name__ == "__main__":
   # cmap = 'cool'
   # end params
 
-  regionName, df, bounds, regionBoundedMasked, lats, lons = None, None, None, None, None, None
+  regionName, df, bounds, lats, lons = None, None, None, None, None
   
+  
+
   unit_timesArea = get_unit_timesArea(dataset)
   unit = get_unit(dataset)
   
@@ -233,7 +242,7 @@ if __name__ == "__main__":
       # open next file
       # by year
 
-      fd = h5py.File(os.path.join(gfedDir, filename), 'r')
+      # fd = h5py.File(os.path.join(gfedDir, filename), 'r')
       fd_timesArea = h5py.File(os.path.join(gfedDir_timesArea, filename), 'r')
 
       next_year = next_jan1(currentDate)
@@ -242,87 +251,104 @@ if __name__ == "__main__":
       if endDate < next_year or currentDate == endDate:
         curr_endMonth = endDate.month
 
-      # temp_val = add_matrices([ fd[group][month_str(month_it)][dataset] for month_it in range(curr_startMonth, curr_endMonth + 1) ])
-
       if df is None:
-        # df = pd.DataFrame(None, columns = ['lat', 'lon', 'grid_cell_area', unit_timesArea, 'basis_regions'])
         df = dict()
-        bounds, regionBoundedMasked = get_bounds_regionsMasked(np.matrix(fd['ancill/basis_regions']), regionNums[regionName])
+        bounds, df['is_in_region'] = get_bounds_regionsMasked(np.matrix(fd_timesArea['ancill/basis_regions']), regionNums[regionName], entireGlobe=False)
 
-        lats = np.matrix(fd['lat'])
-        lons = np.matrix(fd['lon'])
+        lats = np.matrix(fd_timesArea['lat'])
+        lons = np.matrix(fd_timesArea['lon'])
 
-        df['grid_cell_area'] = extract_matrix_for_region(np.matrix(fd['ancill/grid_cell_area']), bounds, regionBoundedMasked)
-        df['lat'] = extract_matrix_for_region(lats, bounds, regionBoundedMasked)
-        df['lon'] = extract_matrix_for_region(lons, bounds, regionBoundedMasked)
+        df['grid_cell_area'] = extract_matrix_for_region(np.matrix(fd_timesArea['ancill/grid_cell_area']), bounds, df['is_in_region'])
+        df['lat'] = extract_matrix_for_region(lats, bounds, df['is_in_region'])
+        df['lon'] = extract_matrix_for_region(lons, bounds, df['is_in_region'])
+        df[unit + '_month^-1'] = df['is_in_region'] * 0.0 # initialize for adding unit_timesArea, eventually will divide by area and numMonths
 
         stats.region_area = [np.sum(df['grid_cell_area'])]
-      
-      print(stats.region_area[0])
+        t0 = timer_restart(t0, 'df is None')
+        # print(stats.region_area[0])
 
-      monthly_totals_timesArea = [ np.sum(  extract_matrix_for_region(np.matrix(fd[group][month_str(month_it)][dataset]), bounds, regionBoundedMasked) ) for month_it in range(curr_startMonth, curr_endMonth + 1) ]
-      monthly_totals = np.divide(monthly_totals_timesArea, stats.region_area[0])
+      temp_months = [ extract_matrix_for_region(np.matrix(fd_timesArea[group][month_str(month_it)][dataset]), bounds, df['is_in_region']) for month_it in range(curr_startMonth, curr_endMonth + 1) ]
       
-      temp_df = pd.DataFrame({
-        'year': [currentDate.year]*12,
-        'month': [month_str(m) for m in range(1,13)],
+      df[unit + '_month^-1'] += add_matrices(temp_months)
+
+      monthly_totals_timesArea = [np.sum(mat) for mat in temp_months]
+      monthly_totals = np.divide(monthly_totals_timesArea, stats.region_area[0])
+      yearly_totals_timesArea = np.sum(monthly_totals_timesArea)
+      yearly_totals = np.divide(yearly_totals_timesArea, stats.region_area[0])
+
+      hist_month = hist_month.append(pd.DataFrame({
+        'year': [currentDate.year]*(curr_endMonth + 1 - curr_startMonth),
+        'month': [m for m in range(curr_startMonth, curr_endMonth + 1)],
         unit: monthly_totals,
         unit_timesArea: monthly_totals_timesArea
-      })
-
-      print(temp_df)
+      }), ignore_index=True)
+      hist_year = hist_year.append(pd.DataFrame({
+        'year': [currentDate.year],
+        unit: [yearly_totals],
+        unit_timesArea: [yearly_totals_timesArea]
+      }), ignore_index=True)
 
       currentDate = next_year
-      fd.close()
+      fd_timesArea.close()
 
-  exit()
+    
+  t0 = timer_restart(t0, '2nd-last year')
 
-  # t0 = timer_restart(t0, '2nd-last year')
+  # pd.set_option('display.max_rows', None)
+  # print(hist_month)
+  # print(hist_year)
+
+
   
-  # region_yearly_val = pd.DataFrame(None, columns = ['year', unit])
-  # region_yearly_val.year = list(range(startYear, endYear + 1))
+
+  # df_nonzero = copy.deepcopy(df)
+  df_nonzero = pd.DataFrame()
+
+  for key in df.keys():
+    df_nonzero[key] = np.ravel(df[key])
 
   # # after reading all months/years
-  # df_nonzero = df[df[unit] != 0.0]
-  # # print(len(df_nonzero[unit]))
-  # # print(len(df[unit]))
+  df_nonzero = df_nonzero[df_nonzero[unit + '_month^-1'] != 0.0]
 
-  # # stats['region_area_nonzero_cell'] = [np.sum(df_nonzero['grid_cell_area'])]
+  df_nonzero[unit + '_month^-1'] = np.divide(df_nonzero[unit + '_month^-1'], df_nonzero['grid_cell_area']) / numMonths
 
-  # # (g C / m^2 period) per cell
+
+  # stats['region_area_nonzero_cell'] = [np.sum(df_nonzero['grid_cell_area'])]
+
+  # (g C / m^2 period) per cell
   
   # df[unit] = [v / numYears for v in df[unit]] # take average
-  # # (g C / m^2 month) per cell
+  # (g C / m^2 month) per cell
   
 
 
 
-  # t0 = timer_restart(t0, 'stats')
+  t0 = timer_restart(t0, 'stats')
 
 
-  # color_buf = 0 # 1e8
-  # color_min = min(df_nonzero[unit]) - color_buf
-  # color_max = max(df_nonzero[unit]) + color_buf
-  # # color_min = 0
-  # # color_max = 1
+  color_buf = 0 # 1e8
+  color_min = min(df_nonzero[unit + '_month^-1']) - color_buf
+  color_max = max(df_nonzero[unit + '_month^-1']) + color_buf
+  # color_min = 0
+  # color_max = 1
 
-  # # print(color_min)
-  # # print(color_max)
-  # norm = cl.Normalize(vmin=color_min, vmax=color_max, clip=False) # clip=False is default
-  # # https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html
-  # mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
-  # # https://matplotlib.org/stable/api/cm_api.html#matplotlib.cm.ScalarMappable
-  # # https://matplotlib.org/stable/tutorials/colors/colormaps.html
+  # print(color_min)
+  # print(color_max)
+  norm = cl.Normalize(vmin=color_min, vmax=color_max, clip=False) # clip=False is default
+  # https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html
+  mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
+  # https://matplotlib.org/stable/api/cm_api.html#matplotlib.cm.ScalarMappable
+  # https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
-  # df_nonzero['color'] = [mapper.to_rgba(v) for v in df_nonzero[unit]]
+  df_nonzero['color'] = [mapper.to_rgba(v) for v in df_nonzero[unit + '_month^-1']]
 
-  # cldf = pd.DataFrame()
-  # cldf['min'] = [color_min]
-  # cldf['max'] = [color_max]
-  # cldf['cmap'] = [cmap]
+  cldf = pd.DataFrame()
+  cldf['min'] = [color_min]
+  cldf['max'] = [color_max]
+  cldf['cmap'] = [cmap]
 
-  # # print(cldf)
-  # t0 = timer_restart(t0, 'colormap')
+  # print(cldf)
+  t0 = timer_restart(t0, 'colormap')
 
 
   # plot result
@@ -348,8 +374,8 @@ if __name__ == "__main__":
 
     ms = marker_size(plt, xlim1, ylim1)
     # print(ms)
-    # plt.scatter(df_nonzero['lon'], df_nonzero['lat'], s=ms, c=df_nonzero.color, alpha=1, linewidths=0, marker='s')
-    # plt.colorbar(mapper)
+    plt.scatter(df_nonzero['lon'], df_nonzero['lat'], s=ms, c=df_nonzero.color, alpha=1, linewidths=0, marker='s')
+    plt.colorbar(mapper)
 
     # now = utc_time_filename()
     t0 = timer_restart(t0, 'create plot')
