@@ -1,9 +1,11 @@
+from logging import error
 import h5py
 import numpy as np
 
 import json
 import geopandas
 from numpy.lib.function_base import extract
+from numpy.testing._private.utils import print_assert_equal
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
@@ -109,21 +111,29 @@ def utc_time_filename():
 def fslash(a, b):
   return a + '/' + b
 
-def save_plt(plt, dest, name):
-  plt.savefig(os.path.join(dest, name + '.png'))
+def save_plt(plt, folderPath, name):
+  plt.savefig(os.path.join(folderPath, name + '.png'))
 
-def save_df(df, cldf, stats, dest, name):
-  fd = h5py.File(os.path.join(dest, name + '.hdf5'), 'w')
-  fd.create_dataset('data', data=df)
-  fd.create_dataset('colormap', data=cldf)
-  fd.create_dataset('stats', data=stats)
+def save_df(df_nonzero, hist_month, hist_year, cldf, stats, folderPath, name):
+  fd = pd.HDFStore(os.path.join(folderPath, name + '.hdf5'))
+  del df_nonzero['color']
+  print(df_nonzero)
+  print(cldf)
+  print(stats)
+  print(hist_month)
+  print(hist_year)
+  fd.put('data', df_nonzero, format='table', data_columns=True)
+  fd.put('colormap', cldf, format='table', data_columns=True)
+  fd.put('stats', stats, format='table', data_columns=True)
+  fd.put('hist_month', hist_month, format='table', data_columns=True)
+  fd.put('hist_year', hist_year, format='table', data_columns=True)
   fd.close()
 
-def save_df_plt(plt, df, cldf, stats, dest, name):
+def save_df_plt(plt, df_nonzero, hist_month, hist_year, cldf, stats, dest, name):
   folderPath = os.path.join(dest, name)
   os.makedirs(folderPath)
   save_plt(plt, folderPath, name)
-  save_df(df, cldf, stats, folderPath, name)
+  save_df(df_nonzero, hist_month, hist_year, cldf, stats, folderPath, name)
 
   
 
@@ -147,22 +157,22 @@ def read_json(path):
 
 def get_unit_timesArea(dataset):
   if dataset == 'DM':
-    return 'kg_DM'
+    return 'kg-DM'
   elif dataset in ['C', 'BB', 'NPP', 'Rh']:
-    return 'g_C'
+    return 'g-C'
   elif dataset == 'burned_fraction':
-    return 'm^2'
+    return 'mE2'
   else:
     return ''
 
 def get_unit(dataset):
   unit = get_unit_timesArea(dataset)
-  if unit == 'm^2':
+  if unit == 'mE2':
     return 'fraction'
-  elif unit in ['g_C', 'kg_DM']:
-    return unit + '_m^-2'
+  elif unit in ['g-C', 'kg-DM']:
+    return unit + '-mE-2'
   else:
-    return 'm^-2'
+    return 'mE-2'
 
 
 
@@ -187,8 +197,6 @@ if __name__ == "__main__":
 
   regionName, df, bounds, lats, lons = None, None, None, None, None
   
-  
-
   unit_timesArea = get_unit_timesArea(dataset)
   unit = get_unit(dataset)
   
@@ -214,6 +222,8 @@ if __name__ == "__main__":
   startDate = dt.date(startYear, startMonth, 1)
   endDate = dt.date(endYear, endMonth, 1)
 
+  print_assert_equal('startDate <= endDate', startDate <= endDate, True)
+
   currentDate = startDate
 
   numMonths = (endDate.year - startDate.year)*12 + (endDate.month - startDate.month) + 1
@@ -223,11 +233,9 @@ if __name__ == "__main__":
   hist_month = pd.DataFrame(None, columns=['year', 'month', unit, unit_timesArea])
   hist_year = pd.DataFrame(None, columns=['year', unit, unit_timesArea])
 
-
-  stats = pd.DataFrame(None, columns=['month_count', 'year_count', 'region_area'])
+  stats = pd.DataFrame(None, columns=['month_count', 'year_count', 'region_area', 'region_area_nonzero_cell'])
   stats.month_count = [numMonths]
   stats.year_count = [numYears]
-  
 
   t0 = timer_start()
   t1 = t0
@@ -261,15 +269,14 @@ if __name__ == "__main__":
         df['grid_cell_area'] = extract_matrix_for_region(np.matrix(fd_timesArea['ancill/grid_cell_area']), bounds, df['is_in_region'])
         df['lat'] = extract_matrix_for_region(lats, bounds, df['is_in_region'])
         df['lon'] = extract_matrix_for_region(lons, bounds, df['is_in_region'])
-        df[unit + '_month^-1'] = df['is_in_region'] * 0.0 # initialize for adding unit_timesArea, eventually will divide by area and numMonths
+        df[unit_timesArea] = df['is_in_region'] * 0.0 # initialize for adding unit_timesArea, eventually will divide by area and numMonths
 
         stats.region_area = [np.sum(df['grid_cell_area'])]
         t0 = timer_restart(t0, 'df is None')
-        # print(stats.region_area[0])
 
       temp_months = [ extract_matrix_for_region(np.matrix(fd_timesArea[group][month_str(month_it)][dataset]), bounds, df['is_in_region']) for month_it in range(curr_startMonth, curr_endMonth + 1) ]
       
-      df[unit + '_month^-1'] += add_matrices(temp_months)
+      df[unit_timesArea] += add_matrices(temp_months)
 
       monthly_totals_timesArea = [np.sum(mat) for mat in temp_months]
       monthly_totals = np.divide(monthly_totals_timesArea, stats.region_area[0])
@@ -277,13 +284,13 @@ if __name__ == "__main__":
       yearly_totals = np.divide(yearly_totals_timesArea, stats.region_area[0])
 
       hist_month = hist_month.append(pd.DataFrame({
-        'year': [currentDate.year]*(curr_endMonth + 1 - curr_startMonth),
-        'month': [m for m in range(curr_startMonth, curr_endMonth + 1)],
+        'year': [str(currentDate.year)]*(curr_endMonth + 1 - curr_startMonth),
+        'month': [str(m) for m in range(curr_startMonth, curr_endMonth + 1)],
         unit: monthly_totals,
         unit_timesArea: monthly_totals_timesArea
       }), ignore_index=True)
       hist_year = hist_year.append(pd.DataFrame({
-        'year': [currentDate.year],
+        'year': [str(currentDate.year)],
         unit: [yearly_totals],
         unit_timesArea: [yearly_totals_timesArea]
       }), ignore_index=True)
@@ -298,9 +305,6 @@ if __name__ == "__main__":
   # print(hist_month)
   # print(hist_year)
 
-
-  
-
   # df_nonzero = copy.deepcopy(df)
   df_nonzero = pd.DataFrame()
 
@@ -308,27 +312,40 @@ if __name__ == "__main__":
     df_nonzero[key] = np.ravel(df[key])
 
   # # after reading all months/years
-  df_nonzero = df_nonzero[df_nonzero[unit + '_month^-1'] != 0.0]
+  df_nonzero = df_nonzero[df_nonzero[unit_timesArea] != 0.0]
+  stats.region_area_nonzero_cell = [np.sum(df_nonzero['grid_cell_area'])]
+  del df_nonzero['is_in_region']
 
-  df_nonzero[unit + '_month^-1'] = np.divide(df_nonzero[unit + '_month^-1'], df_nonzero['grid_cell_area']) / numMonths
+  df_nonzero[unit_timesArea + '-monthE-1'] = df_nonzero[unit_timesArea] / numMonths
+  df_nonzero[unit] = np.divide(df_nonzero[unit_timesArea], df_nonzero['grid_cell_area'])
+  df_nonzero[unit + '-monthE-1'] = df_nonzero[unit] / numMonths
 
+  hist_month[unit_timesArea + '-monthE-1'] = hist_month[unit_timesArea] / numMonths
+  hist_month[unit + '-monthE-1'] = hist_month[unit] / numMonths
 
-  # stats['region_area_nonzero_cell'] = [np.sum(df_nonzero['grid_cell_area'])]
+  hist_year[unit_timesArea + '-monthE-1'] = hist_year[unit_timesArea] / numMonths
+  hist_year[unit + '-monthE-1'] = hist_year[unit] / numMonths
 
-  # (g C / m^2 period) per cell
-  
-  # df[unit] = [v / numYears for v in df[unit]] # take average
-  # (g C / m^2 month) per cell
-  
+  if unit == 'fraction':
+    del df_nonzero[unit]
+    del df_nonzero[unit_timesArea]
+    del hist_month[unit]
+    del hist_month[unit_timesArea]
+    del hist_year[unit]
+    del hist_year[unit_timesArea]
 
+  # print(df_nonzero.shape)
+  # print(df_nonzero)
+  # print(stats)
 
+  t0 = timer_restart(t0, 'flatten df_nonzero')
+  # t0 = timer_restart(t0, 'stats')
 
-  t0 = timer_restart(t0, 'stats')
-
+  plotted_unit = unit + '-monthE-1'
 
   color_buf = 0 # 1e8
-  color_min = min(df_nonzero[unit + '_month^-1']) - color_buf
-  color_max = max(df_nonzero[unit + '_month^-1']) + color_buf
+  color_min = min(df_nonzero[plotted_unit]) - color_buf
+  color_max = max(df_nonzero[plotted_unit]) + color_buf
   # color_min = 0
   # color_max = 1
 
@@ -340,16 +357,16 @@ if __name__ == "__main__":
   # https://matplotlib.org/stable/api/cm_api.html#matplotlib.cm.ScalarMappable
   # https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
-  df_nonzero['color'] = [mapper.to_rgba(v) for v in df_nonzero[unit + '_month^-1']]
+  df_nonzero['color'] = [mapper.to_rgba(v) for v in df_nonzero[plotted_unit]]
 
   cldf = pd.DataFrame()
   cldf['min'] = [color_min]
   cldf['max'] = [color_max]
   cldf['cmap'] = [cmap]
+  cldf['plotted_unit'] = [plotted_unit]
 
   # print(cldf)
   t0 = timer_restart(t0, 'colormap')
-
 
   # plot result
   with plt.style.context(("seaborn", "ggplot")):
@@ -359,10 +376,10 @@ if __name__ == "__main__":
 
     plt.xlabel("Longitude")
     plt.ylabel("Latitude")
-    plt.title(title)
+    plt.title(title + ' (' + plotted_unit + ')')
 
-    plt.xlim((-180,180)) # default
-    plt.ylim((-90,90)) # default
+    # plt.xlim((-180,180)) # default
+    # plt.ylim((-90,90)) # default
 
     xlim1 = plt.xlim()
     ylim1 = plt.ylim()
@@ -377,12 +394,12 @@ if __name__ == "__main__":
     plt.scatter(df_nonzero['lon'], df_nonzero['lat'], s=ms, c=df_nonzero.color, alpha=1, linewidths=0, marker='s')
     plt.colorbar(mapper)
 
-    # now = utc_time_filename()
+    now = utc_time_filename()
     t0 = timer_restart(t0, 'create plot')
-    # save_df_plt(plt, df, cldf, stats, outputDir, title + '-' + utc_time_filename())
+    save_df_plt(plt, df_nonzero, hist_month, hist_year, cldf, stats, outputDir, title + '-' + utc_time_filename())
 
     t0 = timer_restart(t0, 'save outfiles')
     t1 = timer_restart(t1, 'total time')
 
-    plt.show()
+    # plt.show()
 
