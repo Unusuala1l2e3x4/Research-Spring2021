@@ -157,9 +157,9 @@ def read_json(path):
 
 def get_unit_timesArea(dataset):
   if dataset == 'DM':
-    return 'kg-DM'
+    return 'kg_DM'
   elif dataset in ['C', 'BB', 'NPP', 'Rh']:
-    return 'g-C'
+    return 'g_C'
   elif dataset == 'burned_fraction':
     return 'mE2'
   else:
@@ -169,8 +169,8 @@ def get_unit(dataset):
   unit = get_unit_timesArea(dataset)
   if unit == 'mE2':
     return 'fraction'
-  elif unit in ['g-C', 'kg-DM']:
-    return unit + '-mE-2'
+  elif unit in ['g_C', 'kg_DM']:
+    return unit + '_mE-2'
   else:
     return 'mE-2'
 
@@ -316,15 +316,15 @@ if __name__ == "__main__":
   stats.region_area_nonzero_cell = [np.sum(df_nonzero['grid_cell_area'])]
   del df_nonzero['is_in_region']
 
-  df_nonzero[unit_timesArea + '-monthE-1'] = df_nonzero[unit_timesArea] / numMonths
+  df_nonzero[unit_timesArea + '_monthE-1'] = df_nonzero[unit_timesArea] / numMonths
   df_nonzero[unit] = np.divide(df_nonzero[unit_timesArea], df_nonzero['grid_cell_area'])
-  df_nonzero[unit + '-monthE-1'] = df_nonzero[unit] / numMonths
+  df_nonzero[unit + '_monthE-1'] = df_nonzero[unit] / numMonths
 
-  hist_month[unit_timesArea + '-monthE-1'] = hist_month[unit_timesArea] / numMonths
-  hist_month[unit + '-monthE-1'] = hist_month[unit] / numMonths
+  hist_month[unit_timesArea + '_monthE-1'] = hist_month[unit_timesArea] / numMonths
+  hist_month[unit + '_monthE-1'] = hist_month[unit] / numMonths
 
-  hist_year[unit_timesArea + '-monthE-1'] = hist_year[unit_timesArea] / numMonths
-  hist_year[unit + '-monthE-1'] = hist_year[unit] / numMonths
+  hist_year[unit_timesArea + '_monthE-1'] = hist_year[unit_timesArea] / numMonths
+  hist_year[unit + '_monthE-1'] = hist_year[unit] / numMonths
 
   if unit == 'fraction':
     del df_nonzero[unit]
@@ -341,7 +341,7 @@ if __name__ == "__main__":
   t0 = timer_restart(t0, 'flatten df_nonzero')
   # t0 = timer_restart(t0, 'stats')
 
-  plotted_unit = unit + '-monthE-1'
+  plotted_unit = unit + '_monthE-1'
 
   color_buf = 0 # 1e8
   color_min = min(df_nonzero[plotted_unit]) - color_buf
