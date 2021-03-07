@@ -1,8 +1,11 @@
+from logging import error
 import h5py
 import numpy as np
 
 import json
 import geopandas
+from numpy.lib.function_base import extract
+from numpy.testing._private.utils import print_assert_equal
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
@@ -14,12 +17,13 @@ import sys
 
 import time
 import datetime as dt
+import copy
 
 from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
 from shapely.ops import unary_union
 # https://shapely.readthedocs.io/en/latest/manual.html
 
-regionNums = {'BONA':1, 'TENA':2, 'CEAM':3, 'NHSA':4, 'SHSA':5, 'EURO':6, 'MIDE':7, 'NHAF':8, 'SHAF':9, 'BOAS':10, 'CEAS':11, 'SEAS':12, 'EQAS':13, 'AUST':14}
+regionNums = {None:0, 'BONA':1, 'TENA':2, 'CEAM':3, 'NHSA':4, 'SHSA':5, 'EURO':6, 'MIDE':7, 'NHAF':8, 'SHAF':9, 'BOAS':10, 'CEAS':11, 'SEAS':12, 'EQAS':13, 'AUST':14}
 # GFED file groups: ['ancill', 'biosphere', 'burned_area', 'emissions', 'lat', 'lon']
 
 def month_str(month):
@@ -38,15 +42,53 @@ def gfed_filenames(gfed_fnames):
 def flatten_list(regular_list):
   return [item for sublist in regular_list for item in sublist]
 
+def add_matrices(list):
+  return np.sum(list, axis=0)
+
+def get_bounds_regionsMasked(regions, regionVal, entireGlobe=False):
+  """
+  for all regions: regionVal = 0
+  for 1 region: 1 <= regionVal <= 14
+  for region being the entire globe: set entireGlobe = True
+  """
+  rowcol = regions.shape
+  regionBoundedMasked = copy.deepcopy(regions)
+  bounds = {'minLonIndex':regions.shape[1]-1, 'minLatIndex':regions.shape[0]-1, 'maxLonIndex':0, 'maxLatIndex':0}
+
+  for lat in range(rowcol[0]):
+    for lon in range(rowcol[1]):
+      if (regionVal and regions[lat,lon] == regionVal) or (not regionVal and regions[lat,lon] != 0) or entireGlobe:
+        regionBoundedMasked[lat,lon] = 1
+        if lon > bounds['maxLonIndex']:
+          bounds['maxLonIndex'] = lon
+        if lat > bounds['maxLatIndex']:
+          bounds['maxLatIndex'] = lat
+      else:
+        regionBoundedMasked[lat,lon] = 0
+
+  if entireGlobe:
+    bounds = {'minLonIndex':0, 'minLatIndex':0, 'maxLonIndex':regions.shape[1]-1, 'maxLatIndex':regions.shape[0]-1}
+    return bounds, regionBoundedMasked
+
+  for lat in range(bounds['maxLatIndex'],-1,-1):
+    for lon in range(bounds['maxLonIndex'],-1,-1):
+      if (regionVal and regions[lat,lon] == regionVal) or (not regionVal and regions[lat,lon] != 0):
+        if lon < bounds['minLonIndex']:
+          bounds['minLonIndex'] = lon
+        if lat < bounds['minLatIndex']:
+          bounds['minLatIndex'] = lat
+  return bounds, regionBoundedMasked[bounds['minLatIndex']:bounds['maxLatIndex']+1, bounds['minLonIndex']:bounds['maxLonIndex']+1]
+
+def extract_matrix_for_region(mat, bounds, regionBoundedMasked):
+  return np.multiply( mat[bounds['minLatIndex']:bounds['maxLatIndex']+1, bounds['minLonIndex']:bounds['maxLonIndex']+1], regionBoundedMasked)
+
 
 def timer_start():
   return time.time()
-
 def timer_elapsed(t0):
   return time.time() - t0
-
 def timer_restart(t0, msg):
-  # print(timer_elapsed(t0), msg)
+  print(timer_elapsed(t0), msg)
   return timer_start()
 
 def lim_length(lim):
@@ -65,23 +107,33 @@ def marker_size(plt, xlim1, ylim1):
 def utc_time_filename():
   return dt.datetime.utcnow().strftime('%Y.%m.%d-%H.%M.%S')
   
-def save_plt(plt, dest, name):
-  plt.savefig(os.path.join(dest, name + '.png'))
 
-def save_df(df, cldf, stats, dest, name):
-  fd = pd.HDFStore(os.path.join(dest, name + '.hdf5'))
-  # del df['color']
-  del df['region']
-  fd.put('data', df, format='table', data_columns=True)
+def fslash(a, b):
+  return a + '/' + b
+
+def save_plt(plt, folderPath, name):
+  plt.savefig(os.path.join(folderPath, name + '.png'))
+
+def save_df(df_nonzero, hist_month, hist_year, cldf, stats, folderPath, name):
+  fd = pd.HDFStore(os.path.join(folderPath, name + '.hdf5'))
+  del df_nonzero['color']
+  print(df_nonzero)
+  print(cldf)
+  print(stats)
+  print(hist_month)
+  print(hist_year)
+  fd.put('data', df_nonzero, format='table', data_columns=True)
   fd.put('colormap', cldf, format='table', data_columns=True)
   fd.put('stats', stats, format='table', data_columns=True)
+  fd.put('hist_month', hist_month, format='table', data_columns=True)
+  fd.put('hist_year', hist_year, format='table', data_columns=True)
   fd.close()
 
-def save_df_plt(plt, df, cldf, stats, dest, name):
+def save_df_plt(plt, df_nonzero, hist_month, hist_year, cldf, stats, dest, name):
   folderPath = os.path.join(dest, name)
   os.makedirs(folderPath)
   save_plt(plt, folderPath, name)
-  save_df(df, cldf, stats, folderPath, name)
+  save_df(df_nonzero, hist_month, hist_year, cldf, stats, folderPath, name)
 
   
 
@@ -99,32 +151,29 @@ def next_jan1(start):
 def read_json(path):
   return json.load(open(path, 'r'))
 
-def are_points_inside(basisregion, df):
-  return [ basisregion.contains(Point(row.lon, row.lat)) for row in df.itertuples() ]
 
 # 'DM_AGRI', 'DM_BORF', 'DM_DEFO', 'DM_PEAT', 'DM_SAVA', 'DM_TEMF'
 # 'C_AGRI', 'C_BORF', 'C_DEFO', 'C_PEAT', 'C_SAVA', 'C_TEMF'
 
 def get_unit_timesArea(dataset):
   if dataset == 'DM':
-    return 'kg-DM'
+    return 'kg_DM'
   elif dataset in ['C', 'BB', 'NPP', 'Rh']:
-    return 'g-C'
+    return 'g_C'
   elif dataset == 'burned_fraction':
-    return 'm^2'
+    return 'mE2'
   else:
     return ''
 
 def get_unit(dataset):
   unit = get_unit_timesArea(dataset)
-  if unit == 'm^2':
+  if unit == 'mE2':
     return 'fraction'
-  elif unit in ['g-C', 'kg-DM']:
-    return unit + '-m^-2'
+  elif unit in ['g_C', 'kg_DM']:
+    return unit + '_mE-2'
   else:
-    return 'm^-2'
-    
-  
+    return 'mE-2'
+
 
 
 
@@ -146,8 +195,8 @@ if __name__ == "__main__":
   # cmap = 'cool'
   # end params
 
-  regionName = None
-
+  regionName, df, bounds, lats, lons = None, None, None, None, None
+  
   unit_timesArea = get_unit_timesArea(dataset)
   unit = get_unit(dataset)
   
@@ -155,6 +204,7 @@ if __name__ == "__main__":
   if numArgs == 9:
     regionName = sys.argv[8]
     title = regionName + '_' + title
+
   
   print(title)
 
@@ -165,24 +215,31 @@ if __name__ == "__main__":
   outputDir = os.path.join(pPath, 'read_gfed4s-outfiles')
   shapefilesDir = os.path.join(pPath, 'shapefiles')
   
-  # basisregion = shape( read_json(shapefilesDir + 'basisregions/' + regionName + '.geo.json')['features'][0]['geometry'] )
   
   gfed_fnames = os.listdir(gfedDir)
-  gfed_fnames = sorted(gfed_filenames(gfed_fnames))
+  gfed_fnames = sorted(gfed_filenames(gfed_fnames)) # same as in gfedDir_timesArea
 
   startDate = dt.date(startYear, startMonth, 1)
   endDate = dt.date(endYear, endMonth, 1)
+
+  print_assert_equal('startDate <= endDate', startDate <= endDate, True)
 
   currentDate = startDate
 
   numMonths = (endDate.year - startDate.year)*12 + (endDate.month - startDate.month) + 1
   numYears = float(numMonths) / 12
 
+
+  hist_month = pd.DataFrame(None, columns=['year', 'month', unit, unit_timesArea])
+  hist_year = pd.DataFrame(None, columns=['year', unit, unit_timesArea])
+
+  stats = pd.DataFrame(None, columns=['month_count', 'year_count', 'region_area', 'region_area_nonzero_cell'])
+  stats.month_count = [numMonths]
+  stats.year_count = [numYears]
+
   t0 = timer_start()
   t1 = t0
 
-  df = None
-  year_ = None
 
   for filename in gfed_fnames:
     if currentDate > endDate:
@@ -193,98 +250,102 @@ if __name__ == "__main__":
       # open next file
       # by year
 
-      fd = h5py.File(os.path.join(gfedDir, filename), 'r')
+      # fd = h5py.File(os.path.join(gfedDir, filename), 'r')
+      fd_timesArea = h5py.File(os.path.join(gfedDir_timesArea, filename), 'r')
 
       next_year = next_jan1(currentDate)
-
       curr_startMonth = currentDate.month
       curr_endMonth = 12 # default
       if endDate < next_year or currentDate == endDate:
         curr_endMonth = endDate.month
 
-
       if df is None:
-        df = pd.DataFrame(None, columns = ['lat', 'lon', 'area', unit, 'region'])
-        df.lat = flatten_list(fd['lat'])
-        df.lon = flatten_list(fd['lon'])
-        df.region = flatten_list(fd['ancill/basis_regions'])
-        df.area = flatten_list(fd['ancill/grid_cell_area'])
+        df = dict()
+        bounds, df['is_in_region'] = get_bounds_regionsMasked(np.matrix(fd_timesArea['ancill/basis_regions']), regionNums[regionName], entireGlobe=False)
 
-        # temp_val = pd.DataFrame([ sum(l) for l in zip(*[ flatten_list(fd[group][month_str(month_it)][dataset]) for month_it in range(curr_startMonth, curr_endMonth + 1) ]) ], columns = [unit])
-        # g C 
-        
-        # df[unit_timesArea] = [x*y for x,y in zip(df[unit], df.area)]
-        
-        # df[unit] = temp_val[unit]
+        lats = np.matrix(fd_timesArea['lat'])
+        lons = np.matrix(fd_timesArea['lon'])
 
-        # find indices in region, remove the rest
+        df['grid_cell_area'] = extract_matrix_for_region(np.matrix(fd_timesArea['ancill/grid_cell_area']), bounds, df['is_in_region'])
+        df['lat'] = extract_matrix_for_region(lats, bounds, df['is_in_region'])
+        df['lon'] = extract_matrix_for_region(lons, bounds, df['is_in_region'])
+        df[unit_timesArea] = df['is_in_region'] * 0.0 # initialize for adding unit_timesArea, eventually will divide by area and numMonths
 
-        # df = df[are_points_inside(basisregion, df)] # specific region, geojson
-        if regionName:
-          df = df[df.region == regionNums[regionName]]  # specific region
-        else:
-          df = df[df.region != 0] # all regions
+        stats.region_area = [np.sum(df['grid_cell_area'])]
+        t0 = timer_restart(t0, 'df is None')
 
+      temp_months = [ extract_matrix_for_region(np.matrix(fd_timesArea[group][month_str(month_it)][dataset]), bounds, df['is_in_region']) for month_it in range(curr_startMonth, curr_endMonth + 1) ]
+      
+      df[unit_timesArea] += add_matrices(temp_months)
 
-        # print(len(df[unit]))
-        t0 = timer_restart(t0, '1st year')
+      monthly_totals_timesArea = [np.sum(mat) for mat in temp_months]
+      monthly_totals = np.divide(monthly_totals_timesArea, stats.region_area[0])
+      yearly_totals_timesArea = np.sum(monthly_totals_timesArea)
+      yearly_totals = np.divide(yearly_totals_timesArea, stats.region_area[0])
 
-      # else: # add to df[unit]
-
-      #   # find matching indices
-      #   df[unit] = [x + y for x, y in zip(df[unit], temp_val[temp_val.index.isin(df.index)][unit] ) ]
+      hist_month = hist_month.append(pd.DataFrame({
+        'year': [str(currentDate.year)]*(curr_endMonth + 1 - curr_startMonth),
+        'month': [str(m) for m in range(curr_startMonth, curr_endMonth + 1)],
+        unit: monthly_totals,
+        unit_timesArea: monthly_totals_timesArea
+      }), ignore_index=True)
+      hist_year = hist_year.append(pd.DataFrame({
+        'year': [str(currentDate.year)],
+        unit: [yearly_totals],
+        unit_timesArea: [yearly_totals_timesArea]
+      }), ignore_index=True)
 
       currentDate = next_year
-      
-      fd.close()
+      fd_timesArea.close()
 
-
+    
   t0 = timer_restart(t0, '2nd-last year')
-  
-  region_yearly_val = pd.DataFrame(None, columns = ['year', unit])
-  region_yearly_val.year = list(range(startYear, endYear + 1))
 
-  # after reading all months/years
-  df_nonzero = df[df[unit] != 0.0]
-  # print(len(df_nonzero[unit]))
-  # print(len(df[unit]))
+  # pd.set_option('display.max_rows', None)
+  # print(hist_month)
+  # print(hist_year)
 
-  # df = df[are_points_inside(basisregion, df)]
-  # t0 = timer_restart(t0, 'are_points_inside')
+  # df_nonzero = copy.deepcopy(df)
+  df_nonzero = pd.DataFrame()
 
-  stats = pd.DataFrame()
-  stats['month_count'] = [numMonths]
-  region_area = np.sum(df.area)
-  stats['region_area'] = [region_area]
-  stats['region_area_nonzero_cell'] = [np.sum(df_nonzero.area)]
-  
+  for key in df.keys():
+    df_nonzero[key] = np.ravel(df[key])
 
-  # (g C / m^2 period) per cell
-  
-  df[unit] = [v / numYears for v in df[unit]] # take average
-  # (g C / m^2 month) per cell
-  
-  # if dataset == 'burned_fraction':
-  #   df[unit_timesArea] = [x*y for x,y in zip(df[unit], df.area)]
-  #   # (m^2 / month) per cell
-  #   stats['region_monthly_avg_burned_fraction'] = [np.sum(df['burned_area']) / region_area ]
-  #   # fraction / month)
-  # else:
-  #   df[unit_timesArea] = [x*y for x,y in zip(df[unit], df.area)] 
-  #   # (g C / month) per cell
-  #   sum_cell_total_val = np.sum(df['cell_total_val'])
-  #   stats['region_monthly_avg_val'] = [sum_cell_total_val / numMonths]
-  #   stats['region_yearly_avg_val'] = [sum_cell_total_val / numYears]
-  #   stats['region_period_sum_val'] = [sum_cell_total_val]
-  #   # (g C / year)
+  # # after reading all months/years
+  df_nonzero = df_nonzero[df_nonzero[unit_timesArea] != 0.0]
+  stats.region_area_nonzero_cell = [np.sum(df_nonzero['grid_cell_area'])]
+  del df_nonzero['is_in_region']
 
+  df_nonzero[unit_timesArea + '_monthE-1'] = df_nonzero[unit_timesArea] / numMonths
+  df_nonzero[unit] = np.divide(df_nonzero[unit_timesArea], df_nonzero['grid_cell_area'])
+  df_nonzero[unit + '_monthE-1'] = df_nonzero[unit] / numMonths
 
-  t0 = timer_restart(t0, 'stats')
+  hist_month[unit_timesArea + '_monthE-1'] = hist_month[unit_timesArea] / numMonths
+  hist_month[unit + '_monthE-1'] = hist_month[unit] / numMonths
 
+  hist_year[unit_timesArea + '_monthE-1'] = hist_year[unit_timesArea] / numMonths
+  hist_year[unit + '_monthE-1'] = hist_year[unit] / numMonths
+
+  if unit == 'fraction':
+    del df_nonzero[unit]
+    del df_nonzero[unit_timesArea]
+    del hist_month[unit]
+    del hist_month[unit_timesArea]
+    del hist_year[unit]
+    del hist_year[unit_timesArea]
+
+  # print(df_nonzero.shape)
+  # print(df_nonzero)
+  # print(stats)
+
+  t0 = timer_restart(t0, 'flatten df_nonzero')
+  # t0 = timer_restart(t0, 'stats')
+
+  plotted_unit = unit + '_monthE-1'
 
   color_buf = 0 # 1e8
-  color_min = min(df_nonzero[unit]) - color_buf
-  color_max = max(df_nonzero[unit]) + color_buf
+  color_min = min(df_nonzero[plotted_unit]) - color_buf
+  color_max = max(df_nonzero[plotted_unit]) + color_buf
   # color_min = 0
   # color_max = 1
 
@@ -296,16 +357,16 @@ if __name__ == "__main__":
   # https://matplotlib.org/stable/api/cm_api.html#matplotlib.cm.ScalarMappable
   # https://matplotlib.org/stable/tutorials/colors/colormaps.html
 
-  df_nonzero['color'] = [mapper.to_rgba(v) for v in df_nonzero[unit]]
+  df_nonzero['color'] = [mapper.to_rgba(v) for v in df_nonzero[plotted_unit]]
 
   cldf = pd.DataFrame()
   cldf['min'] = [color_min]
   cldf['max'] = [color_max]
   cldf['cmap'] = [cmap]
+  cldf['plotted_unit'] = [plotted_unit]
 
   # print(cldf)
   t0 = timer_restart(t0, 'colormap')
-
 
   # plot result
   with plt.style.context(("seaborn", "ggplot")):
@@ -315,37 +376,30 @@ if __name__ == "__main__":
 
     plt.xlabel("Longitude")
     plt.ylabel("Latitude")
-    plt.title(title)
+    plt.title(title + ' (' + plotted_unit + ')')
 
-    plt.xlim((-180,180)) # default
-    plt.ylim((-90,90)) # default
+    # plt.xlim((-180,180)) # default
+    # plt.ylim((-90,90)) # default
 
     xlim1 = plt.xlim()
     ylim1 = plt.ylim()
 
-    # bounds = basisregion.bounds # (minx, miny, maxx, maxy) 
-    bounds = (min(df_nonzero.lon), min(df_nonzero.lat), max(df_nonzero.lon), max(df_nonzero.lat))
-
-    plt.xlim((bounds[0],bounds[2]))
-    plt.ylim((bounds[1],bounds[3]))
+    lonBounds = [lons[0,bounds['minLonIndex']], lons[0,bounds['maxLonIndex']]]
+    latBounds = [lats[bounds['minLatIndex'],0], lats[bounds['maxLatIndex'],0]]
+    plt.xlim((min(lonBounds), max(lonBounds)))
+    plt.ylim((min(latBounds), max(latBounds)))
 
     ms = marker_size(plt, xlim1, ylim1)
     # print(ms)
-    plt.scatter(df_nonzero.lon, df_nonzero.lat, s=ms, c=df_nonzero.color, alpha=1, linewidths=0, marker='s')
+    plt.scatter(df_nonzero['lon'], df_nonzero['lat'], s=ms, c=df_nonzero.color, alpha=1, linewidths=0, marker='s')
     plt.colorbar(mapper)
 
-    # now = utc_time_filename()
+    now = utc_time_filename()
     t0 = timer_restart(t0, 'create plot')
-    save_df_plt(plt, df, cldf, stats, outputDir, title + '-' + utc_time_filename())
+    save_df_plt(plt, df_nonzero, hist_month, hist_year, cldf, stats, outputDir, title + '-' + utc_time_filename())
 
     t0 = timer_restart(t0, 'save outfiles')
     t1 = timer_restart(t1, 'total time')
 
     # plt.show()
-
-    
-
-  # after plot
-
-
 
