@@ -230,8 +230,8 @@ if __name__ == "__main__":
   numYears = float(numMonths) / 12
 
 
-  hist_month = pd.DataFrame(None, columns=['year', 'month', unit, unit_timesArea])
-  hist_year = pd.DataFrame(None, columns=['year', unit, unit_timesArea])
+  hist_month = pd.DataFrame(None, columns=['YYYYMM', unit, unit_timesArea])
+  hist_year = pd.DataFrame(None, columns=['YYYY', unit, unit_timesArea])
 
   stats = pd.DataFrame(None, columns=['month_count', 'year_count', 'region_area', 'region_area_nonzero_cell'])
   stats.month_count = [numMonths]
@@ -284,13 +284,13 @@ if __name__ == "__main__":
       yearly_totals = np.divide(yearly_totals_timesArea, stats.region_area[0])
 
       hist_month = hist_month.append(pd.DataFrame({
-        'year': [str(currentDate.year)]*(curr_endMonth + 1 - curr_startMonth),
-        'month': [str(m) for m in range(curr_startMonth, curr_endMonth + 1)],
+        # 'year': [str(currentDate.year)]*(curr_endMonth + 1 - curr_startMonth),
+        'YYYYMM': [str(currentDate.year)+month_str(m) for m in range(curr_startMonth, curr_endMonth + 1)],
         unit: monthly_totals,
         unit_timesArea: monthly_totals_timesArea
       }), ignore_index=True)
       hist_year = hist_year.append(pd.DataFrame({
-        'year': [str(currentDate.year)],
+        'YYYY': [str(currentDate.year)],
         unit: [yearly_totals],
         unit_timesArea: [yearly_totals_timesArea]
       }), ignore_index=True)
