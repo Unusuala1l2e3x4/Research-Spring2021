@@ -7,9 +7,12 @@
 - Get original data:
   - Download original GFED data from https://www.geo.vu.nl/~gwerf/GFED/GFED4/, place in folder "GFED4s"
 - Construct GFED data with appropriate datasets multiplied by cell area:
-  - Create folder "GFED4s_timesArea"
-  - Copy all .hdf5 files from the original GFED data (from folder "GFED4s") into folder "GFED4s_timesArea"
+  - Copy all .hdf5 files from the original GFED data (from folder "GFED4s") into new folder "GFED4s_timesArea"
   - Run "code/multiply_by_area_gfed4s.py"
+- Get PM2.5 grid data
+  - Download files for each year: https://sedac.ciesin.columbia.edu/data/set/sdei-global-annual-gwr-pm2-5-modis-misr-seawifs-aod/data-download#close
+  - Place files into new folder "Global Annual PM2.5 Grids"
+  - Run "code/unzip_pm2-5.py 
 
   
 #### Links to potentially useful datasets/tools

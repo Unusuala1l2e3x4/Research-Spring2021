@@ -1,10 +1,8 @@
-from logging import error
 import h5py
 import numpy as np
 
 import json
 import geopandas
-from numpy.lib.function_base import extract
 from numpy.testing._private.utils import print_assert_equal
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -19,9 +17,6 @@ import time
 import datetime as dt
 import copy
 
-from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
-from shapely.ops import unary_union
-# https://shapely.readthedocs.io/en/latest/manual.html
 
 regionNums = {None:0, 'BONA':1, 'TENA':2, 'CEAM':3, 'NHSA':4, 'SHSA':5, 'EURO':6, 'MIDE':7, 'NHAF':8, 'SHAF':9, 'BOAS':10, 'CEAS':11, 'SEAS':12, 'EQAS':13, 'AUST':14}
 # GFED file groups: ['ancill', 'biosphere', 'burned_area', 'emissions', 'lat', 'lon']
@@ -117,11 +112,6 @@ def save_plt(plt, folderPath, name):
 def save_df(df_nonzero, hist_month, hist_year, cldf, stats, folderPath, name):
   fd = pd.HDFStore(os.path.join(folderPath, name + '.hdf5'))
   del df_nonzero['color']
-  print(df_nonzero)
-  print(cldf)
-  print(stats)
-  print(hist_month)
-  print(hist_year)
   fd.put('data', df_nonzero, format='table', data_columns=True)
   fd.put('colormap', cldf, format='table', data_columns=True)
   fd.put('stats', stats, format='table', data_columns=True)
@@ -213,7 +203,6 @@ if __name__ == "__main__":
   gfedDir = os.path.join(ppPath, 'GFED4s')
   gfedDir_timesArea = os.path.join(ppPath, 'GFED4s_timesArea')
   outputDir = os.path.join(pPath, 'read_gfed4s-outfiles')
-  shapefilesDir = os.path.join(pPath, 'shapefiles')
   
   
   gfed_fnames = os.listdir(gfedDir)
@@ -386,20 +375,21 @@ if __name__ == "__main__":
 
     lonBounds = [lons[0,bounds['minLonIndex']], lons[0,bounds['maxLonIndex']]]
     latBounds = [lats[bounds['minLatIndex'],0], lats[bounds['maxLatIndex'],0]]
-    plt.xlim((min(lonBounds), max(lonBounds)))
-    plt.ylim((min(latBounds), max(latBounds)))
+    # print(lonBounds)
+    # print(latBounds)
+    plt.xlim((min(lonBounds) - .25, max(lonBounds) + .25))
+    plt.ylim((min(latBounds) - .25, max(latBounds) + .25))
 
     ms = marker_size(plt, xlim1, ylim1)
     # print(ms)
     plt.scatter(df_nonzero['lon'], df_nonzero['lat'], s=ms, c=df_nonzero.color, alpha=1, linewidths=0, marker='s')
     plt.colorbar(mapper)
 
-    now = utc_time_filename()
     t0 = timer_restart(t0, 'create plot')
-    save_df_plt(plt, df_nonzero, hist_month, hist_year, cldf, stats, outputDir, title + '-' + utc_time_filename())
+    # save_df_plt(plt, df_nonzero, hist_month, hist_year, cldf, stats, outputDir, title + '-' + utc_time_filename())
 
     t0 = timer_restart(t0, 'save outfiles')
     t1 = timer_restart(t1, 'total time')
 
-    # plt.show()
+    plt.show()
 
