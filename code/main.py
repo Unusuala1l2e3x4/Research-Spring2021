@@ -41,7 +41,7 @@ if __name__ == "__main__":
   t0 = timer_start()
   t1 = t0
 
-  run(dir, 'read_gfed4s.py', [2020, 10, 2020, 10, 'emissions', 'C', 'YlOrRd', 'TENA'])
+  # run(dir, 'read_gfed4s.py', [2020, 10, 2020, 10, 'emissions', 'C', 'YlOrRd', 'TENA'])
   
   # run(dir, 'read_gfed4s.py', [1997, 1, 2016, 12, 'burned_area', 'burned_fraction', 'YlOrRd', 'TENA'])
   # t0 = timer_restart(t0, '')
@@ -55,6 +55,10 @@ if __name__ == "__main__":
   # t0 = timer_restart(t0, '')
   # run(dir, 'read_gfed4s.py', [1997, 1, 2020, 10, 'emissions', 'DM', 'YlOrRd'])
   # t0 = timer_restart(t0, '')
+
+  run(dir, 'read_pm2-5.py', [2016, 2016, 'YlOrRd', 'TENA.geo.json'])
+  t0 = timer_restart(t0, '')
+
 
   t1 = timer_restart(t1, 'total time')
   
