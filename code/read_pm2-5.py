@@ -64,6 +64,8 @@ def save_tif(mat, fd, folderPath, name):
     fd2.close()
   
 
+def utc_time_filename():
+  return dt.datetime.utcnow().strftime('%Y.%m.%d-%H.%M.%S')
 
 def timer_start():
   return time.time()
@@ -111,12 +113,12 @@ def get_bound_indices(bounds, transform):
   return minLat, maxLat, minLon, maxLon
 
 
-def bound_ravel(la, lo, bounds, transform):
+def bound_ravel(lats_1d, lons_1d, bounds, transform):
   # bounds = (-179.995 - buf,-54.845 - buf,179.995,69.845) # entire mat
   minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
-  la = np.flip(la[minLat:maxLat])
-  lo = lo[minLon:maxLon]
-  return np.ravel(np.rot90(np.matrix([la for i in lo]))), np.ravel(np.matrix([lo for i in la]))
+  lats_1d = np.flip(lats_1d[minLat:maxLat])
+  lons_1d = lons_1d[minLon:maxLon]
+  return np.ravel(np.rot90(np.matrix([lats_1d for i in lons_1d]))), np.ravel(np.matrix([lons_1d for i in lats_1d]))
 
 
 world = geopandas.read_file(geopandas.datasets.get_path("naturalearth_lowres"))
@@ -140,11 +142,15 @@ if __name__ == "__main__":
   basisregionsDir = os.path.join(pPath, 'shapefiles', 'basisregions')
 
   filenames = os.listdir(os.path.join(pmDir, 'data'))
-  points_in_region_filenames = os.listdir(os.path.join(pmDir, 'df'))
+  points_in_region_filenames = os.listdir(os.path.join(pmDir, 'points_in_region'))
   filenames = sorted(tif_filenames(filenames)) # same as in gfedDir_timesArea
 
   lats0, lons0, points_in_shape, df, basisregion = None, None, None, None, None
   minLat, maxLat, minLon, maxLon = None, None, None, None
+  lats_1d, lons_1d = None, None
+  bounded_mat = None
+  
+  levels1, levels2 = [], []
 
 
   t0 = timer_start()
@@ -156,7 +162,7 @@ if __name__ == "__main__":
   t0 = timer_restart(t0, 'read basisregion')
 
   if regionFile + '.hdf5' in points_in_region_filenames:
-    df = pd.read_hdf(os.path.join(pmDir, 'df', regionFile + '.hdf5'), key='points')
+    df = pd.read_hdf(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), key='points')
     lats0 = np.array(df['lat'])
     lons0 = np.array(df['lon'])
     t0 = timer_restart(t0, 'load df')
@@ -178,14 +184,13 @@ if __name__ == "__main__":
 
     mat = fd.read(1)
     t0 = timer_restart(t0, 'read tif')
+    xy = fd.xy(range(len(mat)), range(len(mat)))
+    lats_1d = np.array(xy[1])
+    xy = fd.xy(range(len(mat[0])), range(len(mat[0])))
+    lons_1d = np.array(xy[0])
 
     if df is None:
-      xy = fd.xy(range(len(mat)), range(len(mat)))
-      la = np.array(xy[1])
-      xy = fd.xy(range(len(mat[0])), range(len(mat[0])))
-      lo = np.array(xy[0])
-
-      lats0, lons0 = bound_ravel(la, lo, basisregion.bounds, fd.transform)
+      lats0, lons0 = bound_ravel(lats_1d, lons_1d, basisregion.bounds, fd.transform)
 
       df = pd.DataFrame()
       df['lat'] = lats0
@@ -197,7 +202,7 @@ if __name__ == "__main__":
 
       t0 = timer_restart(t0, 'make df')
 
-      with pd.HDFStore(os.path.join(pmDir, 'df', regionFile + '.hdf5'), mode='w') as f:
+      with pd.HDFStore(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), mode='w') as f:
         f.put('points', df, format='table', data_columns=True)
         f.close()
 
@@ -207,22 +212,29 @@ if __name__ == "__main__":
     # print(df)
 
     minLat, maxLat, minLon, maxLon = get_bound_indices(basisregion.bounds, fd.transform)
+    
+    lats_1d = lats_1d[minLat:maxLat]
+    lons_1d = lons_1d[minLon:maxLon]
 
-    mat = np.ravel(mat[minLat:maxLat,minLon:maxLon])
+    bounded_mat = mat[minLat:maxLat,minLon:maxLon]
+    mat = np.ravel(bounded_mat)
     t0 = timer_restart(t0, 'mat bound ravel')
 
 
     df[unit] = mat
     df = df[df[unit] > 0]
     t0 = timer_restart(t0, 'make df')
-    print(df, np.shape(df)) 
+    # print(df, np.shape(df))
+    # print(np.max(df[unit]))
+    # print(np.min(df[unit]))
+    # print(np.average(df[unit]))
 
-    exit()
+    # exit()
 
-    # color_min = min(df[unit])
-    # color_max = max(df[unit])
-    # norm = cl.Normalize(vmin=color_min, vmax=color_max, clip=False) # clip=False is default
-    # mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
+    color_min = np.min(df[unit])
+    color_max = np.max(df[unit])
+    norm = cl.Normalize(vmin=color_min, vmax=color_max, clip=False) # clip=False is default
+    mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
     # df['color'] = [mapper.to_rgba(v) for v in df[unit]]
     # t0 = timer_restart(t0, 'color mapping')
 
@@ -247,13 +259,26 @@ if __name__ == "__main__":
       ms = marker_size(plt, xlim0, ylim0)
       # print(ms)
 
-      plt.scatter(df.lon, df.lat, s=ms, c='red', alpha=1, linewidths=0, marker='s')
+
+      # contours = 
+
+      levels1 = np.arange(np.min(df[unit]),np.max(df[unit]),0.15)
+      plt.contour(lons_1d, lats_1d, bounded_mat, levels=levels1, cmap=cmap, linewidths=0.4, alpha=0.8)
+
+      levels2 = [5,7.5,10,12.5,15,17.5,20]
+      plt.contour(lons_1d, lats_1d, bounded_mat, levels=levels2, colors='black', linewidths=0.2, alpha=1)
+
+      # labels = plt.clabel(contours, fontsize=10)
+      # print(np.array(labels))
+
+      # plt.scatter(df.lon, df.lat, s=ms, c='red', alpha=1, linewidths=0, marker='s')
       # plt.scatter(df.lon, df.lat, s=ms, c=df.color, alpha=1, linewidths=0, marker='s')
-      # plt.colorbar(mapper)
+      plt.colorbar(mapper)
 
       t0 = timer_restart(t0, 'create plot')
 
-      save_plt(plt, outputDir, name)
+      # save_plt(plt, outputDir, name + '_' + str(len(levels1)) + '_' + str(len(levels2)) + '_' + utc_time_filename())
+      save_plt(plt, outputDir, name + '_' + '-'.join([str(i) for i in levels2]))
       # save_df_plt(plt, df, hist_month, hist_year, cldf, stats, outputDir, title + '-' + utc_time_filename())
       t0 = timer_restart(t0, 'save outfiles')
 
