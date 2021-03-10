@@ -97,8 +97,8 @@ def geojson_filenames(filenames):
       ret.append(filename)
   return ret
 
-def are_points_inside(basisregion, df):
-  return [ basisregion.contains(Point(row.lon, row.lat)) for row in df.itertuples() ]
+# def are_points_inside(basisregion, df):
+#   return [ basisregion.contains(Point(row.lon, row.lat)) for row in df.itertuples() ]
 
 
 def get_bound_indices(bounds, transform):
@@ -140,10 +140,10 @@ if __name__ == "__main__":
   basisregionsDir = os.path.join(pPath, 'shapefiles', 'basisregions')
 
   filenames = os.listdir(os.path.join(pmDir, 'data'))
-  points_in_region_filenames = os.listdir(os.path.join(pmDir, 'points_in_region'))
+  points_in_region_filenames = os.listdir(os.path.join(pmDir, 'df'))
   filenames = sorted(tif_filenames(filenames)) # same as in gfedDir_timesArea
 
-  lats0, lons0, points_in_shape, points_in_region, basisregion = None, None, None, None, None
+  lats0, lons0, points_in_shape, df, basisregion = None, None, None, None, None
   minLat, maxLat, minLon, maxLon = None, None, None, None
 
 
@@ -156,8 +156,10 @@ if __name__ == "__main__":
   t0 = timer_restart(t0, 'read basisregion')
 
   if regionFile + '.hdf5' in points_in_region_filenames:
-    points_in_region = pd.read_hdf(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), key='points')
-    t0 = timer_restart(t0, 'load points_in_region')
+    df = pd.read_hdf(os.path.join(pmDir, 'df', regionFile + '.hdf5'), key='points')
+    lats0 = np.array(df['lat'])
+    lons0 = np.array(df['lon'])
+    t0 = timer_restart(t0, 'load df')
 
 
   for filename in filenames:
@@ -177,7 +179,7 @@ if __name__ == "__main__":
     mat = fd.read(1)
     t0 = timer_restart(t0, 'read tif')
 
-    if points_in_region is None:
+    if df is None:
       xy = fd.xy(range(len(mat)), range(len(mat)))
       la = np.array(xy[1])
       xy = fd.xy(range(len(mat[0])), range(len(mat[0])))
@@ -185,62 +187,34 @@ if __name__ == "__main__":
 
       lats0, lons0 = bound_ravel(la, lo, basisregion.bounds, fd.transform)
 
-      points_in_region = pd.DataFrame()
-      points_in_region['lat'] = lats0
-      points_in_region['lon'] = lons0
+      df = pd.DataFrame()
+      df['lat'] = lats0
+      df['lon'] = lons0
 
-      # shapely stuff; get indices
+      # shapely stuff; get indices (impossible time contraint for all TENA points - ~70 days)
+      # df = df[are_points_inside(basisregion, df)]
+      # print(df)
 
+      t0 = timer_restart(t0, 'make df')
 
-      points_in_region = points_in_region[are_points_inside(basisregion, points_in_region)]
-
-      print(points_in_region)
-
-
-      t0 = timer_restart(t0, 'make points_in_region')
-
-      with pd.HDFStore(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), mode='w') as f:
-        f.put('points', points_in_region, format='table', data_columns=True)
+      with pd.HDFStore(os.path.join(pmDir, 'df', regionFile + '.hdf5'), mode='w') as f:
+        f.put('points', df, format='table', data_columns=True)
         f.close()
 
-      t0 = timer_restart(t0, 'save points_in_region')
+      t0 = timer_restart(t0, 'save df')
 
 
-    print(points_in_region)
+    # print(df)
 
     minLat, maxLat, minLon, maxLon = get_bound_indices(basisregion.bounds, fd.transform)
 
     mat = np.ravel(mat[minLat:maxLat,minLon:maxLon])
     t0 = timer_restart(t0, 'mat bound ravel')
-    
-    # get mat by indices
-    
-
-    print(mat, np.shape(mat))
-    exit()
-    
-    
-
-    # basis regions
 
 
-
-
-    # remove <= 0 for plotting
-    where_nonnero = np.where(mat <= 0)
-    lats = np.delete(lats0, where_nonnero)
-    lons = np.delete(lons0, where_nonnero)
-    mat = np.delete(mat, where_nonnero)
-
-    t0 = timer_restart(t0, 'remove <= 0')
-
-    df = pd.DataFrame()
     df[unit] = mat
-    df['lon'] = lons
-    df['lat'] = lats
-    
+    df = df[df[unit] > 0]
     t0 = timer_restart(t0, 'make df')
-
     print(df, np.shape(df)) 
 
     exit()
