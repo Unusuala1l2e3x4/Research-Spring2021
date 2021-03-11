@@ -1,5 +1,6 @@
 import h5py
 import numpy as np
+from numpy import cos, sin, arctan2, arccos
 
 import json
 import geopandas
@@ -26,6 +27,33 @@ import rasterio.warp
 from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
 
 
+WGS84_RADIUS = 6378137
+WGS84_RADIUS_SQUARED = WGS84_RADIUS**2
+d2r = np.pi/180
+
+def greatCircleBearing(lon1, lat1, lon2, lat2):
+    dLong = lon1 - lon2
+    s = cos(d2r*lat2)*sin(d2r*dLong)
+    c = cos(d2r*lat1)*sin(d2r*lat2) - sin(lat1*d2r)*cos(d2r*lat2)*cos(d2r*dLong)
+    return arctan2(s, c)
+
+def quad_area(lat, lon, deg):
+  deg = deg / 2
+  lons = [lon+deg,lon+deg,lon-deg,lon-deg]
+  lats = [lat+deg,lat-deg,lat-deg,lat+deg]
+  N = 4 # len(lons)
+  angles = np.empty(N)
+  for i in range(N):
+      phiB1, phiA, phiB2 = np.roll(lats, i)[:3]
+      lB1, lA, lB2 = np.roll(lons, i)[:3]
+      # calculate angle with north (eastward)
+      beta1 = greatCircleBearing(lA, phiA, lB1, phiB1)
+      beta2 = greatCircleBearing(lA, phiA, lB2, phiB2)
+      # calculate angle between the polygons and add to angle array
+      angles[i] = arccos(cos(-beta1)*cos(-beta2) + sin(-beta1)*sin(-beta2))
+  return (np.sum(angles) - (N-2)*np.pi)*WGS84_RADIUS_SQUARED
+
+
 def tif_filenames(filenames):
   ret = []
   for filename in filenames:
@@ -33,16 +61,14 @@ def tif_filenames(filenames):
       ret.append(filename)
   return ret
 
-def save_plt(plt, folderPath, name):
-  plt.savefig(os.path.join(folderPath, name + '.png'))
+def save_plt(plt, folderPath, name, ext):
+  plt.savefig(os.path.join(folderPath, name + '.' + ext), format=ext)
 
 def save_df(df, folderPath, name):
   # df.to_hdf(os.path.join(folderPath, filename + '.hdf5'), key='data')
-
   fd = pd.HDFStore(os.path.join(folderPath, name + '.hdf5'))
   fd.put('data', df, format='table', data_columns=True, complib='blosc', complevel=5)
   fd.close()
-  
   # fd = h5py.File(os.path.join(folderPath, name + '.hdf5'),'w')
   # fd.create_dataset('data', data=df)
   # fd.close()
@@ -121,29 +147,37 @@ def bound_ravel(lats_1d, lons_1d, bounds, transform):
   return np.ravel(np.rot90(np.matrix([lats_1d for i in lons_1d]))), np.ravel(np.matrix([lons_1d for i in lats_1d]))
 
 
-world = geopandas.read_file(geopandas.datasets.get_path("naturalearth_lowres"))
 
 if __name__ == "__main__":
-
   numArgs = len(sys.argv)
   startYear, endYear = int(sys.argv[1]), int(sys.argv[2])
   cmap = sys.argv[3]
-  regionFile = sys.argv[4].split('.')[0]
+  geojsonDir = sys.argv[4]
+  regionFile = sys.argv[5]
+  mapDir = sys.argv[6]
 
-  # cmap = 'YlOrRd'
-  # regionFile = 'TENA.geo'
-
-  unit = 'μm_m^-3'
-  
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
   pmDir = os.path.join(ppPath, 'Global Annual PM2.5 Grids')
   outputDir = os.path.join(pPath, 'read_pm2-5-outfiles')
-  basisregionsDir = os.path.join(pPath, 'shapefiles', 'basisregions')
+  shapefilesDir = os.path.join(pPath, 'shapefiles')
 
-  filenames = os.listdir(os.path.join(pmDir, 'data'))
+  filenames = os.listdir(os.path.join(pmDir, 'data_0.01'))
   points_in_region_filenames = os.listdir(os.path.join(pmDir, 'points_in_region'))
   filenames = sorted(tif_filenames(filenames)) # same as in gfedDir_timesArea
+
+
+  # PARAMS
+  # cmap = 'YlOrRd'
+  # regionFile = 'TENA.geo'
+  unit = 'μm_m^-3'
+  res = 3 # map.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
+  
+  # map = geopandas.read_file(geopandas.datasets.get_path("naturalearth_lowres"))
+  map = geopandas.read_file(os.path.join(shapefilesDir, mapDir))
+
+  # map = map.boundary
+
 
   lats0, lons0, points_in_shape, df, basisregion = None, None, None, None, None
   minLat, maxLat, minLon, maxLon = None, None, None, None
@@ -156,17 +190,19 @@ if __name__ == "__main__":
   t0 = timer_start()
   t1 = t0
 
-  with open(os.path.join(basisregionsDir, regionFile + '.geo.json'), 'r') as f:
+  # with open(os.path.join(basisregionsDir, regionFile + '.geo.json'), 'r') as f:
+  with open(os.path.join(shapefilesDir, geojsonDir, regionFile), 'r') as f:
     contents = json.load(f)
     basisregion = shape(contents['features'][0]['geometry'])
-  t0 = timer_restart(t0, 'read basisregion')
+  # t0 = timer_restart(t0, 'read basisregion')
+
+  regionFile = regionFile.split('.')[0]
 
   if regionFile + '.hdf5' in points_in_region_filenames:
     df = pd.read_hdf(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), key='points')
     lats0 = np.array(df['lat'])
     lons0 = np.array(df['lon'])
-    t0 = timer_restart(t0, 'load df')
-
+    # t0 = timer_restart(t0, 'load df')
 
   for filename in filenames:
     name = filename.split('.')[0]
@@ -175,7 +211,7 @@ if __name__ == "__main__":
       continue
 
     print(filename)
-    fd = rasterio.open(os.path.join(pmDir, 'data', filename))
+    fd = rasterio.open(os.path.join(pmDir, 'data_0.01', filename))
     # print(fd.bounds)
     # print(fd.crs)
     # (lon index, lat index) 
@@ -183,11 +219,13 @@ if __name__ == "__main__":
     # print(fd.transform)
 
     mat = fd.read(1)
-    t0 = timer_restart(t0, 'read tif')
+    # t0 = timer_restart(t0, 'read tif')
     xy = fd.xy(range(len(mat)), range(len(mat)))
     lats_1d = np.array(xy[1])
     xy = fd.xy(range(len(mat[0])), range(len(mat[0])))
     lons_1d = np.array(xy[0])
+
+    deg = np.abs(lats_1d[0] - lats_1d[1])
 
     if df is None:
       lats0, lons0 = bound_ravel(lats_1d, lons_1d, basisregion.bounds, fd.transform)
@@ -196,19 +234,16 @@ if __name__ == "__main__":
       df['lat'] = lats0
       df['lon'] = lons0
 
-      # shapely stuff; get indices (impossible time contraint for all TENA points - ~70 days)
+      # shapely stuff; get indices (impossible time contraint for all .01 TENA points - ~70 days)
       # df = df[are_points_inside(basisregion, df)]
       # print(df)
-
-      t0 = timer_restart(t0, 'make df')
+      # t0 = timer_restart(t0, 'make df')
 
       with pd.HDFStore(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), mode='w') as f:
         f.put('points', df, format='table', data_columns=True)
         f.close()
 
-      t0 = timer_restart(t0, 'save df')
-
-
+      # t0 = timer_restart(t0, 'save df')
     # print(df)
 
     minLat, maxLat, minLon, maxLon = get_bound_indices(basisregion.bounds, fd.transform)
@@ -216,42 +251,31 @@ if __name__ == "__main__":
     lats_1d = lats_1d[minLat:maxLat]
     lons_1d = lons_1d[minLon:maxLon]
 
-    bounded_mat = mat[minLat:maxLat,minLon:maxLon]
-    bounded_mat
-
+    bounded_mat = mat[minLat:maxLat,minLon:maxLon]          # for contour plotting
+    bounded_mat = np.where(bounded_mat < 0, 0, bounded_mat) # for contour plotting
 
     mat = np.ravel(bounded_mat)
-    t0 = timer_restart(t0, 'mat bound ravel')
-
+    # t0 = timer_restart(t0, 'mat bound ravel')
 
     df[unit] = mat
     df = df[df[unit] > 0]
-    t0 = timer_restart(t0, 'make df')
-    # print(df, np.shape(df))
-    # print(np.max(df[unit]))
-    # print(np.min(df[unit]))
-    # print(np.average(df[unit]))
-
-    # exit()
+    # t0 = timer_restart(t0, 'make df')
 
     color_min = np.min(df[unit])
     color_max = np.max(df[unit])
     norm = cl.Normalize(vmin=color_min, vmax=color_max, clip=False) # clip=False is default
     mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
     # df['color'] = [mapper.to_rgba(v) for v in df[unit]]
-    # t0 = timer_restart(t0, 'color mapping')
+    # # t0 = timer_restart(t0, 'color mapping')
 
     with plt.style.context(("seaborn", "ggplot")):
-      world.plot(figsize=(18,10),
+      map.plot(figsize=(18*res,10*res),
                   color="white",
-                  edgecolor = "grey")
+                  edgecolor = "black")
 
-      plt.xlabel("Longitude")
-      plt.ylabel("Latitude")
-      plt.title(filename + ' (' + unit + ')')
-
-      # plt.xlim((-180,180)) # default
-      # plt.ylim((-90,90)) # default
+      plt.xlabel("Longitude", fontsize=7*res)
+      plt.ylabel("Latitude", fontsize=7*res)
+      plt.title(name + ' (' + unit + ')', fontsize=7*res)
 
       xlim0 = plt.xlim()
       ylim0 = plt.ylim()
@@ -259,31 +283,35 @@ if __name__ == "__main__":
       plt.xlim((min(df.lon) - .01, max(df.lon) + .01))
       plt.ylim((min(df.lat) - .01, max(df.lat) + .01))
 
-      ms = marker_size(plt, xlim0, ylim0, 0.01)
-      # print(ms)
-
-
-      # contours = 
-
-      levels1 = np.arange(np.min(df[unit]),np.max(df[unit]),0.15)
-      plt.contour(lons_1d, lats_1d, bounded_mat, levels=levels1, cmap=cmap, linewidths=0.4, alpha=0.8)
-
-      levels2 = [5,7.5,10,12.5,15,17.5,20]
-      plt.contour(lons_1d, lats_1d, bounded_mat, levels=levels2, colors='black', linewidths=0.2, alpha=1)
-
-      # labels = plt.clabel(contours, fontsize=10)
+      ## contour lines
+      # levels2 = np.arange(0,25,2)
+      levels2 = np.arange(0,np.max(df[unit]),2)
+      contours = plt.contour(lons_1d, lats_1d, bounded_mat, levels=levels2, colors='white', linewidths=0, alpha=1)
+      labels = plt.clabel(contours, fontsize=3*res, colors='black')
       # print(np.array(labels))
 
+      ## contour filler
+      # levels1 = np.arange(np.min(df[unit]),np.max(df[unit]),0.6)
+      # levels1 = np.arange(0,25,0.2)
+      # levels1 = np.arange(0,np.max(df[unit]),0.2)
+      levels1 = levels2
+      plt.contourf(lons_1d, lats_1d, bounded_mat, levels=levels1, cmap=cmap, alpha=0.6)
+
+      # ms = marker_size(plt, xlim0, ylim0, deg)
+      # print(ms)
       # plt.scatter(df.lon, df.lat, s=ms, c='red', alpha=1, linewidths=0, marker='s')
       # plt.scatter(df.lon, df.lat, s=ms, c=df.color, alpha=1, linewidths=0, marker='s')
-      plt.colorbar(mapper)
 
-      t0 = timer_restart(t0, 'create plot')
+      ticks = np.sort([np.min(df[unit])] + list(levels2) + [np.max(df[unit])])
+      # print(ticks)
+      plt.colorbar(mapper, ticks=ticks)
 
-      # save_plt(plt, outputDir, name + '_' + str(len(levels1)) + '_' + str(len(levels2)) + '_' + utc_time_filename())
-      save_plt(plt, outputDir, name + '_' + '-'.join([str(i) for i in levels2]))
+      # t0 = timer_restart(t0, 'create plot')
+      
+      save_plt(plt, outputDir, regionFile + '_' + str(year) + '_' + '{:.3f}'.format(np.max(df[unit])) + '_' + utc_time_filename(), 'png')
+      # save_plt(plt, outputDir, name + '_' + regionFile + '_' + '-'.join([str(i) for i in levels2]))
       # save_df_plt(plt, df, hist_month, hist_year, cldf, stats, outputDir, title + '-' + utc_time_filename())
-      t0 = timer_restart(t0, 'save outfiles')
+      # t0 = timer_restart(t0, 'save outfiles')
 
       t1 = timer_restart(t1, 'total time')
 

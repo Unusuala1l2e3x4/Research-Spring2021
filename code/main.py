@@ -2,6 +2,7 @@
 import os
 import pathlib
 import time
+import numpy as np
 
 def run(dir, file, args=None):
   # a = "python " + dir + '/' + file
@@ -56,9 +57,20 @@ if __name__ == "__main__":
   # run(dir, 'read_gfed4s.py', [1997, 1, 2020, 10, 'emissions', 'DM', 'YlOrRd'])
   # t0 = timer_restart(t0, '')
 
-  run(dir, 'read_pm2-5_v2.py', [2016, 2016, 'YlOrRd', 'basisregions', 'TENA.geo.json'])
-  # run(dir, 'read_pm2-5_v2.py', [2016, 2016, 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), 'CA-California.geojson'])
-  t0 = timer_restart(t0, '')
+
+
+  states = os.path.join('USA_states_counties', 'cb_2018_us_state_500k', 'cb_2018_us_state_500k.shp')
+  counties = os.path.join('USA_states_counties', 'cb_2017_us_county_500k', 'cb_2017_us_county_500k.shp')
+
+  # 1998, 2016
+  years = np.arange(2016, 2016 + 1)
+
+  for y in years:
+    run(dir, 'read_pm2-5.py', [y, y, 'YlOrRd', 'basisregions', 'TENA.geo.json', states])
+
+
+  # run(dir, 'read_pm2-5.py', [2016, 2016, 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), 'CA-California.geojson', counties])
+  # t0 = timer_restart(t0, '')
 
 
   t1 = timer_restart(t1, 'total time')
