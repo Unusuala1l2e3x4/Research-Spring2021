@@ -56,7 +56,8 @@ if __name__ == "__main__":
   # run(dir, 'read_gfed4s.py', [1997, 1, 2020, 10, 'emissions', 'DM', 'YlOrRd'])
   # t0 = timer_restart(t0, '')
 
-  run(dir, 'read_pm2-5.py', [2016, 2016, 'YlOrRd', 'TENA.geo.json'])
+  run(dir, 'read_pm2-5_v2.py', [2016, 2016, 'YlOrRd', 'basisregions', 'TENA.geo.json'])
+  # run(dir, 'read_pm2-5_v2.py', [2016, 2016, 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), 'CA-California.geojson'])
   t0 = timer_restart(t0, '')
 
 

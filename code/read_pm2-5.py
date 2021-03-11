@@ -83,8 +83,8 @@ def lim_length(lim):
   return lim[1] - lim[0]
 
 
-def marker_size(plt, xlim1, ylim1):
-  a = 0.4865063 * 0.04
+def marker_size(plt, xlim1, ylim1, deg):
+  a = 0.4865063 * (deg / 0.25)
   # 0.4378557
   x = lim_length(plt.xlim())
   y = lim_length(plt.ylim())
@@ -217,6 +217,9 @@ if __name__ == "__main__":
     lons_1d = lons_1d[minLon:maxLon]
 
     bounded_mat = mat[minLat:maxLat,minLon:maxLon]
+    bounded_mat
+
+
     mat = np.ravel(bounded_mat)
     t0 = timer_restart(t0, 'mat bound ravel')
 
@@ -256,7 +259,7 @@ if __name__ == "__main__":
       plt.xlim((min(df.lon) - .01, max(df.lon) + .01))
       plt.ylim((min(df.lat) - .01, max(df.lat) + .01))
 
-      ms = marker_size(plt, xlim0, ylim0)
+      ms = marker_size(plt, xlim0, ylim0, 0.01)
       # print(ms)
 
 

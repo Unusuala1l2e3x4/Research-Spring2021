@@ -20,9 +20,9 @@ if __name__ == "__main__":
   # print(len(filenames))
 
   for filename in filenames:
-    z = zipfile.ZipFile(os.path.join(pmDir, filename), 'r')
+    z = zipfile.ZipFile(os.path.join(pmDir, 'data_0.01', filename), 'r')
     tiffilename = sorted(z.namelist())[1]
-    z.extract(tiffilename, path=pmDir)
+    z.extract(tiffilename, path=os.path.join(pmDir, 'data_0.01'))
     
 
 

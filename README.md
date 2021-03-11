@@ -14,6 +14,7 @@
   - Place files into new folder "Global Annual PM2.5 Grids"
   - Run "code/unzip_pm2-5.py 
 
+##### If encounter error message where a directory does not exist, create it in the path described
   
 #### Links to potentially useful datasets/tools
 - ARSET: https://appliedsciences.nasa.gov/what-we-do/capacity-building/arset
