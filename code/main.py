@@ -58,16 +58,19 @@ if __name__ == "__main__":
   # t0 = timer_restart(t0, '')
 
 
+  world = os.path.join('UIA_World_Countries_Boundaries-shp', 'World_Countries__Generalized_.shp')
 
   states = os.path.join('USA_states_counties', 'cb_2018_us_state_500k', 'cb_2018_us_state_500k.shp')
   counties = os.path.join('USA_states_counties', 'cb_2017_us_county_500k', 'cb_2017_us_county_500k.shp')
 
   # 1998, 2016
-  years = np.arange(2016, 2016 + 1)
+  years = np.arange(1998, 2016 + 1)
 
   for y in years:
-    run(dir, 'read_pm2-5.py', [y, y, 'YlOrRd', 'basisregions', 'TENA.geo.json', states])
+    # run(dir, 'read_pm2-5.py', [y, y, 'YlOrRd', 'basisregions', 'TENA.geo.json', states])
+    run(dir, 'read_pm2-5.py', [y, y, 'YlOrRd', 'geo-countries', 'geo-countries-union.json', world])
 
+  
 
   # run(dir, 'read_pm2-5.py', [2016, 2016, 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), 'CA-California.geojson', counties])
   # t0 = timer_restart(t0, '')
