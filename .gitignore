@@ -37,3 +37,5 @@ code/test.py
 Global Annual PM2.5 Grids/data_0.01
 Global Annual PM2.5 Grids/points_in_region
 code/read_pm2-5-outfiles/gwr_pm25_2016_nonnegative.tif
+CDC data/500 Cities & Places
+CDC data/U.S. Chronic Disease Indicators (CDI)

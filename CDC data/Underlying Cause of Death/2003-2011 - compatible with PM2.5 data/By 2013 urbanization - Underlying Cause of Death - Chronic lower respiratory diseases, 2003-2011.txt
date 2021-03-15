@@ -1,0 +1,700 @@
+"Notes"	"2013 Urbanization"	"2013 Urbanization Code"	"Year"	"Year Code"	"Month"	"Month Code"	"ICD Sub-Chapter"	"ICD Sub-Chapter Code"	Deaths	Population	Crude Rate
+	"Large Central Metro"	"1"	"2003"	"2003"	"Jan., 2003"	"2003/01"	"Chronic lower respiratory diseases"	"J40-J47"	124	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2003"	"2003"	"Feb., 2003"	"2003/02"	"Chronic lower respiratory diseases"	"J40-J47"	121	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2003"	"2003"	"Mar., 2003"	"2003/03"	"Chronic lower respiratory diseases"	"J40-J47"	121	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2003"	"2003"	"Apr., 2003"	"2003/04"	"Chronic lower respiratory diseases"	"J40-J47"	123	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2003"	"2003"	"May, 2003"	"2003/05"	"Chronic lower respiratory diseases"	"J40-J47"	114	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2003"	"2003"	"Jun., 2003"	"2003/06"	"Chronic lower respiratory diseases"	"J40-J47"	101	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2003"	"2003"	"Jul., 2003"	"2003/07"	"Chronic lower respiratory diseases"	"J40-J47"	95	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2003"	"2003"	"Aug., 2003"	"2003/08"	"Chronic lower respiratory diseases"	"J40-J47"	87	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2003"	"2003"	"Sep., 2003"	"2003/09"	"Chronic lower respiratory diseases"	"J40-J47"	93	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2003"	"2003"	"Oct., 2003"	"2003/10"	"Chronic lower respiratory diseases"	"J40-J47"	115	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2003"	"2003"	"Nov., 2003"	"2003/11"	"Chronic lower respiratory diseases"	"J40-J47"	124	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2003"	"2003"	"Dec., 2003"	"2003/12"	"Chronic lower respiratory diseases"	"J40-J47"	141	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"Jan., 2004"	"2004/01"	"Chronic lower respiratory diseases"	"J40-J47"	126	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"Feb., 2004"	"2004/02"	"Chronic lower respiratory diseases"	"J40-J47"	133	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"Mar., 2004"	"2004/03"	"Chronic lower respiratory diseases"	"J40-J47"	113	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"Apr., 2004"	"2004/04"	"Chronic lower respiratory diseases"	"J40-J47"	90	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"May, 2004"	"2004/05"	"Chronic lower respiratory diseases"	"J40-J47"	99	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"Jun., 2004"	"2004/06"	"Chronic lower respiratory diseases"	"J40-J47"	110	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"Jul., 2004"	"2004/07"	"Chronic lower respiratory diseases"	"J40-J47"	89	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"Aug., 2004"	"2004/08"	"Chronic lower respiratory diseases"	"J40-J47"	86	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"Sep., 2004"	"2004/09"	"Chronic lower respiratory diseases"	"J40-J47"	107	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"Oct., 2004"	"2004/10"	"Chronic lower respiratory diseases"	"J40-J47"	100	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"Nov., 2004"	"2004/11"	"Chronic lower respiratory diseases"	"J40-J47"	110	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2004"	"2004"	"Dec., 2004"	"2004/12"	"Chronic lower respiratory diseases"	"J40-J47"	126	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"Jan., 2005"	"2005/01"	"Chronic lower respiratory diseases"	"J40-J47"	132	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"Feb., 2005"	"2005/02"	"Chronic lower respiratory diseases"	"J40-J47"	121	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"Mar., 2005"	"2005/03"	"Chronic lower respiratory diseases"	"J40-J47"	113	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"Apr., 2005"	"2005/04"	"Chronic lower respiratory diseases"	"J40-J47"	109	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"May, 2005"	"2005/05"	"Chronic lower respiratory diseases"	"J40-J47"	115	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"Jun., 2005"	"2005/06"	"Chronic lower respiratory diseases"	"J40-J47"	112	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"Jul., 2005"	"2005/07"	"Chronic lower respiratory diseases"	"J40-J47"	99	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"Aug., 2005"	"2005/08"	"Chronic lower respiratory diseases"	"J40-J47"	90	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"Sep., 2005"	"2005/09"	"Chronic lower respiratory diseases"	"J40-J47"	81	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"Oct., 2005"	"2005/10"	"Chronic lower respiratory diseases"	"J40-J47"	94	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"Nov., 2005"	"2005/11"	"Chronic lower respiratory diseases"	"J40-J47"	104	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2005"	"2005"	"Dec., 2005"	"2005/12"	"Chronic lower respiratory diseases"	"J40-J47"	136	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"Jan., 2006"	"2006/01"	"Chronic lower respiratory diseases"	"J40-J47"	120	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"Feb., 2006"	"2006/02"	"Chronic lower respiratory diseases"	"J40-J47"	85	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"Mar., 2006"	"2006/03"	"Chronic lower respiratory diseases"	"J40-J47"	119	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"Apr., 2006"	"2006/04"	"Chronic lower respiratory diseases"	"J40-J47"	94	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"May, 2006"	"2006/05"	"Chronic lower respiratory diseases"	"J40-J47"	102	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"Jun., 2006"	"2006/06"	"Chronic lower respiratory diseases"	"J40-J47"	93	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"Jul., 2006"	"2006/07"	"Chronic lower respiratory diseases"	"J40-J47"	84	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"Aug., 2006"	"2006/08"	"Chronic lower respiratory diseases"	"J40-J47"	94	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"Sep., 2006"	"2006/09"	"Chronic lower respiratory diseases"	"J40-J47"	99	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"Oct., 2006"	"2006/10"	"Chronic lower respiratory diseases"	"J40-J47"	85	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"Nov., 2006"	"2006/11"	"Chronic lower respiratory diseases"	"J40-J47"	90	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2006"	"2006"	"Dec., 2006"	"2006/12"	"Chronic lower respiratory diseases"	"J40-J47"	118	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"Jan., 2007"	"2007/01"	"Chronic lower respiratory diseases"	"J40-J47"	121	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"Feb., 2007"	"2007/02"	"Chronic lower respiratory diseases"	"J40-J47"	101	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"Mar., 2007"	"2007/03"	"Chronic lower respiratory diseases"	"J40-J47"	111	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"Apr., 2007"	"2007/04"	"Chronic lower respiratory diseases"	"J40-J47"	89	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"May, 2007"	"2007/05"	"Chronic lower respiratory diseases"	"J40-J47"	89	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"Jun., 2007"	"2007/06"	"Chronic lower respiratory diseases"	"J40-J47"	79	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"Jul., 2007"	"2007/07"	"Chronic lower respiratory diseases"	"J40-J47"	86	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"Aug., 2007"	"2007/08"	"Chronic lower respiratory diseases"	"J40-J47"	66	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"Sep., 2007"	"2007/09"	"Chronic lower respiratory diseases"	"J40-J47"	78	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"Oct., 2007"	"2007/10"	"Chronic lower respiratory diseases"	"J40-J47"	91	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"Nov., 2007"	"2007/11"	"Chronic lower respiratory diseases"	"J40-J47"	115	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2007"	"2007"	"Dec., 2007"	"2007/12"	"Chronic lower respiratory diseases"	"J40-J47"	109	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"Jan., 2008"	"2008/01"	"Chronic lower respiratory diseases"	"J40-J47"	126	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"Feb., 2008"	"2008/02"	"Chronic lower respiratory diseases"	"J40-J47"	98	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"Mar., 2008"	"2008/03"	"Chronic lower respiratory diseases"	"J40-J47"	115	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"Apr., 2008"	"2008/04"	"Chronic lower respiratory diseases"	"J40-J47"	112	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"May, 2008"	"2008/05"	"Chronic lower respiratory diseases"	"J40-J47"	80	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"Jun., 2008"	"2008/06"	"Chronic lower respiratory diseases"	"J40-J47"	87	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"Jul., 2008"	"2008/07"	"Chronic lower respiratory diseases"	"J40-J47"	66	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"Aug., 2008"	"2008/08"	"Chronic lower respiratory diseases"	"J40-J47"	73	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"Sep., 2008"	"2008/09"	"Chronic lower respiratory diseases"	"J40-J47"	88	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"Oct., 2008"	"2008/10"	"Chronic lower respiratory diseases"	"J40-J47"	89	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"Nov., 2008"	"2008/11"	"Chronic lower respiratory diseases"	"J40-J47"	99	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2008"	"2008"	"Dec., 2008"	"2008/12"	"Chronic lower respiratory diseases"	"J40-J47"	98	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"Jan., 2009"	"2009/01"	"Chronic lower respiratory diseases"	"J40-J47"	111	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"Feb., 2009"	"2009/02"	"Chronic lower respiratory diseases"	"J40-J47"	103	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"Mar., 2009"	"2009/03"	"Chronic lower respiratory diseases"	"J40-J47"	116	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"Apr., 2009"	"2009/04"	"Chronic lower respiratory diseases"	"J40-J47"	78	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"May, 2009"	"2009/05"	"Chronic lower respiratory diseases"	"J40-J47"	103	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"Jun., 2009"	"2009/06"	"Chronic lower respiratory diseases"	"J40-J47"	102	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"Jul., 2009"	"2009/07"	"Chronic lower respiratory diseases"	"J40-J47"	76	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"Aug., 2009"	"2009/08"	"Chronic lower respiratory diseases"	"J40-J47"	98	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"Sep., 2009"	"2009/09"	"Chronic lower respiratory diseases"	"J40-J47"	84	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"Oct., 2009"	"2009/10"	"Chronic lower respiratory diseases"	"J40-J47"	84	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"Nov., 2009"	"2009/11"	"Chronic lower respiratory diseases"	"J40-J47"	103	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2009"	"2009"	"Dec., 2009"	"2009/12"	"Chronic lower respiratory diseases"	"J40-J47"	100	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"Jan., 2010"	"2010/01"	"Chronic lower respiratory diseases"	"J40-J47"	97	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"Feb., 2010"	"2010/02"	"Chronic lower respiratory diseases"	"J40-J47"	101	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"Mar., 2010"	"2010/03"	"Chronic lower respiratory diseases"	"J40-J47"	101	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"Apr., 2010"	"2010/04"	"Chronic lower respiratory diseases"	"J40-J47"	87	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"May, 2010"	"2010/05"	"Chronic lower respiratory diseases"	"J40-J47"	93	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"Jun., 2010"	"2010/06"	"Chronic lower respiratory diseases"	"J40-J47"	92	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"Jul., 2010"	"2010/07"	"Chronic lower respiratory diseases"	"J40-J47"	89	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"Aug., 2010"	"2010/08"	"Chronic lower respiratory diseases"	"J40-J47"	83	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"Sep., 2010"	"2010/09"	"Chronic lower respiratory diseases"	"J40-J47"	85	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"Oct., 2010"	"2010/10"	"Chronic lower respiratory diseases"	"J40-J47"	95	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"Nov., 2010"	"2010/11"	"Chronic lower respiratory diseases"	"J40-J47"	87	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2010"	"2010"	"Dec., 2010"	"2010/12"	"Chronic lower respiratory diseases"	"J40-J47"	113	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"Jan., 2011"	"2011/01"	"Chronic lower respiratory diseases"	"J40-J47"	128	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"Feb., 2011"	"2011/02"	"Chronic lower respiratory diseases"	"J40-J47"	120	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"Mar., 2011"	"2011/03"	"Chronic lower respiratory diseases"	"J40-J47"	110	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"Apr., 2011"	"2011/04"	"Chronic lower respiratory diseases"	"J40-J47"	98	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"May, 2011"	"2011/05"	"Chronic lower respiratory diseases"	"J40-J47"	97	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"Jun., 2011"	"2011/06"	"Chronic lower respiratory diseases"	"J40-J47"	89	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"Jul., 2011"	"2011/07"	"Chronic lower respiratory diseases"	"J40-J47"	70	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"Aug., 2011"	"2011/08"	"Chronic lower respiratory diseases"	"J40-J47"	86	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"Sep., 2011"	"2011/09"	"Chronic lower respiratory diseases"	"J40-J47"	71	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"Oct., 2011"	"2011/10"	"Chronic lower respiratory diseases"	"J40-J47"	77	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"Nov., 2011"	"2011/11"	"Chronic lower respiratory diseases"	"J40-J47"	87	Not Applicable	Not Applicable
+	"Large Central Metro"	"1"	"2011"	"2011"	"Dec., 2011"	"2011/12"	"Chronic lower respiratory diseases"	"J40-J47"	98	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"Jan., 2003"	"2003/01"	"Chronic lower respiratory diseases"	"J40-J47"	79	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"Feb., 2003"	"2003/02"	"Chronic lower respiratory diseases"	"J40-J47"	95	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"Mar., 2003"	"2003/03"	"Chronic lower respiratory diseases"	"J40-J47"	73	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"Apr., 2003"	"2003/04"	"Chronic lower respiratory diseases"	"J40-J47"	63	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"May, 2003"	"2003/05"	"Chronic lower respiratory diseases"	"J40-J47"	60	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"Jun., 2003"	"2003/06"	"Chronic lower respiratory diseases"	"J40-J47"	64	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"Jul., 2003"	"2003/07"	"Chronic lower respiratory diseases"	"J40-J47"	62	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"Aug., 2003"	"2003/08"	"Chronic lower respiratory diseases"	"J40-J47"	53	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"Sep., 2003"	"2003/09"	"Chronic lower respiratory diseases"	"J40-J47"	52	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"Oct., 2003"	"2003/10"	"Chronic lower respiratory diseases"	"J40-J47"	62	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"Nov., 2003"	"2003/11"	"Chronic lower respiratory diseases"	"J40-J47"	81	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2003"	"2003"	"Dec., 2003"	"2003/12"	"Chronic lower respiratory diseases"	"J40-J47"	72	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"Jan., 2004"	"2004/01"	"Chronic lower respiratory diseases"	"J40-J47"	89	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"Feb., 2004"	"2004/02"	"Chronic lower respiratory diseases"	"J40-J47"	53	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"Mar., 2004"	"2004/03"	"Chronic lower respiratory diseases"	"J40-J47"	76	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"Apr., 2004"	"2004/04"	"Chronic lower respiratory diseases"	"J40-J47"	52	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"May, 2004"	"2004/05"	"Chronic lower respiratory diseases"	"J40-J47"	45	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"Jun., 2004"	"2004/06"	"Chronic lower respiratory diseases"	"J40-J47"	57	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"Jul., 2004"	"2004/07"	"Chronic lower respiratory diseases"	"J40-J47"	52	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"Aug., 2004"	"2004/08"	"Chronic lower respiratory diseases"	"J40-J47"	59	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"Sep., 2004"	"2004/09"	"Chronic lower respiratory diseases"	"J40-J47"	45	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"Oct., 2004"	"2004/10"	"Chronic lower respiratory diseases"	"J40-J47"	62	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"Nov., 2004"	"2004/11"	"Chronic lower respiratory diseases"	"J40-J47"	67	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2004"	"2004"	"Dec., 2004"	"2004/12"	"Chronic lower respiratory diseases"	"J40-J47"	75	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"Jan., 2005"	"2005/01"	"Chronic lower respiratory diseases"	"J40-J47"	86	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"Feb., 2005"	"2005/02"	"Chronic lower respiratory diseases"	"J40-J47"	86	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"Mar., 2005"	"2005/03"	"Chronic lower respiratory diseases"	"J40-J47"	81	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"Apr., 2005"	"2005/04"	"Chronic lower respiratory diseases"	"J40-J47"	57	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"May, 2005"	"2005/05"	"Chronic lower respiratory diseases"	"J40-J47"	66	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"Jun., 2005"	"2005/06"	"Chronic lower respiratory diseases"	"J40-J47"	51	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"Jul., 2005"	"2005/07"	"Chronic lower respiratory diseases"	"J40-J47"	49	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"Aug., 2005"	"2005/08"	"Chronic lower respiratory diseases"	"J40-J47"	47	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"Sep., 2005"	"2005/09"	"Chronic lower respiratory diseases"	"J40-J47"	50	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"Oct., 2005"	"2005/10"	"Chronic lower respiratory diseases"	"J40-J47"	47	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"Nov., 2005"	"2005/11"	"Chronic lower respiratory diseases"	"J40-J47"	77	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2005"	"2005"	"Dec., 2005"	"2005/12"	"Chronic lower respiratory diseases"	"J40-J47"	61	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"Jan., 2006"	"2006/01"	"Chronic lower respiratory diseases"	"J40-J47"	71	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"Feb., 2006"	"2006/02"	"Chronic lower respiratory diseases"	"J40-J47"	62	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"Mar., 2006"	"2006/03"	"Chronic lower respiratory diseases"	"J40-J47"	70	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"Apr., 2006"	"2006/04"	"Chronic lower respiratory diseases"	"J40-J47"	60	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"May, 2006"	"2006/05"	"Chronic lower respiratory diseases"	"J40-J47"	65	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"Jun., 2006"	"2006/06"	"Chronic lower respiratory diseases"	"J40-J47"	46	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"Jul., 2006"	"2006/07"	"Chronic lower respiratory diseases"	"J40-J47"	54	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"Aug., 2006"	"2006/08"	"Chronic lower respiratory diseases"	"J40-J47"	49	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"Sep., 2006"	"2006/09"	"Chronic lower respiratory diseases"	"J40-J47"	44	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"Oct., 2006"	"2006/10"	"Chronic lower respiratory diseases"	"J40-J47"	47	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"Nov., 2006"	"2006/11"	"Chronic lower respiratory diseases"	"J40-J47"	70	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2006"	"2006"	"Dec., 2006"	"2006/12"	"Chronic lower respiratory diseases"	"J40-J47"	55	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"Jan., 2007"	"2007/01"	"Chronic lower respiratory diseases"	"J40-J47"	51	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"Feb., 2007"	"2007/02"	"Chronic lower respiratory diseases"	"J40-J47"	63	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"Mar., 2007"	"2007/03"	"Chronic lower respiratory diseases"	"J40-J47"	79	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"Apr., 2007"	"2007/04"	"Chronic lower respiratory diseases"	"J40-J47"	59	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"May, 2007"	"2007/05"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"Jun., 2007"	"2007/06"	"Chronic lower respiratory diseases"	"J40-J47"	46	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"Jul., 2007"	"2007/07"	"Chronic lower respiratory diseases"	"J40-J47"	55	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"Aug., 2007"	"2007/08"	"Chronic lower respiratory diseases"	"J40-J47"	52	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"Sep., 2007"	"2007/09"	"Chronic lower respiratory diseases"	"J40-J47"	49	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"Oct., 2007"	"2007/10"	"Chronic lower respiratory diseases"	"J40-J47"	44	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"Nov., 2007"	"2007/11"	"Chronic lower respiratory diseases"	"J40-J47"	57	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2007"	"2007"	"Dec., 2007"	"2007/12"	"Chronic lower respiratory diseases"	"J40-J47"	47	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"Jan., 2008"	"2008/01"	"Chronic lower respiratory diseases"	"J40-J47"	77	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"Feb., 2008"	"2008/02"	"Chronic lower respiratory diseases"	"J40-J47"	72	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"Mar., 2008"	"2008/03"	"Chronic lower respiratory diseases"	"J40-J47"	60	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"Apr., 2008"	"2008/04"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"May, 2008"	"2008/05"	"Chronic lower respiratory diseases"	"J40-J47"	46	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"Jun., 2008"	"2008/06"	"Chronic lower respiratory diseases"	"J40-J47"	47	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"Jul., 2008"	"2008/07"	"Chronic lower respiratory diseases"	"J40-J47"	43	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"Aug., 2008"	"2008/08"	"Chronic lower respiratory diseases"	"J40-J47"	38	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"Sep., 2008"	"2008/09"	"Chronic lower respiratory diseases"	"J40-J47"	46	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"Oct., 2008"	"2008/10"	"Chronic lower respiratory diseases"	"J40-J47"	46	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"Nov., 2008"	"2008/11"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2008"	"2008"	"Dec., 2008"	"2008/12"	"Chronic lower respiratory diseases"	"J40-J47"	49	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"Jan., 2009"	"2009/01"	"Chronic lower respiratory diseases"	"J40-J47"	75	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"Feb., 2009"	"2009/02"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"Mar., 2009"	"2009/03"	"Chronic lower respiratory diseases"	"J40-J47"	48	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"Apr., 2009"	"2009/04"	"Chronic lower respiratory diseases"	"J40-J47"	53	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"May, 2009"	"2009/05"	"Chronic lower respiratory diseases"	"J40-J47"	55	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"Jun., 2009"	"2009/06"	"Chronic lower respiratory diseases"	"J40-J47"	61	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"Jul., 2009"	"2009/07"	"Chronic lower respiratory diseases"	"J40-J47"	77	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"Aug., 2009"	"2009/08"	"Chronic lower respiratory diseases"	"J40-J47"	48	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"Sep., 2009"	"2009/09"	"Chronic lower respiratory diseases"	"J40-J47"	52	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"Oct., 2009"	"2009/10"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"Nov., 2009"	"2009/11"	"Chronic lower respiratory diseases"	"J40-J47"	53	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2009"	"2009"	"Dec., 2009"	"2009/12"	"Chronic lower respiratory diseases"	"J40-J47"	55	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"Jan., 2010"	"2010/01"	"Chronic lower respiratory diseases"	"J40-J47"	63	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"Feb., 2010"	"2010/02"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"Mar., 2010"	"2010/03"	"Chronic lower respiratory diseases"	"J40-J47"	59	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"Apr., 2010"	"2010/04"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"May, 2010"	"2010/05"	"Chronic lower respiratory diseases"	"J40-J47"	51	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"Jun., 2010"	"2010/06"	"Chronic lower respiratory diseases"	"J40-J47"	60	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"Jul., 2010"	"2010/07"	"Chronic lower respiratory diseases"	"J40-J47"	43	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"Aug., 2010"	"2010/08"	"Chronic lower respiratory diseases"	"J40-J47"	54	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"Sep., 2010"	"2010/09"	"Chronic lower respiratory diseases"	"J40-J47"	53	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"Oct., 2010"	"2010/10"	"Chronic lower respiratory diseases"	"J40-J47"	57	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"Nov., 2010"	"2010/11"	"Chronic lower respiratory diseases"	"J40-J47"	54	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2010"	"2010"	"Dec., 2010"	"2010/12"	"Chronic lower respiratory diseases"	"J40-J47"	61	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"Jan., 2011"	"2011/01"	"Chronic lower respiratory diseases"	"J40-J47"	80	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"Feb., 2011"	"2011/02"	"Chronic lower respiratory diseases"	"J40-J47"	63	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"Mar., 2011"	"2011/03"	"Chronic lower respiratory diseases"	"J40-J47"	59	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"Apr., 2011"	"2011/04"	"Chronic lower respiratory diseases"	"J40-J47"	61	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"May, 2011"	"2011/05"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"Jun., 2011"	"2011/06"	"Chronic lower respiratory diseases"	"J40-J47"	42	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"Jul., 2011"	"2011/07"	"Chronic lower respiratory diseases"	"J40-J47"	54	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"Aug., 2011"	"2011/08"	"Chronic lower respiratory diseases"	"J40-J47"	48	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"Sep., 2011"	"2011/09"	"Chronic lower respiratory diseases"	"J40-J47"	53	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"Oct., 2011"	"2011/10"	"Chronic lower respiratory diseases"	"J40-J47"	70	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"Nov., 2011"	"2011/11"	"Chronic lower respiratory diseases"	"J40-J47"	59	Not Applicable	Not Applicable
+	"Large Fringe Metro"	"2"	"2011"	"2011"	"Dec., 2011"	"2011/12"	"Chronic lower respiratory diseases"	"J40-J47"	59	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"Jan., 2003"	"2003/01"	"Chronic lower respiratory diseases"	"J40-J47"	82	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"Feb., 2003"	"2003/02"	"Chronic lower respiratory diseases"	"J40-J47"	65	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"Mar., 2003"	"2003/03"	"Chronic lower respiratory diseases"	"J40-J47"	77	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"Apr., 2003"	"2003/04"	"Chronic lower respiratory diseases"	"J40-J47"	57	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"May, 2003"	"2003/05"	"Chronic lower respiratory diseases"	"J40-J47"	82	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"Jun., 2003"	"2003/06"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"Jul., 2003"	"2003/07"	"Chronic lower respiratory diseases"	"J40-J47"	57	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"Aug., 2003"	"2003/08"	"Chronic lower respiratory diseases"	"J40-J47"	68	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"Sep., 2003"	"2003/09"	"Chronic lower respiratory diseases"	"J40-J47"	50	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"Oct., 2003"	"2003/10"	"Chronic lower respiratory diseases"	"J40-J47"	63	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"Nov., 2003"	"2003/11"	"Chronic lower respiratory diseases"	"J40-J47"	91	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2003"	"2003"	"Dec., 2003"	"2003/12"	"Chronic lower respiratory diseases"	"J40-J47"	84	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"Jan., 2004"	"2004/01"	"Chronic lower respiratory diseases"	"J40-J47"	77	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"Feb., 2004"	"2004/02"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"Mar., 2004"	"2004/03"	"Chronic lower respiratory diseases"	"J40-J47"	66	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"Apr., 2004"	"2004/04"	"Chronic lower respiratory diseases"	"J40-J47"	67	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"May, 2004"	"2004/05"	"Chronic lower respiratory diseases"	"J40-J47"	73	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"Jun., 2004"	"2004/06"	"Chronic lower respiratory diseases"	"J40-J47"	63	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"Jul., 2004"	"2004/07"	"Chronic lower respiratory diseases"	"J40-J47"	60	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"Aug., 2004"	"2004/08"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"Sep., 2004"	"2004/09"	"Chronic lower respiratory diseases"	"J40-J47"	36	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"Oct., 2004"	"2004/10"	"Chronic lower respiratory diseases"	"J40-J47"	66	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"Nov., 2004"	"2004/11"	"Chronic lower respiratory diseases"	"J40-J47"	57	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2004"	"2004"	"Dec., 2004"	"2004/12"	"Chronic lower respiratory diseases"	"J40-J47"	75	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"Jan., 2005"	"2005/01"	"Chronic lower respiratory diseases"	"J40-J47"	70	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"Feb., 2005"	"2005/02"	"Chronic lower respiratory diseases"	"J40-J47"	79	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"Mar., 2005"	"2005/03"	"Chronic lower respiratory diseases"	"J40-J47"	93	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"Apr., 2005"	"2005/04"	"Chronic lower respiratory diseases"	"J40-J47"	67	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"May, 2005"	"2005/05"	"Chronic lower respiratory diseases"	"J40-J47"	70	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"Jun., 2005"	"2005/06"	"Chronic lower respiratory diseases"	"J40-J47"	60	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"Jul., 2005"	"2005/07"	"Chronic lower respiratory diseases"	"J40-J47"	74	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"Aug., 2005"	"2005/08"	"Chronic lower respiratory diseases"	"J40-J47"	50	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"Sep., 2005"	"2005/09"	"Chronic lower respiratory diseases"	"J40-J47"	53	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"Oct., 2005"	"2005/10"	"Chronic lower respiratory diseases"	"J40-J47"	65	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"Nov., 2005"	"2005/11"	"Chronic lower respiratory diseases"	"J40-J47"	51	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2005"	"2005"	"Dec., 2005"	"2005/12"	"Chronic lower respiratory diseases"	"J40-J47"	57	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"Jan., 2006"	"2006/01"	"Chronic lower respiratory diseases"	"J40-J47"	89	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"Feb., 2006"	"2006/02"	"Chronic lower respiratory diseases"	"J40-J47"	60	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"Mar., 2006"	"2006/03"	"Chronic lower respiratory diseases"	"J40-J47"	77	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"Apr., 2006"	"2006/04"	"Chronic lower respiratory diseases"	"J40-J47"	71	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"May, 2006"	"2006/05"	"Chronic lower respiratory diseases"	"J40-J47"	71	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"Jun., 2006"	"2006/06"	"Chronic lower respiratory diseases"	"J40-J47"	46	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"Jul., 2006"	"2006/07"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"Aug., 2006"	"2006/08"	"Chronic lower respiratory diseases"	"J40-J47"	44	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"Sep., 2006"	"2006/09"	"Chronic lower respiratory diseases"	"J40-J47"	50	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"Oct., 2006"	"2006/10"	"Chronic lower respiratory diseases"	"J40-J47"	50	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"Nov., 2006"	"2006/11"	"Chronic lower respiratory diseases"	"J40-J47"	53	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2006"	"2006"	"Dec., 2006"	"2006/12"	"Chronic lower respiratory diseases"	"J40-J47"	62	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"Jan., 2007"	"2007/01"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"Feb., 2007"	"2007/02"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"Mar., 2007"	"2007/03"	"Chronic lower respiratory diseases"	"J40-J47"	62	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"Apr., 2007"	"2007/04"	"Chronic lower respiratory diseases"	"J40-J47"	59	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"May, 2007"	"2007/05"	"Chronic lower respiratory diseases"	"J40-J47"	59	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"Jun., 2007"	"2007/06"	"Chronic lower respiratory diseases"	"J40-J47"	52	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"Jul., 2007"	"2007/07"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"Aug., 2007"	"2007/08"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"Sep., 2007"	"2007/09"	"Chronic lower respiratory diseases"	"J40-J47"	55	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"Oct., 2007"	"2007/10"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"Nov., 2007"	"2007/11"	"Chronic lower respiratory diseases"	"J40-J47"	63	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2007"	"2007"	"Dec., 2007"	"2007/12"	"Chronic lower respiratory diseases"	"J40-J47"	66	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"Jan., 2008"	"2008/01"	"Chronic lower respiratory diseases"	"J40-J47"	67	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"Feb., 2008"	"2008/02"	"Chronic lower respiratory diseases"	"J40-J47"	69	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"Mar., 2008"	"2008/03"	"Chronic lower respiratory diseases"	"J40-J47"	78	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"Apr., 2008"	"2008/04"	"Chronic lower respiratory diseases"	"J40-J47"	60	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"May, 2008"	"2008/05"	"Chronic lower respiratory diseases"	"J40-J47"	70	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"Jun., 2008"	"2008/06"	"Chronic lower respiratory diseases"	"J40-J47"	46	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"Jul., 2008"	"2008/07"	"Chronic lower respiratory diseases"	"J40-J47"	62	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"Aug., 2008"	"2008/08"	"Chronic lower respiratory diseases"	"J40-J47"	52	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"Sep., 2008"	"2008/09"	"Chronic lower respiratory diseases"	"J40-J47"	43	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"Oct., 2008"	"2008/10"	"Chronic lower respiratory diseases"	"J40-J47"	51	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"Nov., 2008"	"2008/11"	"Chronic lower respiratory diseases"	"J40-J47"	65	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2008"	"2008"	"Dec., 2008"	"2008/12"	"Chronic lower respiratory diseases"	"J40-J47"	59	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"Jan., 2009"	"2009/01"	"Chronic lower respiratory diseases"	"J40-J47"	57	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"Feb., 2009"	"2009/02"	"Chronic lower respiratory diseases"	"J40-J47"	57	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"Mar., 2009"	"2009/03"	"Chronic lower respiratory diseases"	"J40-J47"	52	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"Apr., 2009"	"2009/04"	"Chronic lower respiratory diseases"	"J40-J47"	52	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"May, 2009"	"2009/05"	"Chronic lower respiratory diseases"	"J40-J47"	64	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"Jun., 2009"	"2009/06"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"Jul., 2009"	"2009/07"	"Chronic lower respiratory diseases"	"J40-J47"	33	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"Aug., 2009"	"2009/08"	"Chronic lower respiratory diseases"	"J40-J47"	59	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"Sep., 2009"	"2009/09"	"Chronic lower respiratory diseases"	"J40-J47"	44	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"Oct., 2009"	"2009/10"	"Chronic lower respiratory diseases"	"J40-J47"	49	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"Nov., 2009"	"2009/11"	"Chronic lower respiratory diseases"	"J40-J47"	48	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2009"	"2009"	"Dec., 2009"	"2009/12"	"Chronic lower respiratory diseases"	"J40-J47"	63	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"Jan., 2010"	"2010/01"	"Chronic lower respiratory diseases"	"J40-J47"	61	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"Feb., 2010"	"2010/02"	"Chronic lower respiratory diseases"	"J40-J47"	59	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"Mar., 2010"	"2010/03"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"Apr., 2010"	"2010/04"	"Chronic lower respiratory diseases"	"J40-J47"	50	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"May, 2010"	"2010/05"	"Chronic lower respiratory diseases"	"J40-J47"	77	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"Jun., 2010"	"2010/06"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"Jul., 2010"	"2010/07"	"Chronic lower respiratory diseases"	"J40-J47"	55	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"Aug., 2010"	"2010/08"	"Chronic lower respiratory diseases"	"J40-J47"	33	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"Sep., 2010"	"2010/09"	"Chronic lower respiratory diseases"	"J40-J47"	53	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"Oct., 2010"	"2010/10"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"Nov., 2010"	"2010/11"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2010"	"2010"	"Dec., 2010"	"2010/12"	"Chronic lower respiratory diseases"	"J40-J47"	84	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"Jan., 2011"	"2011/01"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"Feb., 2011"	"2011/02"	"Chronic lower respiratory diseases"	"J40-J47"	63	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"Mar., 2011"	"2011/03"	"Chronic lower respiratory diseases"	"J40-J47"	69	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"Apr., 2011"	"2011/04"	"Chronic lower respiratory diseases"	"J40-J47"	58	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"May, 2011"	"2011/05"	"Chronic lower respiratory diseases"	"J40-J47"	51	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"Jun., 2011"	"2011/06"	"Chronic lower respiratory diseases"	"J40-J47"	46	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"Jul., 2011"	"2011/07"	"Chronic lower respiratory diseases"	"J40-J47"	44	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"Aug., 2011"	"2011/08"	"Chronic lower respiratory diseases"	"J40-J47"	48	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"Sep., 2011"	"2011/09"	"Chronic lower respiratory diseases"	"J40-J47"	33	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"Oct., 2011"	"2011/10"	"Chronic lower respiratory diseases"	"J40-J47"	56	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"Nov., 2011"	"2011/11"	"Chronic lower respiratory diseases"	"J40-J47"	48	Not Applicable	Not Applicable
+	"Medium Metro"	"3"	"2011"	"2011"	"Dec., 2011"	"2011/12"	"Chronic lower respiratory diseases"	"J40-J47"	54	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"Jan., 2003"	"2003/01"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"Feb., 2003"	"2003/02"	"Chronic lower respiratory diseases"	"J40-J47"	45	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"Mar., 2003"	"2003/03"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"Apr., 2003"	"2003/04"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"May, 2003"	"2003/05"	"Chronic lower respiratory diseases"	"J40-J47"	40	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"Jun., 2003"	"2003/06"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"Jul., 2003"	"2003/07"	"Chronic lower respiratory diseases"	"J40-J47"	24	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"Aug., 2003"	"2003/08"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"Sep., 2003"	"2003/09"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"Oct., 2003"	"2003/10"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"Nov., 2003"	"2003/11"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2003"	"2003"	"Dec., 2003"	"2003/12"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"Jan., 2004"	"2004/01"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"Feb., 2004"	"2004/02"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"Mar., 2004"	"2004/03"	"Chronic lower respiratory diseases"	"J40-J47"	38	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"Apr., 2004"	"2004/04"	"Chronic lower respiratory diseases"	"J40-J47"	35	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"May, 2004"	"2004/05"	"Chronic lower respiratory diseases"	"J40-J47"	41	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"Jun., 2004"	"2004/06"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"Jul., 2004"	"2004/07"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"Aug., 2004"	"2004/08"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"Sep., 2004"	"2004/09"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"Oct., 2004"	"2004/10"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"Nov., 2004"	"2004/11"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2004"	"2004"	"Dec., 2004"	"2004/12"	"Chronic lower respiratory diseases"	"J40-J47"	36	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"Jan., 2005"	"2005/01"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"Feb., 2005"	"2005/02"	"Chronic lower respiratory diseases"	"J40-J47"	36	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"Mar., 2005"	"2005/03"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"Apr., 2005"	"2005/04"	"Chronic lower respiratory diseases"	"J40-J47"	45	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"May, 2005"	"2005/05"	"Chronic lower respiratory diseases"	"J40-J47"	48	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"Jun., 2005"	"2005/06"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"Jul., 2005"	"2005/07"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"Aug., 2005"	"2005/08"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"Sep., 2005"	"2005/09"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"Oct., 2005"	"2005/10"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"Nov., 2005"	"2005/11"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2005"	"2005"	"Dec., 2005"	"2005/12"	"Chronic lower respiratory diseases"	"J40-J47"	39	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"Jan., 2006"	"2006/01"	"Chronic lower respiratory diseases"	"J40-J47"	38	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"Feb., 2006"	"2006/02"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"Mar., 2006"	"2006/03"	"Chronic lower respiratory diseases"	"J40-J47"	43	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"Apr., 2006"	"2006/04"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"May, 2006"	"2006/05"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"Jun., 2006"	"2006/06"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"Jul., 2006"	"2006/07"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"Aug., 2006"	"2006/08"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"Sep., 2006"	"2006/09"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"Oct., 2006"	"2006/10"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"Nov., 2006"	"2006/11"	"Chronic lower respiratory diseases"	"J40-J47"	35	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2006"	"2006"	"Dec., 2006"	"2006/12"	"Chronic lower respiratory diseases"	"J40-J47"	39	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"Jan., 2007"	"2007/01"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"Feb., 2007"	"2007/02"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"Mar., 2007"	"2007/03"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"Apr., 2007"	"2007/04"	"Chronic lower respiratory diseases"	"J40-J47"	41	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"May, 2007"	"2007/05"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"Jun., 2007"	"2007/06"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"Jul., 2007"	"2007/07"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"Aug., 2007"	"2007/08"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"Sep., 2007"	"2007/09"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"Oct., 2007"	"2007/10"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"Nov., 2007"	"2007/11"	"Chronic lower respiratory diseases"	"J40-J47"	35	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2007"	"2007"	"Dec., 2007"	"2007/12"	"Chronic lower respiratory diseases"	"J40-J47"	37	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"Jan., 2008"	"2008/01"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"Feb., 2008"	"2008/02"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"Mar., 2008"	"2008/03"	"Chronic lower respiratory diseases"	"J40-J47"	37	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"Apr., 2008"	"2008/04"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"May, 2008"	"2008/05"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"Jun., 2008"	"2008/06"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"Jul., 2008"	"2008/07"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"Aug., 2008"	"2008/08"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"Sep., 2008"	"2008/09"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"Oct., 2008"	"2008/10"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"Nov., 2008"	"2008/11"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2008"	"2008"	"Dec., 2008"	"2008/12"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"Jan., 2009"	"2009/01"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"Feb., 2009"	"2009/02"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"Mar., 2009"	"2009/03"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"Apr., 2009"	"2009/04"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"May, 2009"	"2009/05"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"Jun., 2009"	"2009/06"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"Jul., 2009"	"2009/07"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"Aug., 2009"	"2009/08"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"Sep., 2009"	"2009/09"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"Oct., 2009"	"2009/10"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"Nov., 2009"	"2009/11"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2009"	"2009"	"Dec., 2009"	"2009/12"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"Jan., 2010"	"2010/01"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"Feb., 2010"	"2010/02"	"Chronic lower respiratory diseases"	"J40-J47"	40	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"Mar., 2010"	"2010/03"	"Chronic lower respiratory diseases"	"J40-J47"	36	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"Apr., 2010"	"2010/04"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"May, 2010"	"2010/05"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"Jun., 2010"	"2010/06"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"Jul., 2010"	"2010/07"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"Aug., 2010"	"2010/08"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"Sep., 2010"	"2010/09"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"Oct., 2010"	"2010/10"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"Nov., 2010"	"2010/11"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2010"	"2010"	"Dec., 2010"	"2010/12"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"Jan., 2011"	"2011/01"	"Chronic lower respiratory diseases"	"J40-J47"	24	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"Feb., 2011"	"2011/02"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"Mar., 2011"	"2011/03"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"Apr., 2011"	"2011/04"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"May, 2011"	"2011/05"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"Jun., 2011"	"2011/06"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"Jul., 2011"	"2011/07"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"Aug., 2011"	"2011/08"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"Sep., 2011"	"2011/09"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"Oct., 2011"	"2011/10"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"Nov., 2011"	"2011/11"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Small Metro"	"4"	"2011"	"2011"	"Dec., 2011"	"2011/12"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"Jan., 2003"	"2003/01"	"Chronic lower respiratory diseases"	"J40-J47"	41	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"Feb., 2003"	"2003/02"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"Mar., 2003"	"2003/03"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"Apr., 2003"	"2003/04"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"May, 2003"	"2003/05"	"Chronic lower respiratory diseases"	"J40-J47"	38	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"Jun., 2003"	"2003/06"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"Jul., 2003"	"2003/07"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"Aug., 2003"	"2003/08"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"Sep., 2003"	"2003/09"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"Oct., 2003"	"2003/10"	"Chronic lower respiratory diseases"	"J40-J47"	36	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"Nov., 2003"	"2003/11"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2003"	"2003"	"Dec., 2003"	"2003/12"	"Chronic lower respiratory diseases"	"J40-J47"	48	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"Jan., 2004"	"2004/01"	"Chronic lower respiratory diseases"	"J40-J47"	46	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"Feb., 2004"	"2004/02"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"Mar., 2004"	"2004/03"	"Chronic lower respiratory diseases"	"J40-J47"	36	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"Apr., 2004"	"2004/04"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"May, 2004"	"2004/05"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"Jun., 2004"	"2004/06"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"Jul., 2004"	"2004/07"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"Aug., 2004"	"2004/08"	"Chronic lower respiratory diseases"	"J40-J47"	24	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"Sep., 2004"	"2004/09"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"Oct., 2004"	"2004/10"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"Nov., 2004"	"2004/11"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2004"	"2004"	"Dec., 2004"	"2004/12"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"Jan., 2005"	"2005/01"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"Feb., 2005"	"2005/02"	"Chronic lower respiratory diseases"	"J40-J47"	43	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"Mar., 2005"	"2005/03"	"Chronic lower respiratory diseases"	"J40-J47"	44	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"Apr., 2005"	"2005/04"	"Chronic lower respiratory diseases"	"J40-J47"	33	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"May, 2005"	"2005/05"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"Jun., 2005"	"2005/06"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"Jul., 2005"	"2005/07"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"Aug., 2005"	"2005/08"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"Sep., 2005"	"2005/09"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"Oct., 2005"	"2005/10"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"Nov., 2005"	"2005/11"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2005"	"2005"	"Dec., 2005"	"2005/12"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"Jan., 2006"	"2006/01"	"Chronic lower respiratory diseases"	"J40-J47"	54	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"Feb., 2006"	"2006/02"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"Mar., 2006"	"2006/03"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"Apr., 2006"	"2006/04"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"May, 2006"	"2006/05"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"Jun., 2006"	"2006/06"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"Jul., 2006"	"2006/07"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"Aug., 2006"	"2006/08"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"Sep., 2006"	"2006/09"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"Oct., 2006"	"2006/10"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"Nov., 2006"	"2006/11"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2006"	"2006"	"Dec., 2006"	"2006/12"	"Chronic lower respiratory diseases"	"J40-J47"	36	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"Jan., 2007"	"2007/01"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"Feb., 2007"	"2007/02"	"Chronic lower respiratory diseases"	"J40-J47"	35	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"Mar., 2007"	"2007/03"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"Apr., 2007"	"2007/04"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"May, 2007"	"2007/05"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"Jun., 2007"	"2007/06"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"Jul., 2007"	"2007/07"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"Aug., 2007"	"2007/08"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"Sep., 2007"	"2007/09"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"Oct., 2007"	"2007/10"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"Nov., 2007"	"2007/11"	"Chronic lower respiratory diseases"	"J40-J47"	35	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2007"	"2007"	"Dec., 2007"	"2007/12"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"Jan., 2008"	"2008/01"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"Feb., 2008"	"2008/02"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"Mar., 2008"	"2008/03"	"Chronic lower respiratory diseases"	"J40-J47"	38	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"Apr., 2008"	"2008/04"	"Chronic lower respiratory diseases"	"J40-J47"	38	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"May, 2008"	"2008/05"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"Jun., 2008"	"2008/06"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"Jul., 2008"	"2008/07"	"Chronic lower respiratory diseases"	"J40-J47"	24	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"Aug., 2008"	"2008/08"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"Sep., 2008"	"2008/09"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"Oct., 2008"	"2008/10"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"Nov., 2008"	"2008/11"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2008"	"2008"	"Dec., 2008"	"2008/12"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"Jan., 2009"	"2009/01"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"Feb., 2009"	"2009/02"	"Chronic lower respiratory diseases"	"J40-J47"	24	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"Mar., 2009"	"2009/03"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"Apr., 2009"	"2009/04"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"May, 2009"	"2009/05"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"Jun., 2009"	"2009/06"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"Jul., 2009"	"2009/07"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"Aug., 2009"	"2009/08"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"Sep., 2009"	"2009/09"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"Oct., 2009"	"2009/10"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"Nov., 2009"	"2009/11"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2009"	"2009"	"Dec., 2009"	"2009/12"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"Jan., 2010"	"2010/01"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"Feb., 2010"	"2010/02"	"Chronic lower respiratory diseases"	"J40-J47"	33	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"Mar., 2010"	"2010/03"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"Apr., 2010"	"2010/04"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"May, 2010"	"2010/05"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"Jun., 2010"	"2010/06"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"Jul., 2010"	"2010/07"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"Aug., 2010"	"2010/08"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"Sep., 2010"	"2010/09"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"Oct., 2010"	"2010/10"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"Nov., 2010"	"2010/11"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2010"	"2010"	"Dec., 2010"	"2010/12"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"Jan., 2011"	"2011/01"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"Feb., 2011"	"2011/02"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"Mar., 2011"	"2011/03"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"Apr., 2011"	"2011/04"	"Chronic lower respiratory diseases"	"J40-J47"	35	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"May, 2011"	"2011/05"	"Chronic lower respiratory diseases"	"J40-J47"	39	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"Jun., 2011"	"2011/06"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"Jul., 2011"	"2011/07"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"Aug., 2011"	"2011/08"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"Sep., 2011"	"2011/09"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"Oct., 2011"	"2011/10"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"Nov., 2011"	"2011/11"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"Micropolitan (Nonmetro)"	"5"	"2011"	"2011"	"Dec., 2011"	"2011/12"	"Chronic lower respiratory diseases"	"J40-J47"	33	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"Jan., 2003"	"2003/01"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"Feb., 2003"	"2003/02"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"Mar., 2003"	"2003/03"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"Apr., 2003"	"2003/04"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"May, 2003"	"2003/05"	"Chronic lower respiratory diseases"	"J40-J47"	24	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"Jun., 2003"	"2003/06"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"Jul., 2003"	"2003/07"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"Aug., 2003"	"2003/08"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"Sep., 2003"	"2003/09"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"Oct., 2003"	"2003/10"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"Nov., 2003"	"2003/11"	"Chronic lower respiratory diseases"	"J40-J47"	24	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2003"	"2003"	"Dec., 2003"	"2003/12"	"Chronic lower respiratory diseases"	"J40-J47"	47	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"Jan., 2004"	"2004/01"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"Feb., 2004"	"2004/02"	"Chronic lower respiratory diseases"	"J40-J47"	43	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"Mar., 2004"	"2004/03"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"Apr., 2004"	"2004/04"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"May, 2004"	"2004/05"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"Jun., 2004"	"2004/06"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"Jul., 2004"	"2004/07"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"Aug., 2004"	"2004/08"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"Sep., 2004"	"2004/09"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"Oct., 2004"	"2004/10"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"Nov., 2004"	"2004/11"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2004"	"2004"	"Dec., 2004"	"2004/12"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"Jan., 2005"	"2005/01"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"Feb., 2005"	"2005/02"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"Mar., 2005"	"2005/03"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"Apr., 2005"	"2005/04"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"May, 2005"	"2005/05"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"Jun., 2005"	"2005/06"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"Jul., 2005"	"2005/07"	"Chronic lower respiratory diseases"	"J40-J47"	24	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"Aug., 2005"	"2005/08"	"Chronic lower respiratory diseases"	"J40-J47"	24	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"Sep., 2005"	"2005/09"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"Oct., 2005"	"2005/10"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"Nov., 2005"	"2005/11"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2005"	"2005"	"Dec., 2005"	"2005/12"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"Jan., 2006"	"2006/01"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"Feb., 2006"	"2006/02"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"Mar., 2006"	"2006/03"	"Chronic lower respiratory diseases"	"J40-J47"	33	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"Apr., 2006"	"2006/04"	"Chronic lower respiratory diseases"	"J40-J47"	30	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"May, 2006"	"2006/05"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"Jun., 2006"	"2006/06"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"Jul., 2006"	"2006/07"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"Aug., 2006"	"2006/08"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"Sep., 2006"	"2006/09"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"Oct., 2006"	"2006/10"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"Nov., 2006"	"2006/11"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2006"	"2006"	"Dec., 2006"	"2006/12"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"Jan., 2007"	"2007/01"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"Feb., 2007"	"2007/02"	"Chronic lower respiratory diseases"	"J40-J47"	32	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"Mar., 2007"	"2007/03"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"Apr., 2007"	"2007/04"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"May, 2007"	"2007/05"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"Jun., 2007"	"2007/06"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"Jul., 2007"	"2007/07"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"Aug., 2007"	"2007/08"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"Sep., 2007"	"2007/09"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"Oct., 2007"	"2007/10"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"Nov., 2007"	"2007/11"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2007"	"2007"	"Dec., 2007"	"2007/12"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"Jan., 2008"	"2008/01"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"Feb., 2008"	"2008/02"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"Mar., 2008"	"2008/03"	"Chronic lower respiratory diseases"	"J40-J47"	33	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"Apr., 2008"	"2008/04"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"May, 2008"	"2008/05"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"Jun., 2008"	"2008/06"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"Jul., 2008"	"2008/07"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"Aug., 2008"	"2008/08"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"Sep., 2008"	"2008/09"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"Oct., 2008"	"2008/10"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"Nov., 2008"	"2008/11"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2008"	"2008"	"Dec., 2008"	"2008/12"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"Jan., 2009"	"2009/01"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"Feb., 2009"	"2009/02"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"Mar., 2009"	"2009/03"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"Apr., 2009"	"2009/04"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"May, 2009"	"2009/05"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"Jun., 2009"	"2009/06"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"Jul., 2009"	"2009/07"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"Aug., 2009"	"2009/08"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"Sep., 2009"	"2009/09"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"Oct., 2009"	"2009/10"	"Chronic lower respiratory diseases"	"J40-J47"	34	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"Nov., 2009"	"2009/11"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2009"	"2009"	"Dec., 2009"	"2009/12"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"Jan., 2010"	"2010/01"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"Feb., 2010"	"2010/02"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"Mar., 2010"	"2010/03"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"Apr., 2010"	"2010/04"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"May, 2010"	"2010/05"	"Chronic lower respiratory diseases"	"J40-J47"	31	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"Jun., 2010"	"2010/06"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"Jul., 2010"	"2010/07"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"Aug., 2010"	"2010/08"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"Sep., 2010"	"2010/09"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"Oct., 2010"	"2010/10"	"Chronic lower respiratory diseases"	"J40-J47"	23	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"Nov., 2010"	"2010/11"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2010"	"2010"	"Dec., 2010"	"2010/12"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"Jan., 2011"	"2011/01"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"Feb., 2011"	"2011/02"	"Chronic lower respiratory diseases"	"J40-J47"	25	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"Mar., 2011"	"2011/03"	"Chronic lower respiratory diseases"	"J40-J47"	29	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"Apr., 2011"	"2011/04"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"May, 2011"	"2011/05"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"Jun., 2011"	"2011/06"	"Chronic lower respiratory diseases"	"J40-J47"	26	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"Jul., 2011"	"2011/07"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"Aug., 2011"	"2011/08"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"Sep., 2011"	"2011/09"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"Oct., 2011"	"2011/10"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"Nov., 2011"	"2011/11"	"Chronic lower respiratory diseases"	"J40-J47"	27	Not Applicable	Not Applicable
+	"NonCore (Nonmetro)"	"6"	"2011"	"2011"	"Dec., 2011"	"2011/12"	"Chronic lower respiratory diseases"	"J40-J47"	28	Not Applicable	Not Applicable
+"---"
+"Dataset: Underlying Cause of Death, 1999-2019"
+"Query Parameters:"
+"ICD-10 113 Cause List: Asthma (J45-J46)"
+"Year/Month: 2003; 2004; 2005; 2006; 2007; 2008; 2009; 2010; 2011"
+"Group By: 2013 Urbanization; Year; Month; ICD Sub-Chapter"
+"Show Totals: False"
+"Show Zero Values: True"
+"Show Suppressed: True"
+"Calculate Rates Per: 100,000"
+"Rate Options: Default intercensal populations for years 2001-2009 (except Infant Age Groups)"
+"---"
+"Help: See http://wonder.cdc.gov/wonder/help/ucd.html for more information."
+"---"
+"Query Date: Mar 14, 2021 10:38:07 PM"
+"---"
+"Suggested Citation: Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death"
+"1999-2019 on CDC WONDER Online Database, released in 2020. Data are from the Multiple Cause of Death Files, 1999-2019, as"
+"compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed"
+"at http://wonder.cdc.gov/ucd-icd10.html on Mar 14, 2021 10:38:07 PM"
+"---"
+Messages:
+"1. Selections made to any variable in [ICD-10 Codes, ICD-10 113 Cause List] cause equivalent selections in the other variables."
+"More Information: http://wonder.cdc.gov/wonder/help/faq.html#related-variables."
+"---"
+Caveats:
+"1. Population and rates are labeled 'Not Applicable' when Autopsy, Place of Death, Weekday or Month are grouped by or limited,"
+"due to lack of a valid population. More information: http://wonder.cdc.gov/wonder/help/ucd.html#NotApplicableRates."
+"2. Circumstances in Georgia for the years 2008 and 2009 have resulted in unusually high death counts for the ICD-10 cause of"
+"death code R99, ""Other ill-defined and unspecified causes of mortality."" Caution should be used in interpreting these data."
+"More information: http://wonder.cdc.gov/wonder/help/ucd.html#Georgia-Reporting-Anomalies."
+"3. Circumstances in New Jersey for the year 2009 have resulted in unusually high death counts for the ICD-10 cause of death code"
+"R99, ""Other ill-defined and unspecified causes of mortality"" and therefore unusually low death counts in other ICD-10 codes,"
+"most notably R95, ""Sudden Infant Death Syndrome"" and X40-X49, ""Unintentional poisoning."" Caution should be used in"
+"interpreting these data. More information: http://wonder.cdc.gov/wonder/help/ucd.html#New-Jersey-Reporting-Anomalies."
+"4. These items in the results table are not fully selected: Chronic lower respiratory diseases. The Query Description lists the"
+"actual values selected."
+"5. Death rates are flagged as Unreliable when the rate is calculated with a numerator of 20 or less. More information:"
+"http://wonder.cdc.gov/wonder/help/ucd.html#Unreliable."
+"6. Beginning with the 2018 data, changes have been implemented that affect the counts for ICD-10 cause of death codes O00-O99"
+"compared to previous practice. In addition, data for the cause of death codes O00-O99 for 2003 through 2017 reflect differences"
+"in information available to individual states and probable errors. Caution should be used in interpreting these data. More"
+"information can be found at: https://www.cdc.gov/nchs/maternal-mortality/."
+"7. On March 11, 2021, the 2019 mortality data on CDC WONDER was updated with the 2019 mortality data updated by NCHS on March 4,"
+"2021 to include corrected information for residents of Texas affecting 5 records previously coded to cause code *U01.4,"
+"Terrorism involving firearms (homicide). The underlying and multiple cause of death codes for 5 records were corrected in the"
+"2019 data. Underlying and multiple cause of death codes for those 5 records were recoded to Assault (homicide) by other and"
+"unspecified firearm discharge, ICD-10 code X95. The corrected final death records replaces the data released on December 22,"
+"2020."
+"8. Changes to cause of death classification affect reporting trends. More information:"
+"http://wonder.cdc.gov/wonder/help/ucd.html#ICD-10 Changes."

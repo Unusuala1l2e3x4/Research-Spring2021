@@ -1,0 +1,240 @@
+"Notes"	"County"	"County Code"	"Year"	"Year Code"	"Month"	"Month Code"	"ICD Sub-Chapter"	"ICD Sub-Chapter Code"	Deaths	Population	Crude Rate
+	"Los Angeles County, CA"	"06037"	"1999"	"1999"	"Feb., 1999"	"1999/02"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"1999"	"1999"	"Mar., 1999"	"1999/03"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"1999"	"1999"	"Apr., 1999"	"1999/04"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"1999"	"1999"	"May, 1999"	"1999/05"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"1999"	"1999"	"Oct., 1999"	"1999/10"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"1999"	"1999"	"Nov., 1999"	"1999/11"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"1999"	"1999"	"Dec., 1999"	"1999/12"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2000"	"2000"	"Jan., 2000"	"2000/01"	"Chronic lower respiratory diseases"	"J40-J47"	22	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2000"	"2000"	"Feb., 2000"	"2000/02"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2000"	"2000"	"Mar., 2000"	"2000/03"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2000"	"2000"	"Apr., 2000"	"2000/04"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2000"	"2000"	"May, 2000"	"2000/05"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2000"	"2000"	"Jun., 2000"	"2000/06"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2000"	"2000"	"Aug., 2000"	"2000/08"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2000"	"2000"	"Sep., 2000"	"2000/09"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2000"	"2000"	"Nov., 2000"	"2000/11"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2000"	"2000"	"Dec., 2000"	"2000/12"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2001"	"2001"	"Jan., 2001"	"2001/01"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2001"	"2001"	"Feb., 2001"	"2001/02"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2001"	"2001"	"Mar., 2001"	"2001/03"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2001"	"2001"	"Apr., 2001"	"2001/04"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2001"	"2001"	"May, 2001"	"2001/05"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2001"	"2001"	"Jul., 2001"	"2001/07"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2001"	"2001"	"Oct., 2001"	"2001/10"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2001"	"2001"	"Nov., 2001"	"2001/11"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2001"	"2001"	"Dec., 2001"	"2001/12"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2002"	"2002"	"Jan., 2002"	"2002/01"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2002"	"2002"	"Mar., 2002"	"2002/03"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2002"	"2002"	"Apr., 2002"	"2002/04"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2002"	"2002"	"Sep., 2002"	"2002/09"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2002"	"2002"	"Oct., 2002"	"2002/10"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2002"	"2002"	"Dec., 2002"	"2002/12"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2003"	"2003"	"Jan., 2003"	"2003/01"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2003"	"2003"	"Mar., 2003"	"2003/03"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2003"	"2003"	"Apr., 2003"	"2003/04"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2003"	"2003"	"May, 2003"	"2003/05"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2003"	"2003"	"Jul., 2003"	"2003/07"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2003"	"2003"	"Sep., 2003"	"2003/09"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2003"	"2003"	"Oct., 2003"	"2003/10"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2004"	"2004"	"Jan., 2004"	"2004/01"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2004"	"2004"	"Feb., 2004"	"2004/02"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2004"	"2004"	"Mar., 2004"	"2004/03"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2004"	"2004"	"Sep., 2004"	"2004/09"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2004"	"2004"	"Nov., 2004"	"2004/11"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2004"	"2004"	"Dec., 2004"	"2004/12"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2005"	"2005"	"Feb., 2005"	"2005/02"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2005"	"2005"	"Mar., 2005"	"2005/03"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2005"	"2005"	"Apr., 2005"	"2005/04"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2005"	"2005"	"May, 2005"	"2005/05"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2005"	"2005"	"Jul., 2005"	"2005/07"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2005"	"2005"	"Dec., 2005"	"2005/12"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2006"	"2006"	"Jan., 2006"	"2006/01"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2006"	"2006"	"Mar., 2006"	"2006/03"	"Chronic lower respiratory diseases"	"J40-J47"	19	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2006"	"2006"	"Apr., 2006"	"2006/04"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2006"	"2006"	"Jun., 2006"	"2006/06"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2006"	"2006"	"Aug., 2006"	"2006/08"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2006"	"2006"	"Oct., 2006"	"2006/10"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2006"	"2006"	"Dec., 2006"	"2006/12"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2007"	"2007"	"Feb., 2007"	"2007/02"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2007"	"2007"	"May, 2007"	"2007/05"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2007"	"2007"	"Nov., 2007"	"2007/11"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2007"	"2007"	"Dec., 2007"	"2007/12"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2008"	"2008"	"Jan., 2008"	"2008/01"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2008"	"2008"	"Mar., 2008"	"2008/03"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2008"	"2008"	"Jul., 2008"	"2008/07"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2008"	"2008"	"Nov., 2008"	"2008/11"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Los Angeles County, CA"	"06037"	"2008"	"2008"	"Dec., 2008"	"2008/12"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"Jan., 1999"	"1999/01"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"Feb., 1999"	"1999/02"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"Mar., 1999"	"1999/03"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"Apr., 1999"	"1999/04"	"Chronic lower respiratory diseases"	"J40-J47"	21	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"May, 1999"	"1999/05"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"Jun., 1999"	"1999/06"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"Jul., 1999"	"1999/07"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"Aug., 1999"	"1999/08"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"Sep., 1999"	"1999/09"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"Oct., 1999"	"1999/10"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"Nov., 1999"	"1999/11"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"1999"	"1999"	"Dec., 1999"	"1999/12"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2000"	"2000"	"Jan., 2000"	"2000/01"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2000"	"2000"	"Feb., 2000"	"2000/02"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2000"	"2000"	"Mar., 2000"	"2000/03"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2000"	"2000"	"Apr., 2000"	"2000/04"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2000"	"2000"	"Jun., 2000"	"2000/06"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2000"	"2000"	"Jul., 2000"	"2000/07"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2000"	"2000"	"Aug., 2000"	"2000/08"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2000"	"2000"	"Sep., 2000"	"2000/09"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2000"	"2000"	"Oct., 2000"	"2000/10"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2000"	"2000"	"Nov., 2000"	"2000/11"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2000"	"2000"	"Dec., 2000"	"2000/12"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2001"	"2001"	"Feb., 2001"	"2001/02"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2001"	"2001"	"Mar., 2001"	"2001/03"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2001"	"2001"	"Apr., 2001"	"2001/04"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2001"	"2001"	"Jun., 2001"	"2001/06"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2001"	"2001"	"Jul., 2001"	"2001/07"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2001"	"2001"	"Aug., 2001"	"2001/08"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2001"	"2001"	"Sep., 2001"	"2001/09"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2001"	"2001"	"Oct., 2001"	"2001/10"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2001"	"2001"	"Nov., 2001"	"2001/11"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2001"	"2001"	"Dec., 2001"	"2001/12"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2002"	"2002"	"Feb., 2002"	"2002/02"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2002"	"2002"	"Mar., 2002"	"2002/03"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2002"	"2002"	"Apr., 2002"	"2002/04"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2002"	"2002"	"May, 2002"	"2002/05"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2002"	"2002"	"Jun., 2002"	"2002/06"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2002"	"2002"	"Aug., 2002"	"2002/08"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2002"	"2002"	"Sep., 2002"	"2002/09"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2002"	"2002"	"Oct., 2002"	"2002/10"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2002"	"2002"	"Nov., 2002"	"2002/11"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2002"	"2002"	"Dec., 2002"	"2002/12"	"Chronic lower respiratory diseases"	"J40-J47"	17	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2003"	"2003"	"May, 2003"	"2003/05"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2003"	"2003"	"Sep., 2003"	"2003/09"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2003"	"2003"	"Oct., 2003"	"2003/10"	"Chronic lower respiratory diseases"	"J40-J47"	18	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2003"	"2003"	"Dec., 2003"	"2003/12"	"Chronic lower respiratory diseases"	"J40-J47"	15	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2004"	"2004"	"Feb., 2004"	"2004/02"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2004"	"2004"	"Mar., 2004"	"2004/03"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2004"	"2004"	"Jun., 2004"	"2004/06"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2004"	"2004"	"Jul., 2004"	"2004/07"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2004"	"2004"	"Dec., 2004"	"2004/12"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2005"	"2005"	"Jan., 2005"	"2005/01"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2005"	"2005"	"Feb., 2005"	"2005/02"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2005"	"2005"	"Jun., 2005"	"2005/06"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2005"	"2005"	"Jul., 2005"	"2005/07"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2005"	"2005"	"Aug., 2005"	"2005/08"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2005"	"2005"	"Sep., 2005"	"2005/09"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2005"	"2005"	"Oct., 2005"	"2005/10"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2005"	"2005"	"Dec., 2005"	"2005/12"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2006"	"2006"	"Dec., 2006"	"2006/12"	"Chronic lower respiratory diseases"	"J40-J47"	20	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2007"	"2007"	"Jun., 2007"	"2007/06"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2007"	"2007"	"Dec., 2007"	"2007/12"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2008"	"2008"	"Jan., 2008"	"2008/01"	"Chronic lower respiratory diseases"	"J40-J47"	11	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2008"	"2008"	"Aug., 2008"	"2008/08"	"Chronic lower respiratory diseases"	"J40-J47"	13	Not Applicable	Not Applicable
+	"Cook County, IL"	"17031"	"2008"	"2008"	"Sep., 2008"	"2008/09"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Wayne County, MI"	"26163"	"1999"	"1999"	"Mar., 1999"	"1999/03"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Bronx County, NY"	"36005"	"2001"	"2001"	"Dec., 2001"	"2001/12"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Bronx County, NY"	"36005"	"2004"	"2004"	"Jan., 2004"	"2004/01"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Bronx County, NY"	"36005"	"2004"	"2004"	"Dec., 2004"	"2004/12"	"Chronic lower respiratory diseases"	"J40-J47"	12	Not Applicable	Not Applicable
+	"Kings County, NY"	"36047"	"1999"	"1999"	"Jan., 1999"	"1999/01"	"Chronic lower respiratory diseases"	"J40-J47"	16	Not Applicable	Not Applicable
+	"Kings County, NY"	"36047"	"1999"	"1999"	"Feb., 1999"	"1999/02"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Kings County, NY"	"36047"	"1999"	"1999"	"May, 1999"	"1999/05"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Kings County, NY"	"36047"	"1999"	"1999"	"Sep., 1999"	"1999/09"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Kings County, NY"	"36047"	"2003"	"2003"	"Feb., 2003"	"2003/02"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"Kings County, NY"	"36047"	"2004"	"2004"	"Jan., 2004"	"2004/01"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+	"New York County, NY"	"36061"	"1999"	"1999"	"Jan., 1999"	"1999/01"	"Chronic lower respiratory diseases"	"J40-J47"	14	Not Applicable	Not Applicable
+	"Harris County, TX"	"48201"	"2003"	"2003"	"Apr., 2003"	"2003/04"	"Chronic lower respiratory diseases"	"J40-J47"	10	Not Applicable	Not Applicable
+"---"
+"Dataset: Underlying Cause of Death, 1999-2019"
+"Query Parameters:"
+"ICD-10 113 Cause List: Asthma (J45-J46)"
+"Year/Month: 1999; 2000; 2001; 2002; 2003; 2004; 2005; 2006; 2007; 2008"
+"Group By: County; Year; Month; ICD Sub-Chapter"
+"Show Totals: Disabled"
+"Show Zero Values: Disabled"
+"Show Suppressed: True"
+"Calculate Rates Per: 100,000"
+"Rate Options: Default intercensal populations for years 2001-2009 (except Infant Age Groups)"
+"---"
+"Help: See http://wonder.cdc.gov/wonder/help/ucd.html for more information."
+"---"
+"Query Date: Mar 13, 2021 10:15:21 PM"
+"---"
+"Suggested Citation: Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death"
+"1999-2019 on CDC WONDER Online Database, released in 2020. Data are from the Multiple Cause of Death Files, 1999-2019, as"
+"compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed"
+"at http://wonder.cdc.gov/ucd-icd10.html on Mar 13, 2021 10:15:21 PM"
+"---"
+Messages:
+"1. Selections made to any variable in [ICD-10 Codes, ICD-10 113 Cause List] cause equivalent selections in the other variables."
+"More Information: http://wonder.cdc.gov/wonder/help/faq.html#related-variables."
+"2. The full results are too long to be displayed. Due to suppression constraints rows that are zero, suppressed or a total will"
+"not be available."
+"---"
+Footnotes:
+"1. Data are not available for this area for all of the requested years. See Caveats below for more information."
+"2. Data discontinuity due to county line boundary changes in requested years. See Caveats below for more information."
+"3. Deaths for Allen Parish, Louisiana are under reported in years 2006 through 2008. See Caveats below for more information."
+"---"
+Caveats:
+"1. Note: County of residence is misidentified in 316 deaths that occurred in the year 2000, for Hartford County, CT (FIPS code"
+"09003) and New London County, CT (FIPS code 09011). More information: http://wonder.cdc.gov/wonder/help/ucd.html#errata."
+"2. Population and rates are labeled 'Not Applicable' when Autopsy, Place of Death, Weekday or Month are grouped by or limited,"
+"due to lack of a valid population. More information: http://wonder.cdc.gov/wonder/help/ucd.html#NotApplicableRates."
+"3. Circumstances in Georgia for the years 2008 and 2009 have resulted in unusually high death counts for the ICD-10 cause of"
+"death code R99, ""Other ill-defined and unspecified causes of mortality."" Caution should be used in interpreting these data."
+"More information: http://wonder.cdc.gov/wonder/help/ucd.html#Georgia-Reporting-Anomalies."
+"4. Circumstances in California resulted in unusually high death counts for the ICD-10 cause of death code R99, ""Other"
+"ill-defined and unspecified causes of mortality"" for deaths occurring in years 2000 and 2001. Caution should be used in"
+"interpreting these data. More information: http://wonder.cdc.gov/wonder/help/ucd.html#California-Reporting-Anomalies."
+"5. These items in the results table are not fully selected: Chronic lower respiratory diseases. The Query Description lists the"
+"actual values selected."
+"6. Data for Prince of Wales-Hyder Census Area, AK (FIPS code 02198), Hoonah-Angoon Census Area, AK (FIPS code 02105), Skagway"
+"Municipality, AK (FIPS code 02230), Petersburg Borough/Census Area, AK (FIPS code 02195) and Wrangell City and Borough, AK (FIPS"
+"code 02275) are only available for 2014 and later; for computational purposes, counts and population estimates for 2013 and"
+"earlier are set to zero. Thus, counts and rates shown in multi-year requests for this entity do not include any data for years"
+"before 2014, only data for 2014 and later. More information: http://wonder.cdc.gov/wonder/help/ucd.html#Alaska2014."
+"7. Data for Denali Borough, Alaska (FIPS code 02068) are only available for 2003 and later; for computational purposes, counts"
+"and population estimates for 1999-2002 are set to zero. Thus, counts and rates shown in multi-year requests for this entity do"
+"not include any data for years prior to 2003, only data for 2003 and later. More information:"
+"http://wonder.cdc.gov/wonder/help/ucd.html#Denali Borough."
+"8. There is a discontinuity in the mortality and population data for Yukon-Koyukuk Census Area (FIPS code 02290) between 2002"
+"and 2003. The discontinuity occurs because part of Yukon-Koyukuk Census Area became Denali Borough, Alaska (FIPS code 02068) and"
+"beginning in 2003, deaths and population counts for this former part of Yukon-Koyukuk are reported for Denali Borough and are no"
+"longer included with data for Yukon-Koyukuk."
+"9. Death rates for Clifton Forge city, Virginia (FIPS code 51560) are available only for 1999-2000. For 2001 and beyond, death"
+"counts and population estimates for Clifton Forge city have been combined with those for Alleghany county, Virginia (FIPS code"
+"51005). Death counts and population estimates for this entity from multi-year requests, only reflect data from 1999 and 2000;"
+"for 2001 and beyond they have been set to zero. More information: http://wonder.cdc.gov/wonder/help/ucd.html#Clifton Forge."
+"10. There is a discontinuity in the mortality and population data for Alleghany, Virginia (FIPS code 51005) between 2000 and"
+"2001. It occurs because for 2001 and beyond, death counts and population estimates for Clifton Forge city, Virginia (FIPS code"
+"51560) have been combined with those for Alleghany county."
+"11. Data for Broomfield, Colorado (FIPS code 08014) are only available for 2003 and later; for computational purposes, counts"
+"and population estimates for 1999-2002 are set to zero. Thus, counts and rates shown in multi-year requests for this entity do"
+"not include any data for years prior to 2003, only data for 2003 and later. More information:"
+"http://wonder.cdc.gov/wonder/help/ucd.html#Broomfield."
+"12. There is a discontinuity in the mortality and population data for Adams, Colorado (FIPS code 08001), Boulder, Colorado (FIPS"
+"code 08013), Jefferson, Colorado (FIPS code 08059), and Weld, Colorado (FIPS code 080123) between 2002 and 2003. This"
+"discontinuity occurs because territory in each of these four counties has been combined to form a new county, Broomfield,"
+"Colorado (FIPS code 08014). Beginning in 2003, deaths and population counts for this territory are reported for Broomfield"
+"county and are no longer included with data for Adams, Boulder, Jefferson, and Weld."
+"13. Deaths for Allen Parish, Louisiana (FIPS code 22003] in years 2006 through 2008 are under reported due to problems with"
+"registering the deaths with the Louisiana Vital Statistics Office."
+"14. Deaths and population estimates are shown separately from the adjacent counties for Carson City, Nevada (FIPS code 32510)."
+"15. Deaths and population estimates are reported separately for Baltimore City (FIPS code 24510) and Baltimore county (FIPS code"
+"24005)."
+"16. Deaths and population estimates are reported separately for St. Louis City (FIPS code 29510) and county (FIPS code 29189)."
+"17. Death rates are flagged as Unreliable when the rate is calculated with a numerator of 20 or less. More information:"
+"http://wonder.cdc.gov/wonder/help/ucd.html#Unreliable."
+"18. Beginning with the 2018 data, changes have been implemented that affect the counts for ICD-10 cause of death codes O00-O99"
+"compared to previous practice. In addition, data for the cause of death codes O00-O99 for 2003 through 2017 reflect differences"
+"in information available to individual states and probable errors. Caution should be used in interpreting these data. More"
+"information can be found at: https://www.cdc.gov/nchs/maternal-mortality/."
+"19. On March 11, 2021, the 2019 mortality data on CDC WONDER was updated with the 2019 mortality data updated by NCHS on March"
+"4, 2021 to include corrected information for residents of Texas affecting 5 records previously coded to cause code *U01.4,"
+"Terrorism involving firearms (homicide). The underlying and multiple cause of death codes for 5 records were corrected in the"
+"2019 data. Underlying and multiple cause of death codes for those 5 records were recoded to Assault (homicide) by other and"
+"unspecified firearm discharge, ICD-10 code X95. The corrected final death records replaces the data released on December 22,"
+"2020."
+"20. Changes to cause of death classification affect reporting trends. More information:"
+"http://wonder.cdc.gov/wonder/help/ucd.html#ICD-10 Changes."
