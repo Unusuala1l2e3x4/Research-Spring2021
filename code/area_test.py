@@ -1,5 +1,7 @@
 import numpy as np
 from numpy import cos, sin, arctan2, arccos
+import pathlib, os
+import json
 
 # https://stackoverflow.com/questions/4681737/how-to-calculate-the-area-of-a-polygon-on-the-earths-surface-using-python
 # https://stackoverflow.com/a/19398136 <-- source of code
@@ -14,7 +16,7 @@ def greatCircleBearing(lon1, lat1, lon2, lat2):
     c = cos(d2r*lat1)*sin(d2r*lat2) - sin(lat1*d2r)*cos(d2r*lat2)*cos(d2r*dLong)
     return arctan2(s, c)
 
-def quad_area(lat, lon, deg):
+def quad_area(lon, lat, deg):
   deg = deg / 2
   lons = [lon+deg,lon+deg,lon-deg,lon-deg]
   lats = [lat+deg,lat-deg,lat-deg,lat+deg]
@@ -32,10 +34,28 @@ def quad_area(lat, lon, deg):
 
 
 
-pt = {'lon':-102.055,'lat':40.995}
-area = quad_area(pt['lat'], pt['lon'], 0.1)
+# pt = {'lon':-102.055,'lat':40.995}
+# area = quad_area(pt['lat'], pt['lon'], 0.1)
+
+pt = [-102.055, 40.995]
+area = quad_area(pt[0], pt[1], 0.1)
 
 print(area / 1000000, 'sq km')
+
+
+
+
+
+dir = str(pathlib.Path(__file__).parent.absolute())
+statesDir = os.path.join( dir, 'shapefiles\\USA_states_counties\\us_states')
+
+filename = ''
+
+with open(os.path.join(dir, filename + '.geojson'), 'r') as f:
+  stateItems = json.load(f)['features']
+
+
+
 
 
 
