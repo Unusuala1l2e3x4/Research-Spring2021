@@ -19,11 +19,13 @@
   - files downloaded via FTP, as per instructions. I used FileZilla to do this.
   - put PM2.5 files into path "Atmospheric Composition Analysis Group/V4NA03/[filetype]/NA/PM25"
     - where [filetype] = NetCDF or ArcGIS
-
+##
 ##### If in any case, you encounter error message where a directory does not exist, create it in the path described
 ##
-#### Links to potentially useful datasets/tools
-- ARSET: <https://appliedsciences.nasa.gov/what-we-do/capacity-building/arset>
+#### Links to datasets/tools being used
 - Gridded Population of the World (GPW): <https://sedac.ciesin.columbia.edu/data/collection/gpw-v4>
 - CDC Asthma: <https://www.cdc.gov/asthma/data-visualizations/default.htm>
+- CDC WONDER - Underlying Cause of Death - saved query: <https://wonder.cdc.gov/controller/saved/D76/D133F078>
+
+#### Potentially useful
 - Our World in Data - Wildfires: <https://ourworldindata.org/natural-disasters#wildfires>

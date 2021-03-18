@@ -3,7 +3,7 @@ import numpy as np
 from numpy import cos, sin, arctan2, arccos
 
 import json
-import geopandas
+import geopandas as gpd
 from numpy.testing._private.utils import print_assert_equal
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -177,12 +177,12 @@ if __name__ == "__main__":
   # cmap = 'YlOrRd'
   # regionFile = 'TENA.geo'
   unit = 'μm_m^-3'
-  res = 3 # map.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
+  res = 3 # locmap.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
   
-  # map = geopandas.read_file(geopandas.datasets.get_path("naturalearth_lowres"))
-  map = geopandas.read_file(os.path.join(shapefilesDir, mapFile))
+  # locmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+  locmap = gpd.read_file(os.path.join(shapefilesDir, mapFile))
 
-  # map = map.boundary
+  # locmap = locmap.boundary
 
 
   lats0, lons0, points_in_shape, df, basisregion = None, None, None, None, None
@@ -282,7 +282,7 @@ if __name__ == "__main__":
     # # t0 = timer_restart(t0, 'color mapping')
 
     with plt.style.context(("seaborn", "ggplot")):
-      map.plot(figsize=(18*res,10*res),
+      locmap.plot(figsize=(18*res,10*res),
                   color="white",
                   edgecolor = "black")
 
