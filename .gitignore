@@ -41,7 +41,5 @@ CDC data/500 Cities & Places
 CDC data/U.S. Chronic Disease Indicators (CDI)
 Atmospheric Composition Analysis Group/V4NA03/NetCDF/NA/PM25
 Atmospheric Composition Analysis Group/V4NA03/ArcGIS/NA/PM25
-EPA data - Air Trends
-IHME data
-NASA-IMPACT_datashare
 code/shapefiles/USA_states_counties
+unused data sources
