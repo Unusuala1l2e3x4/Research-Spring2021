@@ -1,6 +1,5 @@
 import numpy as np
 
-import json
 import geopandas as gpd
 from numpy.testing._private.utils import print_assert_equal
 import pandas as pd
@@ -8,9 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as cl
 import matplotlib.cm as cm
 
-
-import os
-import pathlib
+import os, pathlib, re, json
 
 import time
 import datetime as dt
@@ -18,10 +15,7 @@ import datetime as dt
 from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
 from shapely.ops import unary_union
 
-import rasterio
-import rasterio.features
-import rasterio.warp
-
+import rasterio, rasterio.features, rasterio.warp
 
 
 def save_plt(plt, folderPath, name, ext):
@@ -50,6 +44,15 @@ def timer_restart(t0, msg):
   return timer_start()
 
 
+def data_by_date_geoid(folderPath):
+  filenames = os.listdir(folderPath)
+  linesAll = []
+  for filename in filenames:
+    lines = open(os.path.join(folderPath, filename)).readlines()
+    lines = [list(filter(None, re.split('\t|\n|"|/',l))) for l in lines]
+    lines = [[int(item) for item in line if str.isnumeric(item)] for line in lines[1:lines.index(['---'])]]
+    linesAll += lines
+  return pd.DataFrame(linesAll, columns=['GEOID', 'year', 'month', 'deaths']).sort_values(by=['year','month','GEOID']).reset_index(drop=True)
 
 # https://jcutrer.com/python/learn-geopandas-plotting-usmaps
 # https://gis.stackexchange.com/questions/336437/colorizing-polygons-based-on-color-values-in-dataframe-column/
@@ -66,6 +69,8 @@ if __name__ == "__main__":
   # outputDir = os.path.join(pPath, 'read_pm2-5-outfiles')
   shapefilesDir = os.path.join(pPath, 'shapefiles')
   usaDir = os.path.join(shapefilesDir, 'USA_states_counties')
+
+  cdcWonderDir = os.path.join(ppPath, 'CDC data', 'CDC WONDER datasets')
 
 
   t0 = timer_start()
@@ -97,7 +102,8 @@ if __name__ == "__main__":
   # locmap = gpd.read_file(os.path.join(shapefilesDir, mapFile))
   # locmap = locmap.boundary
 
-  res = 1 # locmap.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
+  title = 'By county - Underlying Cause of Death - Chronic lower respiratory diseases, 1999-2019'
+  res = 3 # locmap.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
   # unit = 'GEOID'
   cmap = 'YlOrRd'
   deg = 0.1
@@ -108,9 +114,16 @@ if __name__ == "__main__":
   unit = 'COUNTYFP'
   df = allCountiesData
 
-
   unit = 'LANDPERCENTAGE'
   
+
+
+  deathsData = data_by_date_geoid(os.path.join(cdcWonderDir, title))
+  # print(deathsData)
+  t0 = timer_restart(t0, 'read deaths data')
+
+
+
   df[unit] = np.divide(list(map(float, df['ALAND'])), np.array(list(map(float, df['ALAND']))) + np.array(list(map(float, df['AWATER']))))
 
   print(df[unit])
@@ -154,11 +167,13 @@ if __name__ == "__main__":
     plt.colorbar(mapper, ticks=ticks)
 
     t0 = timer_restart(t0, 'create plot')
+
+    save_plt(plt,pPath,'TENA_land_to_total_area_ratio', 'png')
     
 
     t1 = timer_restart(t1, 'total time')
 
-    plt.show()
+    # plt.show()
 
 
 

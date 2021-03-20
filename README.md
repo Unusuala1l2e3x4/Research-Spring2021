@@ -12,7 +12,7 @@
   - Download files for each year: <https://sedac.ciesin.columbia.edu/data/set/sdei-global-annual-gwr-pm2-5-modis-misr-seawifs-aod/data-download#close>
   - Place files into new folder "Global Annual PM2.5 Grids"
   - Run "code/unzip_pm2-5.py 
- 
+##
 #### 2000-2018 Surface PM2.5 datasets (monthly, 0.01 deg resolution)
 - Corresponding article: <https://pubs.acs.org/doi/full/10.1021/acs.est.0c01764>
 - More info + instructions: <http://fizz.phys.dal.ca/~atmos/martin/?page_id=140http://fizz.phys.dal.ca/~atmos/martin/?page_id=140page_id=140http://fizz.phys.dal.ca/~atmos/martin/?page_id=140>
@@ -22,7 +22,7 @@
 ##
 ##### If in any case, you encounter error message where a directory does not exist, create it in the path described
 ##
-#### Links to datasets/tools being used
+#### Other datasets/tools being used
 - Gridded Population of the World (GPW): <https://sedac.ciesin.columbia.edu/data/collection/gpw-v4>
 - CDC Asthma: <https://www.cdc.gov/asthma/data-visualizations/default.htm>
 - CDC WONDER - Underlying Cause of Death - saved query: <https://wonder.cdc.gov/controller/saved/D76/D133F078>
