@@ -69,45 +69,42 @@ def clean_states_reset_index(df):
     del df['STATEFP']
   return df.reset_index(drop=True)
 
-def county_changes_deaths_reset_index(df):
-  # df = df[df.GEOID <= '56']
-  # df = df[df.GEOID != '02']
-  # df = df[df.GEOID != '15']
+def county_changes_deaths_reset_index(df): # see code/write_county_month_pop_testing.txt
+  dates = [i for i in df.keys() if i != 'GEOID']
 
   # 51515 put into   51019 (2013)
-  #   51019 in all
-  #   51515 in 1998-2009 !
-
   temp1 = df[df.GEOID == '51515']
   if len(temp1.GEOID) != 0:
     temp2 = df[df.GEOID == '51019']
-    print(temp2)
+    df.loc[temp2.index[0], dates] = df.loc[[temp1.index[0], temp2.index[0]], dates].sum()
+    df = df.drop([temp1.index[0]])
 
   # 51560 put into   51005 (2013)
-  #   51005 in all
-  #   51560 in 1998-1999 !
-
   temp1 = df[df.GEOID == '51560']
   if len(temp1.GEOID) != 0:
     temp2 = df[df.GEOID == '51005']
-    print(temp2)
+    df.loc[temp2.index[0], dates] = df.loc[[temp1.index[0], temp2.index[0]], dates].sum()
+    df = df.drop([temp1.index[0]])
 
   # 46113 renamed to 46102 (2014)
-  #   46113 in 1998-2009
-  #   46102 in 2010-2019
-
   temp1 = df[df.GEOID == '46113']
   if len(temp1.GEOID) != 0:
-    temp2 = df[df.GEOID == '46102']
-    print(temp2)
-
+    df.loc[temp1.index[0], 'GEOID'] = '46102'
 
   # 08014 created from parts of 08001, 08013, 08059, 08123 (2001)
-  #   08014 in 2000-2019
-  # ignore - no unsuppressed data for it
+  # data unavailable for it (no unsuppressed data).
+    # Thus: divide pop by 4, add result to original 4
+  temp1 = df[df.GEOID == '08014']
+  if len(temp1.GEOID) != 0:
+    df = df.drop([temp1.index[0]])
 
-  return df.reset_index(drop=True)
+  return df.sort_values(by='GEOID').reset_index(drop=True)
 
+def month_str(month):
+  if month < 10:
+    return '0' + str(month)
+  else:
+    return str(month)
 
 
 def parse_lines_deaths(path):
@@ -152,17 +149,17 @@ if __name__ == "__main__":
   countyTitle = 'By county - ' + title
   stateTitle = 'By state - ' + title
 
-
   testing = False
+  doChanges = True
+  origDataMonth = '07'
 
-  
+  all_dfs = []
 
   t0 = timer_start()
   t1 = t0
 
-  # pd.set_option('display.max_columns', None)
   
-
+  
   # for testing
   data_GEOIDs = []
   all_filenames = []
@@ -170,68 +167,78 @@ if __name__ == "__main__":
   # 1998 - 1999 data files - (write 1999 monthly pop)
   filenames = [name for name in os.listdir(usCensusDir) if name.startswith('stch-icen') and name.endswith('.txt')]
   for filename in filenames:
+    print(filename)
     outFileName = filename.split('.')[0] + '_totals'
     if outFileName + '.csv' in os.listdir(usCensusDir):
-      fd = pd.read_csv(os.path.join(usCensusDir, outFileName + '.csv'))
-      fd['GEOID'] = [GEOID_string_geoid(item) for item in fd['GEOID']]
+      df = pd.read_csv(os.path.join(usCensusDir, outFileName + '.csv'))
+      df['GEOID'] = [GEOID_string_geoid(item) for item in df['GEOID']]
     else:
-      yyyymm = filename[-8:-4]+'07'
-      fd = open(os.path.join(usCensusDir, filename), 'r').read()
-      fd = pd.read_csv(io.StringIO(fd), names=['GEOID','AgeGroup','RaceSex','Ethnicity', yyyymm], sep='\s+')
-      fd['GEOID'] = [GEOID_string_geoid(item) for item in fd['GEOID']]
-      fd = clean_states_reset_index(fd)
-      geoids = sorted(list(set(fd['GEOID'])))
+      yyyymm = filename[-8:-4]+origDataMonth
+      df = open(os.path.join(usCensusDir, filename), 'r').read()
+      df = pd.read_csv(io.StringIO(df), names=['GEOID','AgeGroup','RaceSex','Ethnicity', yyyymm], sep='\s+')
+      df['GEOID'] = [GEOID_string_geoid(item) for item in df['GEOID']]
+      df = clean_states_reset_index(df)
+      geoids = sorted(list(set(df['GEOID'])))
       sums = []
       for geoid in geoids:
-        temp = fd[fd['GEOID'] == geoid]
+        temp = df[df['GEOID'] == geoid]
         sums.append(np.sum(temp[yyyymm]))
-      fd = pd.DataFrame()
-      fd['GEOID'] = geoids
-      fd[yyyymm] = sums
-      save_df(fd, usCensusDir, outFileName)
-    print(fd)
+      df = pd.DataFrame()
+      df['GEOID'] = geoids
+      df[yyyymm] = sums
+      save_df(df, usCensusDir, outFileName)
+    # print(df)
+
+    if doChanges:
+      df = county_changes_deaths_reset_index(df)
+
+    all_dfs.append(df)
+    
     if testing:
-      data_GEOIDs.append(set(fd['GEOID'])) #
+      data_GEOIDs.append(set(df['GEOID'])) #
       all_filenames.append(filename) #
-      
 
   t0 = timer_restart(t0, '1998 - 1999 data files')
 
   # 2000 - 2019 data files
   filenames = [name for name in os.listdir(usCensusDir) if name.startswith('co-est') and name.endswith('.csv')]
   for filename in filenames:
-    fd = pd.read_csv(os.path.join(usCensusDir, filename))
-    yearColumns = [item for item in list(fd.keys()) if item.startswith('POPESTIMATE')][:10]
+    print(filename)
+    df = pd.read_csv(os.path.join(usCensusDir, filename))
+    yearColumns = [item for item in list(df.keys()) if item.startswith('POPESTIMATE')][:10]
     yearColumns2 = []
     # print(yearColumns)
-    fd['GEOID'] = [GEOID_string_state_county(state,county) for state,county in zip(fd['STATE'], fd['COUNTY'])]
-    fd = fd[~fd['GEOID'].str.endswith('000') ]
-    fd = clean_states_reset_index(fd)
+    df['GEOID'] = [GEOID_string_state_county(state,county) for state,county in zip(df['STATE'], df['COUNTY'])]
+    df = df[~df['GEOID'].str.endswith('000') ]
+    df = clean_states_reset_index(df)
     for c in yearColumns:
-      fd[c[-4:]+'07'] = fd[c]
-      yearColumns2.append(c[-4:]+'07')
-    fd = fd[['GEOID']+yearColumns2]
-    print(fd)
+      df[c[-4:]+origDataMonth] = df[c]
+      yearColumns2.append(c[-4:]+origDataMonth)
+    df = df[['GEOID']+yearColumns2]
+    # print(df)
+
+    if doChanges:
+      df = county_changes_deaths_reset_index(df)
+
+    all_dfs.append(df)
+
     if testing:
-      data_GEOIDs.append(set(fd['GEOID'])) #
+      data_GEOIDs.append(set(df['GEOID'])) #
       all_filenames.append(filename) #
 
   t0 = timer_restart(t0, '2000 - 2019 data files')
 
-
-  # orig pop numbers are for July 1; write other months based on avg monthly net change
-  
 
   if testing:
     countyMapFiles = ['cb_2019_us_county_500k', 'co99_d00']
     countyMapData = dict()
 
     for filename in countyMapFiles:
-      fd = gpd.read_file(os.path.join(usaDir, filename, filename + '.shp'))
-      if 'GEOID' not in fd.keys():
-        fd['GEOID'] = [GEOID_string_state_county(state,county) for state,county in zip(fd['STATE'], fd['COUNTY'])]
-      fd = fd.sort_values(by=['GEOID'])
-      countyMapData[filename] = clean_states_reset_index(fd)
+      df = gpd.read_file(os.path.join(usaDir, filename, filename + '.shp'))
+      if 'GEOID' not in df.keys():
+        df['GEOID'] = [GEOID_string_state_county(state,county) for state,county in zip(df['STATE'], df['COUNTY'])]
+      df = df.sort_values(by=['GEOID'])
+      countyMapData[filename] = clean_states_reset_index(df)
       data_GEOIDs.append(set(countyMapData[filename].GEOID)) #
       all_filenames.append(filename) #
 
@@ -274,13 +281,65 @@ if __name__ == "__main__":
       deaths_GEOIDs_union_subsets[all_filenames[i]] = set().union(*temp)
       print(len(deaths_GEOIDs_union_subsets[all_filenames[i]]))
       print('not in', all_filenames[i], '\t', len(data_GEOIDs[i]), sorted(list(deaths_GEOIDs_union_subsets[all_filenames[i]] - data_GEOIDs[i])), '\tissubset =', deaths_GEOIDs_union_subsets[all_filenames[i]] <= data_GEOIDs[i])
-
+    
     t0 = timer_restart(t0, 'show issubsets')
 
 
+  if doChanges: # and testing
+    all_GEOIDs = [list(df['GEOID']) for df in all_dfs]
+    all_GEOIDs_union = sorted(set().union(*[set(i) for i in all_GEOIDs]))
+    for i in range(len(all_GEOIDs)): # see if all geoids equal + sorted across all files (by comparing to union)
+      print(all_GEOIDs[i] == all_GEOIDs_union, len(all_GEOIDs[i]), len(all_GEOIDs_union))
+
+    t0 = timer_restart(t0, 'show if GEOIDs equal across all files')
+
 
   
+  # orig pop numbers are for July 1; write other months based on avg monthly net change
+  # V4NA03 pm2.5 data range: 2000-01 to 2018-12
 
+  data = pd.DataFrame(all_dfs[0])
+  for i in range(1, len(all_dfs)):
+    dates = [i for i in all_dfs[i] if i != 'GEOID']
+    data = pd.concat([data, all_dfs[i][dates]], axis=1)
+  # print(data)
+
+
+  dates = sorted(i for i in data if i != 'GEOID')
+  # print(dates)
+
+  monthSeq = np.roll([month_str(month) for month in range(1,13)], -int(origDataMonth))
+  # print(monthSeq)
+
+  for i in range(len(dates[:-1])):
+    year = dates[i][:4]
+    prev = year + monthSeq[-1]
+
+    monthlyChange = pd.DataFrame(data[dates[i + 1]] - data[dates[i]]) / 12
+    # print(monthlyChange)
+
+    startyyyymm = monthSeq[-1]
+    for month in monthSeq[:-1]:
+      if month == '01':
+        year = dates[i + 1][:4]
+      yyyymm = year + month
+      data[yyyymm] = data[prev] + monthlyChange[0]
+      prev = yyyymm
+
+  data = data.sort_index(axis=1)
+  data = data[ ['GEOID'] + [i for i in data.columns if i != 'GEOID'] ]
+
+  dates = [i for i in data if i != 'GEOID']
+  # print(dates)
+
+  lastindex = len(data)
+
+  data.loc[lastindex] = data.sum()
+  data.loc[lastindex,'GEOID'] = ''
+  # print(data)
+  # exit()
+
+  save_df(data, usCensusDir, 'county_pop_1999_2019')
 
   t1 = timer_restart(t1, 'total time')
 
