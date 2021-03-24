@@ -1,8 +1,7 @@
-from ast import parse
+
 import numpy as np
 
 import geopandas as gpd
-from numpy.testing._private.utils import print_assert_equal
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
@@ -12,8 +11,6 @@ import os, pathlib, re, json
 
 import time
 import datetime as dt
-from pandas._libs.missing import NAType
-from pandas.core.algorithms import unique
 
 from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
 from shapely.ops import unary_union
@@ -96,14 +93,15 @@ if __name__ == "__main__":
 
   stateMapFile = 'cb_2019_us_state_500k'
   stateMapData = gpd.read_file(os.path.join(usaDir, stateMapFile, stateMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
+  stateMapData = stateMapData[stateMapData.STATEFP <= '56']
   # print(stateMapData)
   t0 = timer_restart(t0, 'read stateMapData')
 
   countyMapFile = 'cb_2019_us_county_500k'
   countyMapData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
+  countyMapData = countyMapData[countyMapData.STATEFP <= '56']
   # print(countyMapData)
   t0 = timer_restart(t0, 'read countyMapData')
-
 
   stateMapData['total_deaths'] = [0.0 for i in range(len(stateMapData))]
   stateMapData['county_unsuppressed_deaths'] = [0.0 for i in range(len(stateMapData))]
@@ -127,7 +125,6 @@ if __name__ == "__main__":
 
 
   title = 'Underlying Cause of Death - Chronic lower respiratory diseases, 1999-2019'
-
   countyTitle = 'By county - ' + title
   stateTitle = 'By state - ' + title
   deg = 0.1
@@ -177,6 +174,25 @@ if __name__ == "__main__":
   t0 = timer_restart(t0, 'stateCountyStartIndices, stateIndices')
   # exit()
 
+
+
+  # get data files
+  # pop by county, month
+  # deaths by county, month
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   # given: sorted by 'YYYYMM','GEOID'
   
   for deaths_state in stateData.itertuples():
@@ -188,6 +204,10 @@ if __name__ == "__main__":
     it_stateMapData += 1
 
   # print(stateMapData)
+
+
+  # adjust remaining death numbers for suppressed counties by their land area (ratio)
+  # use stateData to record (w/ new column) ratios for each state and YYYYMM
 
 
 

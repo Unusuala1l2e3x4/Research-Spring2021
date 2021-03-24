@@ -1,0 +1,83 @@
+Intercensal State and County Characteristics Population Estimates with 1990-Base Race 
+Groups 
+
+File:	1990-1999 Intercensal State and County Characteristics Population Estimates Files for 
+Internet Display
+Date:	6/23/03
+Source:	Population Estimates Branch, U.S. Bureau of the Census
+
+Sort order of observations States in alpha sort.
+
+There is one file for each of the ten years in the intercensal series 1990-1999.  Each file contains 
+bridged -race estimates of the July 1 resident population by State, county, race (White, Black or 
+African American, American Indian or Alaska Native, Asian or Pacific Islander), age group (< 1 year, 
+1-4 years, 5-9 years, 10-14 years, ..., 80-84 years, 85 years and over), sex, and Hispanic origin (not 
+Hispanic or Latino, Hispanic or Latino).  
+
+File names:
+				STCH-icen1990.txt
+				STCH-icen1991.txt
+				STCH-icen1992.txt
+				STCH-icen1993.txt
+				STCH-icen1994.txt
+				STCH-icen1995.txt
+				STCH-icen1996.txt
+				STCH-icen1997.txt
+				STCH-icen1998.txt
+				STCH-icen1999.txt
+
+Data fields (in order of which they appear):
+Year
+FIPS code state
+FIPS code county
+Age Group
+Race-Sex
+Ethnic origin
+POP
+
+The key for year code is as follows:
+		90 = 1990
+		91 = 1991
+		92 = 1992
+		93 = 1993
+		94 = 1994
+		95 = 1995
+		96 = 1996
+		97 = 1997
+		98 = 1998
+		99 = 1999
+
+The key for Age group code is as follows:
+		0 = <1 year
+		1 = 1-4 years
+		2 = 5-9 years
+		3 = 10-14 years
+		4 = 15-19 years
+		5 = 20-24 years
+		6 = 25-29 years
+		7 = 30-34 years
+		8 = 35-39 years
+		9 = 40-44 years
+		10 = 45-49 years
+		11 = 50-54 years
+		12 = 55-59 years
+		13 = 60-64 years
+		14 = 65-69 years
+		15 = 70-74 years
+		16 = 75-79 years
+		17 = 80-84 years
+		18 = 85 years and over
+
+The key for the race-sex group is as follows:
+		1 = White male
+		2 = White female
+		3 = Black male
+		4 = Black female
+		5 = American Indian or Alaska Native male
+		6 = American Indian or Alaska Native female
+		7 = Asian or Pacific Islander male
+		8 = Asian or Pacific Islander female
+
+The key for the Ethnic origin code is as follows:
+		1 = not Hispanic or Latino
+		2 = Hispanic or Latino

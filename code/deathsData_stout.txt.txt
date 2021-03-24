@@ -1,4 +1,4 @@
-
+# county
        GEOID  YYYYMM  deaths
 0      01073  199901      35
 1      01097  199901      22
@@ -14,6 +14,7 @@
 
 [69131 rows x 3 columns]
 
+# state
       GEOID  YYYYMM  deaths
 0        01  199901     240
 1        02  199901      18
