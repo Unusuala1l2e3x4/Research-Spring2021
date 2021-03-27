@@ -18,11 +18,13 @@ from shapely.ops import unary_union
 import rasterio, rasterio.features, rasterio.warp
 
 
-def save_plt(plt, folderPath, name, ext):
-  plt.savefig(os.path.join(folderPath, name + '.' + ext), format=ext)
-
-def save_df(df, folderPath, name):
-  df.to_csv(os.path.join(folderPath, name + '.csv'), index=False  )
+def save_df(df, folderPath, name, ext):
+  print('save', os.path.join(folderPath, name + '.' + ext))
+  if ext == 'csv':
+    df.to_csv(os.path.join(folderPath, name + '.csv'), index=False  )
+  elif ext == 'hdf5':
+    df.to_hdf(os.path.join(folderPath, name + '.hdf5'), key='data', mode='w', format='fixed')
+  # df.to_csv(os.path.join(folderPath, name + '.csv'), index=False  )
   # df.to_hdf(os.path.join(folderPath, name + '.hdf5'), key='data', mode='w', format=None)
   # fd = pd.HDFStore(os.path.join(folderPath, name + '.hdf5'))
   # fd.put('data', df, format='table', data_columns=True, complib='blosc', complevel=5)
@@ -30,6 +32,19 @@ def save_df(df, folderPath, name):
   # fd = h5py.File(os.path.join(folderPath, name + '.hdf5'),'w')
   # fd.create_dataset('data', data=df)
   # fd.close()
+
+def read_df(folderPath, name, ext):
+  print('read', os.path.join(folderPath, name + '.' + ext))
+  if ext == 'csv':
+    return pd.read_csv(os.path.join(folderPath, name + '.csv'))
+  elif ext == 'hdf5':
+    return pd.read_hdf(os.path.join(folderPath, name + '.hdf5'))
+
+def is_in_dir(folderPath, name, ext):
+  return name + '.' + ext in os.listdir(folderPath)
+
+def save_plt(plt, folderPath, name, ext):
+  plt.savefig(os.path.join(folderPath, name + '.' + ext), format=ext)
 
 
 
@@ -45,29 +60,33 @@ def timer_restart(t0, msg):
   return timer_start()
 
 
-def parse_lines_deaths(path):
+def parse_lines_deaths(path, suppValString):
   lines = open(path).readlines()
   lines = [list(filter(None, re.split('\t|\n|"|/',l))) for l in lines]
   for l in lines:
     if 'Suppressed'in l:
-      l[l.index('Suppressed')] = '-1'
-  lines = [[item for item in line if (item == '-1' or str.isnumeric(item))] for line in lines[1:lines.index(['---'])]]
+      l[l.index('Suppressed')] = suppValString
+  lines = [[item for item in line if (item == suppValString or str.isnumeric(item))] for line in lines[1:lines.index(['---'])]]
   return [[l[0], l[1] + l[2], l[3]] for l in lines]
 
-def deaths_by_date_geoid(title):
+def deaths_by_date_geoid(title, suppValString):
   linesAll = []
   if os.path.isdir(title):
     filenames = os.listdir(title)
     for filename in filenames:
-      linesAll += parse_lines_deaths(os.path.join(title, filename))
+      linesAll += parse_lines_deaths(os.path.join(title, filename), suppValString)
   else:
     title += '.txt'
-    linesAll = parse_lines_deaths(title)
+    linesAll = parse_lines_deaths(title, suppValString)
   ret = pd.DataFrame(linesAll, columns=['GEOID', 'YYYYMM', 'deaths']).sort_values(by=['YYYYMM','GEOID']).reset_index(drop=True)
   ret['deaths'] = pd.to_numeric(ret['deaths'])
   return ret
 
-
+def countyGEOIDstring(geo):
+  geo = str(geo)
+  while len(geo) != 5:
+    geo = '0' + geo
+  return geo
 
 
 # https://jcutrer.com/python/learn-geopandas-plotting-usmaps
@@ -123,17 +142,23 @@ if __name__ == "__main__":
 
 
 
-
+  # PARAMS
   title = 'Underlying Cause of Death - Chronic lower respiratory diseases, 1999-2019'
   countyTitle = 'By county - ' + title
   stateTitle = 'By state - ' + title
   deg = 0.1
+  suppValString = '-1'
+  unit = 'total_deaths'
+  
+  ext = 'hdf5'
 
 
   # shapeData = stateMapData
   # shapeData = countyMapData
 
-  unit = 'total_deaths'
+  # END PARAMS
+
+  
 
 
 
@@ -142,9 +167,9 @@ if __name__ == "__main__":
   # exit()
 
   
-  countyData = deaths_by_date_geoid(os.path.join(cdcWonderDir, countyTitle)) # has missing rows
+  countyData = deaths_by_date_geoid(os.path.join(cdcWonderDir, countyTitle), suppValString) # has missing rows
   # print(countyData)
-  stateData = deaths_by_date_geoid(os.path.join(cdcWonderDir, stateTitle)) # no missing rows
+  stateData = deaths_by_date_geoid(os.path.join(cdcWonderDir, stateTitle), suppValString) # no missing rows
   # print(stateData)
   t0 = timer_restart(t0, 'read deaths data')
 
@@ -179,16 +204,6 @@ if __name__ == "__main__":
   # get data files
   # pop by county, month
   # deaths by county, month
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -235,8 +250,8 @@ if __name__ == "__main__":
   t0 = timer_restart(t0, 'get total_deaths')
 
 
-  # save_df(pd.DataFrame(stateData), outputDir, stateTitle)
-  # save_df(pd.DataFrame(countyData), outputDir, countyTitle)
+  # save_df(pd.DataFrame(stateData), outputDir, stateTitle, ext)
+  # save_df(pd.DataFrame(countyData), outputDir, countyTitle, ext)
 
 
 
