@@ -189,8 +189,8 @@ if __name__ == "__main__":
   countyTitle = 'By county - ' + title
   stateTitle = 'By state - ' + title
 
-  suppValString = '-1'
-  ext = 'csv' # csv/hdf5
+  suppValString = '-1' #None
+  ext = 'hdf5' # csv/hdf5
   
   testing = False
   # END PARAMS
@@ -202,11 +202,10 @@ if __name__ == "__main__":
   t1 = t0
 
   countyPop = pd.read_hdf(os.path.join(usCensusDir, 'TENA_county_pop_1999_2019.hdf5'))
-
-
+  countyPop = makeCountyFileGEOIDs_STATEFPs(countyPop)
 
   statePop = pd.read_hdf(os.path.join(usCensusDir, 'TENA_state_pop_1999_2019.hdf5'))
-
+  statePop = makeStateFileGEOIDs(statePop)
   
   if is_in_dir(cdcWonderDir, countyTitle, ext):
     countyData = read_df(cdcWonderDir, countyTitle, ext)
@@ -264,13 +263,14 @@ if __name__ == "__main__":
   # print(countyData)
   # print(countyPop)
 
+
   countyPopUnsup = countyData.reindex_like(countyPop)
   countyPopUnsup.loc[range(len(countyData.GEOID), len(countyPop.GEOID)), 'GEOID'] = list(set(countyPop.GEOID) - set(countyData.GEOID))
   countyPopUnsup = makeCountyFileGEOIDs_STATEFPs(countyPopUnsup)
   countyPopUnsup = countyPopUnsup.sort_values(by='GEOID').reset_index(drop=True)
+  countyData = copy.deepcopy(countyPopUnsup) # including all GEOIDS
   countyPopUnsup.loc[:, dates] = countyPop.loc[:, dates] * (countyPopUnsup.loc[:, dates] / countyPopUnsup.loc[:, dates])
-  
-  # print(countyPopUnsup)
+
   # print(countyPop)
 
   if is_in_dir(cdcWonderDir, 'statePopUnsup', ext):
@@ -282,31 +282,85 @@ if __name__ == "__main__":
     save_df(statePopUnsup, cdcWonderDir, 'statePopUnsup', ext)
   statePopUnsup = makeStateFileGEOIDs(statePopUnsup)
 
-
+  t0 = timer_restart(t0, 'get unsuppressed data')
   
   # print(statePopUnsup)
   # print(statePop)
 
-  d = copy.deepcopy(stateData)
-  d.loc[:, dates] = d.loc[:, dates] - stateDataUnsup.loc[:, dates]
-  print(d)
-
-  p = copy.deepcopy(statePop)
-  p.loc[:, dates] = p.loc[:, dates] - statePopUnsup.loc[:, dates]
-  print(p)
-
-  # d
+  dS = copy.deepcopy(stateData)
+  dS.loc[:, dates] = dS.loc[:, dates] - stateDataUnsup.loc[:, dates]
+  # print(dS)
 
 
-  r = copy.deepcopy(d)
-  r.loc[:, dates] = r.loc[:, dates] / p.loc[:, dates]
-  print(r)
+  pS = copy.deepcopy(statePop)
+  pS.loc[:, dates] = pS.loc[:, dates] - statePopUnsup.loc[:, dates]
+  # print(pS)
 
 
 
-  # countyData
+  # print(statePop.loc[9, '199902'])                                                        # 7969952.916666667
+  # print(statePopUnsup.loc[9, '199902'] + pS.loc[9, '199902'])                              # 7969952.916666666
+  # print(statePopUnsup.loc[9, '199902'] + pS.loc[9, '199902'] == statePop.loc[9, '199902']) # False
 
 
+  # print(countyPopUnsup)
+  # # print(countyPop.count())
+  # print(countyData)
+  # print(stateData)
+
+  # print(stateData.loc[6:7, ['GEOID']+dates[-14:]])
+  # print()
+  # print(stateDataUnsup.loc[6:7, ['GEOID']+dates[-14:]])
+  # print()
+  # print(dS.loc[6:7, ['GEOID']+dates[-14:]])
+  # print()
+  # print()
+  # print(statePop.loc[6:7, ['GEOID']+dates[-14:]])
+  # print()
+  # print(statePopUnsup.loc[6:7, ['GEOID']+dates[-14:]])
+  # print()
+  # print(pS.loc[6:7, ['GEOID']+dates[-14:]])
+  # print()
+  # print()
+  # print(dS.loc[6:7, ['GEOID']+dates[-14:]])
+  # print()
+  # print(pS.loc[6:7, ['GEOID']+dates[-14:]])
+  # print()
+  # print(rS.loc[6:7, ['GEOID']+dates[-14:]])
+
+
+  countyDataNew = copy.deepcopy(countyData)
+  countyDataNew.loc[:, dates] = countyData.loc[:, dates] / countyData.loc[:, dates]
+  
+  countyDataNew = countyDataNew.replace([1], 0)
+  countyDataNew = countyDataNew.replace([NaN], 1)
+  
+  rS = copy.deepcopy(dS)
+  rS.loc[:, dates] = rS.loc[:, dates] / pS.loc[:, dates]
+  # print(rS)
+
+  rC = copy.deepcopy(countyPop)
+  # print(rC)
+
+  s = 0
+  c = 0
+  while c != len(rC) and s != len(rS):
+    if rS.loc[s, 'GEOID'] == rC.loc[c, 'STATEFP']:
+      rC.loc[c, dates] = rS.loc[s, dates]
+      c += 1
+    else:
+      s += 1
+
+  # print(rC)
+  # exit()
+
+  countyDataNew.loc[:, dates] = (countyDataNew.loc[:, dates] * countyPop.loc[:, dates] * rC.loc[:, dates]) + countyData.loc[:, dates].replace([NaN], 0)
+  print(countyDataNew)
+
+  t0 = timer_restart(t0, 'make county data with suppressed estimates')
+
+  del countyDataNew['STATEFP']
+  save_df(countyDataNew, cdcWonderDir, countyTitle + ', suppressed estimates', ext)
 
   t1 = timer_restart(t1, 'total time')
 

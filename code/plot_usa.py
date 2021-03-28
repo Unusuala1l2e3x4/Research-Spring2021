@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as cl
 import matplotlib.cm as cm
 
-import os, pathlib, re, json
+import os, pathlib, re, json, sys
 
 import time
 import datetime as dt
@@ -19,7 +19,7 @@ import rasterio, rasterio.features, rasterio.warp
 
 
 def save_df(df, folderPath, name, ext):
-  print('save', os.path.join(folderPath, name + '.' + ext))
+  # print('save', os.path.join(folderPath, name + '.' + ext))
   if ext == 'csv':
     df.to_csv(os.path.join(folderPath, name + '.csv'), index=False  )
   elif ext == 'hdf5':
@@ -34,7 +34,7 @@ def save_df(df, folderPath, name, ext):
   # fd.close()
 
 def read_df(folderPath, name, ext):
-  print('read', os.path.join(folderPath, name + '.' + ext))
+  # print('read', os.path.join(folderPath, name + '.' + ext))
   if ext == 'csv':
     return pd.read_csv(os.path.join(folderPath, name + '.csv'))
   elif ext == 'hdf5':
@@ -60,33 +60,73 @@ def timer_restart(t0, msg):
   return timer_start()
 
 
-def parse_lines_deaths(path, suppValString):
-  lines = open(path).readlines()
-  lines = [list(filter(None, re.split('\t|\n|"|/',l))) for l in lines]
-  for l in lines:
-    if 'Suppressed'in l:
-      l[l.index('Suppressed')] = suppValString
-  lines = [[item for item in line if (item == suppValString or str.isnumeric(item))] for line in lines[1:lines.index(['---'])]]
-  return [[l[0], l[1] + l[2], l[3]] for l in lines]
-
-def deaths_by_date_geoid(title, suppValString):
-  linesAll = []
-  if os.path.isdir(title):
-    filenames = os.listdir(title)
-    for filename in filenames:
-      linesAll += parse_lines_deaths(os.path.join(title, filename), suppValString)
-  else:
-    title += '.txt'
-    linesAll = parse_lines_deaths(title, suppValString)
-  ret = pd.DataFrame(linesAll, columns=['GEOID', 'YYYYMM', 'deaths']).sort_values(by=['YYYYMM','GEOID']).reset_index(drop=True)
-  ret['deaths'] = pd.to_numeric(ret['deaths'])
-  return ret
-
 def countyGEOIDstring(geo):
   geo = str(geo)
   while len(geo) != 5:
     geo = '0' + geo
   return geo
+
+def stateGEOIDstring(geo):
+  geo = str(geo)
+  while len(geo) != 2:
+    geo = '0' + geo
+  return geo
+
+def makeCountyFileGEOIDs(df):
+  df.GEOID = [countyGEOIDstring(item) for item in df.GEOID]
+  return df
+
+def makeStateFileGEOIDs(df):
+  df.GEOID = [stateGEOIDstring(item) for item in df.GEOID]
+  return df
+
+def makeCountyFileGEOIDs_STATEFPs(df):
+  df = makeCountyFileGEOIDs(df)
+  df['STATEFP'] = [item[0:2] for item in df.GEOID]
+  return df
+
+
+def clean_states_reset_index(df):
+  statefpExists = 'STATEFP' in df.keys()
+  if not statefpExists:
+    df['STATEFP'] = [item[0:2] for item in df.GEOID]
+  df = df[df['STATEFP'] <= '56']
+  df = df[df['STATEFP'] != '02']
+  df = df[df['STATEFP'] != '15']
+  if not statefpExists:
+    del df['STATEFP']
+  return df.reset_index(drop=True)
+
+def county_changes_deaths_reset_index(df): # see code/write_county_month_pop_testing.txt
+  dates = [i for i in df.keys() if i != 'GEOID' and i != 'STATEFP']
+
+  # 51515 put into   51019 (2013)
+  temp1 = df[df.GEOID == '51515']
+  if len(temp1.GEOID) != 0:
+    temp2 = df[df.GEOID == '51019']
+    df.loc[temp2.index[0], dates] = df.loc[[temp1.index[0], temp2.index[0]], dates].sum()
+    df = df.drop([temp1.index[0]])
+
+  # 51560 put into   51005 (2013)
+  temp1 = df[df.GEOID == '51560']
+  if len(temp1.GEOID) != 0:
+    temp2 = df[df.GEOID == '51005']
+    df.loc[temp2.index[0], dates] = df.loc[[temp1.index[0], temp2.index[0]], dates].sum()
+    df = df.drop([temp1.index[0]])
+
+  # 46113 renamed to 46102 (2014)
+  temp1 = df[df.GEOID == '46113']
+  if len(temp1.GEOID) != 0:
+    df.loc[temp1.index[0], 'GEOID'] = '46102'
+
+  # 08014 created from parts of 08001, 08013, 08059, 08123 (2001)
+  # data unavailable for it (no unsuppressed data).
+    # Thus: divide pop by 4, add result to original 4
+  temp1 = df[df.GEOID == '08014']
+  if len(temp1.GEOID) != 0:
+    df = df.drop([temp1.index[0]])
+
+  return df.sort_values(by='GEOID').reset_index(drop=True)
 
 
 # https://jcutrer.com/python/learn-geopandas-plotting-usmaps
@@ -96,7 +136,7 @@ def countyGEOIDstring(geo):
 
 
 if __name__ == "__main__":
-  
+  # numArgs = len(sys.argv)
 
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
@@ -114,20 +154,13 @@ if __name__ == "__main__":
   stateMapData = gpd.read_file(os.path.join(usaDir, stateMapFile, stateMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
   stateMapData = stateMapData[stateMapData.STATEFP <= '56']
   # print(stateMapData)
-  t0 = timer_restart(t0, 'read stateMapData')
+  # t0 = timer_restart(t0, 'read stateMapData')
 
   countyMapFile = 'cb_2019_us_county_500k'
   countyMapData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
   countyMapData = countyMapData[countyMapData.STATEFP <= '56']
   # print(countyMapData)
-  t0 = timer_restart(t0, 'read countyMapData')
-
-  stateMapData['total_deaths'] = [0.0 for i in range(len(stateMapData))]
-  stateMapData['county_unsuppressed_deaths'] = [0.0 for i in range(len(stateMapData))]
-  # stateMapData['county_unsuppressed_ALAND'] = [0.0 for i in range(len(stateMapData))]
-
-
-  countyMapData['total_deaths'] = [0.0 for i in range(len(countyMapData))]
+  # t0 = timer_restart(t0, 'read countyMapData')
 
 
   basisregionFile = os.path.join(shapefilesDir, 'basisregions', 'TENA.geo.json')
@@ -136,155 +169,52 @@ if __name__ == "__main__":
   with open(basisregionFile, 'r') as f:
     contents = json.load(f)
     basisregion = GeometryCollection( [shape(feature["geometry"]).buffer(0) for feature in contents['features'] ] )
-  t0 = timer_restart(t0, 'read basisregion')
-
-
-
+  # t0 = timer_restart(t0, 'read basisregion')
 
 
   # PARAMS
   title = 'Underlying Cause of Death - Chronic lower respiratory diseases, 1999-2019'
   countyTitle = 'By county - ' + title
   stateTitle = 'By state - ' + title
+  countySupEstTitle = countyTitle + ', suppressed estimates'
+
   deg = 0.1
   suppValString = '-1'
   unit = 'total_deaths'
-  
+
   ext = 'hdf5'
 
+  deathsData = makeCountyFileGEOIDs(read_df(cdcWonderDir, countySupEstTitle, ext))
+  # deathsData = makeCountyFileGEOIDs(read_df(cdcWonderDir, countyTitle, ext))
+  # deathsData = makeCountyFileGEOIDs(read_df(cdcWonderDir, stateTitle, ext))
+  # t0 = timer_restart(t0, 'read deaths data')
 
-  # shapeData = stateMapData
-  # shapeData = countyMapData
+  startYYYYMM, endYYYYMM = sys.argv[1], sys.argv[2]
+  # startYYYYMM, endYYYYMM = '199901', '201907'
+
+  shapeData = countyMapData
+
+  pltTitle = sys.argv[3] + ' (' + startYYYYMM + '-' + endYYYYMM + ')'
+  # pltTitle = countySupEstTitle + ' (' + startYYYYMM + '-' + endYYYYMM + ')'
+
+  res = 2 # locmap.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
+  cmap = 'YlOrRd'
 
   # END PARAMS
 
-  
 
+  shapeData = clean_states_reset_index(shapeData)
+  shapeData = county_changes_deaths_reset_index(shapeData) # removes 08014
+  # print(list(shapeData.GEOID) == list(deathsData.GEOID)) # True
 
+  dates = sorted(i for i in deathsData if i != 'GEOID' and i >= startYYYYMM and i <= endYYYYMM)
+  # print(dates)
 
+  # print(np.sum(deathsData.loc[:, dates], axis=0)) # totals for each YYYYM
+  # print(np.sum(deathsData.loc[:, dates], axis=1)) # totals for each GEOID
 
-  # print(shapeData)
-  # exit()
+  shapeData[unit] = np.sum(deathsData.loc[:, dates], axis=1)
 
-  
-  countyData = deaths_by_date_geoid(os.path.join(cdcWonderDir, countyTitle), suppValString) # has missing rows
-  # print(countyData)
-  stateData = deaths_by_date_geoid(os.path.join(cdcWonderDir, stateTitle), suppValString) # no missing rows
-  # print(stateData)
-  t0 = timer_restart(t0, 'read deaths data')
-
-  it_stateData, it_countyData = 0, 0
-  it_stateMapData, it_countyMapData = 0, 0
-
-  prevYYYYMM = next(stateData.itertuples()).YYYYMM
-
-  stateCountyStartIndices = dict()
-  stateIndices = dict()
-
-  prevSTATEFP = '00'
-  # stateMapData : add column for starting index of counties in each state (iterate through countyMapData)
-  for county in countyMapData.itertuples():
-    if prevSTATEFP != county.STATEFP:
-      stateCountyStartIndices[county.STATEFP] = county.Index
-      prevSTATEFP = county.STATEFP
-  stateCountyStartIndices['length'] = len(countyMapData)
-
-  prevSTATEFP = '00'
-  for state in stateMapData.itertuples():
-    if prevSTATEFP != state.STATEFP:
-      stateIndices[state.STATEFP] = state.Index
-      prevSTATEFP = state.STATEFP
-  stateIndices['length'] = len(stateMapData)
-  
-  t0 = timer_restart(t0, 'stateCountyStartIndices, stateIndices')
-  # exit()
-
-
-
-  # get data files
-  # pop by county, month
-  # deaths by county, month
-
-
-
-
-  # given: sorted by 'YYYYMM','GEOID'
-  
-  for deaths_state in stateData.itertuples():
-    if prevYYYYMM != deaths_state.YYYYMM: # new month
-      prevYYYYMM = deaths_state.YYYYMM
-      it_stateMapData = 0
-    if deaths_state.GEOID == stateMapData.at[it_stateMapData, 'GEOID'] and deaths_state.deaths != -1:
-      stateMapData.at[it_stateMapData, 'total_deaths'] += deaths_state.deaths
-    it_stateMapData += 1
-
-  # print(stateMapData)
-
-
-  # adjust remaining death numbers for suppressed counties by their land area (ratio)
-  # use stateData to record (w/ new column) ratios for each state and YYYYMM
-
-
-
-  i = 0
-  while i != len(countyData):
-    if prevYYYYMM != countyData.YYYYMM[i]: # new month
-      prevYYYYMM = countyData.YYYYMM[i]
-      it_countyMapData = 0
-
-    if countyData.GEOID[i] == countyMapData.at[it_countyMapData, 'GEOID'] and countyData.deaths[i] != -1:
-      countyMapData.at[it_countyMapData, 'total_deaths'] += countyData.deaths[i]
-
-      stateFP = stateIndices[countyData.GEOID[i][0:2]]
-      
-      stateMapData.at[stateFP, 'county_unsuppressed_deaths'] += countyData.deaths[i]
-      # stateMapData.at[stateFP, 'county_unsuppressed_ALAND'] += countyData.deaths[i]
-
-    elif countyData.GEOID[i] != countyMapData.at[it_countyMapData, 'GEOID']:
-      it_countyMapData += 1
-      continue
-    it_countyMapData += 1
-    i += 1
-
-
-  t0 = timer_restart(t0, 'get total_deaths')
-
-
-  # save_df(pd.DataFrame(stateData), outputDir, stateTitle, ext)
-  # save_df(pd.DataFrame(countyData), outputDir, countyTitle, ext)
-
-
-
-
- 
-  
-  print(countyMapData)
-  # print(countyMapData.iloc[[i for i in range(len(countyMapData) -  100)]])
-  print(stateMapData)
-  exit()
-
-  
-
-
-  # while it_stateData != len(stateData):
-  #   it_stateData += 1
-  
-
-    
-
-
-
-  # uniqueStates = pd.unique(stateData['YYYYMM'].values.ravel('K'))
-  # print(uniqueStates)
-  # print( len(uniqueStates)*21*12 )
-  # print( len(stateData) )
-
-
-
-  # exit()
-
-
-  
   # shapeData['LANDPERCENTAGE'] = np.divide(list(map(float, shapeData['ALAND'])), np.array(list(map(float, shapeData['ALAND']))) + np.array(list(map(float, shapeData['AWATER']))))
   # minUnit = np.min(shapeData['LANDPERCENTAGE'])
   # maxUnit = np.max(shapeData['LANDPERCENTAGE'])
@@ -292,20 +222,17 @@ if __name__ == "__main__":
   # mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
   # shapeData['color'] = [mapper.to_rgba(v) for v in shapeData['LANDPERCENTAGE']]
 
-  shapeData = countyMapData
-  pltTitle = countyTitle
-  res = 2 # locmap.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
-  cmap = 'YlOrRd'
 
   minUnit = np.min(shapeData[unit])
   maxUnit = np.max(shapeData[unit])
+  # maxUnit = 15
   norm = cl.Normalize(vmin=minUnit, vmax=maxUnit, clip=False) # clip=False is default
   mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
   shapeData['color'] = [mapper.to_rgba(v) for v in shapeData[unit]]
   
 
 
-  t0 = timer_restart(t0, 'color mapping')
+  # t0 = timer_restart(t0, 'color mapping')
 
   with plt.style.context(("seaborn", "ggplot")):
     shapeData.plot(figsize=(18*res,10*res),
@@ -335,13 +262,12 @@ if __name__ == "__main__":
     # print(ticks)
     plt.colorbar(mapper, ticks=ticks)
 
-    t0 = timer_restart(t0, 'create plot')
+    # t0 = timer_restart(t0, 'create plot')
 
     # save_plt(plt,outputDir,'TENA_land_to_total_area_ratio', 'png')
     save_plt(plt,outputDir, pltTitle, 'png')
-    
 
-    t1 = timer_restart(t1, 'total time')
+    # t1 = timer_restart(t1, 'total time')
 
     # plt.show()
 
