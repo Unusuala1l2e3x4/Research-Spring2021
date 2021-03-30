@@ -17,116 +17,9 @@ from shapely.ops import unary_union
 
 import rasterio, rasterio.features, rasterio.warp
 
+import importlib
+fc = importlib.import_module('functions')
 
-def save_df(df, folderPath, name, ext):
-  # print('save', os.path.join(folderPath, name + '.' + ext))
-  if ext == 'csv':
-    df.to_csv(os.path.join(folderPath, name + '.csv'), index=False  )
-  elif ext == 'hdf5':
-    df.to_hdf(os.path.join(folderPath, name + '.hdf5'), key='data', mode='w', format='fixed')
-  # df.to_csv(os.path.join(folderPath, name + '.csv'), index=False  )
-  # df.to_hdf(os.path.join(folderPath, name + '.hdf5'), key='data', mode='w', format=None)
-  # fd = pd.HDFStore(os.path.join(folderPath, name + '.hdf5'))
-  # fd.put('data', df, format='table', data_columns=True, complib='blosc', complevel=5)
-  # fd.close()
-  # fd = h5py.File(os.path.join(folderPath, name + '.hdf5'),'w')
-  # fd.create_dataset('data', data=df)
-  # fd.close()
-
-def read_df(folderPath, name, ext):
-  # print('read', os.path.join(folderPath, name + '.' + ext))
-  if ext == 'csv':
-    return pd.read_csv(os.path.join(folderPath, name + '.csv'))
-  elif ext == 'hdf5':
-    return pd.read_hdf(os.path.join(folderPath, name + '.hdf5'))
-
-def is_in_dir(folderPath, name, ext):
-  return name + '.' + ext in os.listdir(folderPath)
-
-def save_plt(plt, folderPath, name, ext):
-  plt.savefig(os.path.join(folderPath, name + '.' + ext), format=ext)
-
-
-
-def utc_time_filename():
-  return dt.datetime.utcnow().strftime('%Y.%m.%d-%H.%M.%S')
-
-def timer_start():
-  return time.time()
-def timer_elapsed(t0):
-  return time.time() - t0
-def timer_restart(t0, msg):
-  print(timer_elapsed(t0), msg)
-  return timer_start()
-
-
-def countyGEOIDstring(geo):
-  geo = str(geo)
-  while len(geo) != 5:
-    geo = '0' + geo
-  return geo
-
-def stateGEOIDstring(geo):
-  geo = str(geo)
-  while len(geo) != 2:
-    geo = '0' + geo
-  return geo
-
-def makeCountyFileGEOIDs(df):
-  df.GEOID = [countyGEOIDstring(item) for item in df.GEOID]
-  return df
-
-def makeStateFileGEOIDs(df):
-  df.GEOID = [stateGEOIDstring(item) for item in df.GEOID]
-  return df
-
-def makeCountyFileGEOIDs_STATEFPs(df):
-  df = makeCountyFileGEOIDs(df)
-  df['STATEFP'] = [item[0:2] for item in df.GEOID]
-  return df
-
-
-def clean_states_reset_index(df):
-  statefpExists = 'STATEFP' in df.keys()
-  if not statefpExists:
-    df['STATEFP'] = [item[0:2] for item in df.GEOID]
-  df = df[df['STATEFP'] <= '56']
-  df = df[df['STATEFP'] != '02']
-  df = df[df['STATEFP'] != '15']
-  if not statefpExists:
-    del df['STATEFP']
-  return df.reset_index(drop=True)
-
-def county_changes_deaths_reset_index(df): # see code/write_county_month_pop_testing.txt
-  dates = [i for i in df.keys() if i != 'GEOID' and i != 'STATEFP']
-
-  # 51515 put into   51019 (2013)
-  temp1 = df[df.GEOID == '51515']
-  if len(temp1.GEOID) != 0:
-    temp2 = df[df.GEOID == '51019']
-    df.loc[temp2.index[0], dates] = df.loc[[temp1.index[0], temp2.index[0]], dates].sum()
-    df = df.drop([temp1.index[0]])
-
-  # 51560 put into   51005 (2013)
-  temp1 = df[df.GEOID == '51560']
-  if len(temp1.GEOID) != 0:
-    temp2 = df[df.GEOID == '51005']
-    df.loc[temp2.index[0], dates] = df.loc[[temp1.index[0], temp2.index[0]], dates].sum()
-    df = df.drop([temp1.index[0]])
-
-  # 46113 renamed to 46102 (2014)
-  temp1 = df[df.GEOID == '46113']
-  if len(temp1.GEOID) != 0:
-    df.loc[temp1.index[0], 'GEOID'] = '46102'
-
-  # 08014 created from parts of 08001, 08013, 08059, 08123 (2001)
-  # data unavailable for it (no unsuppressed data).
-    # Thus: divide pop by 4, add result to original 4
-  temp1 = df[df.GEOID == '08014']
-  if len(temp1.GEOID) != 0:
-    df = df.drop([temp1.index[0]])
-
-  return df.sort_values(by='GEOID').reset_index(drop=True)
 
 
 # https://jcutrer.com/python/learn-geopandas-plotting-usmaps
@@ -147,20 +40,20 @@ if __name__ == "__main__":
 
   cdcWonderDir = os.path.join(ppPath, 'CDC data', 'CDC WONDER datasets')
 
-  t0 = timer_start()
+  t0 = fc.timer_start()
   t1 = t0
 
   stateMapFile = 'cb_2019_us_state_500k'
   stateMapData = gpd.read_file(os.path.join(usaDir, stateMapFile, stateMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
   stateMapData = stateMapData[stateMapData.STATEFP <= '56']
   # print(stateMapData)
-  # t0 = timer_restart(t0, 'read stateMapData')
+  # t0 = fc.timer_restart(t0, 'read stateMapData')
 
   countyMapFile = 'cb_2019_us_county_500k'
   countyMapData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
   countyMapData = countyMapData[countyMapData.STATEFP <= '56']
   # print(countyMapData)
-  # t0 = timer_restart(t0, 'read countyMapData')
+  # t0 = fc.timer_restart(t0, 'read countyMapData')
 
 
   basisregionFile = os.path.join(shapefilesDir, 'basisregions', 'TENA.geo.json')
@@ -169,7 +62,7 @@ if __name__ == "__main__":
   with open(basisregionFile, 'r') as f:
     contents = json.load(f)
     basisregion = GeometryCollection( [shape(feature["geometry"]).buffer(0) for feature in contents['features'] ] )
-  # t0 = timer_restart(t0, 'read basisregion')
+  # t0 = fc.timer_restart(t0, 'read basisregion')
 
 
   # PARAMS
@@ -184,10 +77,10 @@ if __name__ == "__main__":
 
   ext = 'hdf5'
 
-  deathsData = makeCountyFileGEOIDs(read_df(cdcWonderDir, countySupEstTitle, ext))
-  # deathsData = makeCountyFileGEOIDs(read_df(cdcWonderDir, countyTitle, ext))
-  # deathsData = makeCountyFileGEOIDs(read_df(cdcWonderDir, stateTitle, ext))
-  # t0 = timer_restart(t0, 'read deaths data')
+  deathsData = fc.makeCountyFileGEOIDs(fc.read_df(cdcWonderDir, countySupEstTitle, ext))
+  # deathsData = fc.makeCountyFileGEOIDs(fc.read_df(cdcWonderDir, countyTitle, ext))
+  # deathsData = fc.makeCountyFileGEOIDs(fc.read_df(cdcWonderDir, stateTitle, ext))
+  # t0 = fc.timer_restart(t0, 'read deaths data')
 
   startYYYYMM, endYYYYMM = sys.argv[1], sys.argv[2]
   # startYYYYMM, endYYYYMM = '199901', '201907'
@@ -203,8 +96,8 @@ if __name__ == "__main__":
   # END PARAMS
 
 
-  shapeData = clean_states_reset_index(shapeData)
-  shapeData = county_changes_deaths_reset_index(shapeData) # removes 08014
+  shapeData = fc.clean_states_reset_index(shapeData)
+  shapeData = fc.county_changes_deaths_reset_index(shapeData) # removes 08014
   # print(list(shapeData.GEOID) == list(deathsData.GEOID)) # True
 
   dates = sorted(i for i in deathsData if i != 'GEOID' and i >= startYYYYMM and i <= endYYYYMM)
@@ -232,7 +125,7 @@ if __name__ == "__main__":
   
 
 
-  # t0 = timer_restart(t0, 'color mapping')
+  # t0 = fc.timer_restart(t0, 'color mapping')
 
   with plt.style.context(("seaborn", "ggplot")):
     shapeData.plot(figsize=(18*res,10*res),
@@ -262,12 +155,12 @@ if __name__ == "__main__":
     # print(ticks)
     plt.colorbar(mapper, ticks=ticks)
 
-    # t0 = timer_restart(t0, 'create plot')
+    # t0 = fc.timer_restart(t0, 'create plot')
 
-    # save_plt(plt,outputDir,'TENA_land_to_total_area_ratio', 'png')
-    save_plt(plt,outputDir, pltTitle, 'png')
+    # fc.save_plt(plt,outputDir,'TENA_land_to_total_area_ratio', 'png')
+    fc.save_plt(plt,outputDir, pltTitle, 'png')
 
-    # t1 = timer_restart(t1, 'total time')
+    # t1 = fc.timer_restart(t1, 'total time')
 
     # plt.show()
 

@@ -1,9 +1,12 @@
-Gridded Population of the World
-research papers
+ARSET - NASA Applied Science.url
+Assignment_4_Data_Science_Fall_2020.pdf
+Asthma Data Visualizations - CDC.url
+Atmospheric Composition Analysis Group/V4NA03/ArcGIS/NA/PM25code/shapefiles/USA_states_counties
+Atmospheric Composition Analysis Group/V4NA03/NetCDF/NA/PM25
+CDC data/500 Cities & Places
+CDC data/U.S. Chronic Disease Indicators (CDI)
 Data Analytics
-other/disease
-other/AMS presentation slides
-GFED4s_timesArea
+EO4HEALTH — GEO Health CoP.url
 GFED4s/GFED4.1s_1997.hdf5
 GFED4s/GFED4.1s_1998.hdf5
 GFED4s/GFED4.1s_1999.hdf5
@@ -28,20 +31,16 @@ GFED4s/GFED4.1s_2017_beta.hdf5
 GFED4s/GFED4.1s_2018_beta.hdf5
 GFED4s/GFED4.1s_2019_beta.hdf5
 GFED4s/GFED4.1s_2020_beta.hdf5
-ARSET - NASA Applied Science.url
-Assignment_4_Data_Science_Fall_2020.pdf
-Asthma Data Visualizations - CDC.url
-EO4HEALTH — GEO Health CoP.url
-Natural Disasters - Our World in Data.url
-code/test.py
-code/area_test.py
+GFED4s_timesArea
 Global Annual PM2.5 Grids/data_0.01
 Global Annual PM2.5 Grids/points_in_region
+Gridded Population of the World
+Natural Disasters - Our World in Data.url
+code/area_test.py
 code/read_pm2-5-outfiles/gwr_pm25_2016_nonnegative.tif
-CDC data/500 Cities & Places
-CDC data/U.S. Chronic Disease Indicators (CDI)
-Atmospheric Composition Analysis Group/V4NA03/NetCDF/NA/PM25
-Atmospheric Composition Analysis Group/V4NA03/ArcGIS/NA/PM25
-code/shapefiles/USA_states_counties
+code/test.py
+other/AMS presentation slides
+other/disease
+research papers
 unused data sources
 writeup
