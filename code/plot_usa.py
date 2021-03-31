@@ -135,7 +135,7 @@ if __name__ == "__main__":
 
     plt.xlabel("Longitude", fontsize=7*res)
     plt.ylabel("Latitude", fontsize=7*res)
-    # plt.title(name + ' (' + unit + ')', fontsize=7*res)
+    plt.title(pltTitle)
 
     xlim0 = plt.xlim()
     ylim0 = plt.ylim()
@@ -157,10 +157,10 @@ if __name__ == "__main__":
 
     # t0 = fc.timer_restart(t0, 'create plot')
 
-    # fc.save_plt(plt,outputDir,'TENA_land_to_total_area_ratio', 'png')
+    # # fc.save_plt(plt,outputDir,'TENA_land_to_total_area_ratio', 'png')
     fc.save_plt(plt,outputDir, pltTitle, 'png')
 
-    # t1 = fc.timer_restart(t1, 'total time')
+    t1 = fc.timer_restart(t1, 'total time')
 
     # plt.show()
 

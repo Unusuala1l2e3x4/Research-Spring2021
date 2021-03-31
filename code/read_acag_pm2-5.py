@@ -12,20 +12,21 @@ import matplotlib.cm as cm
 import xarray
 import bottleneck as bn
 
-import os
-import pathlib
-import sys
+import os, pathlib, sys, re
 
 import time
 import datetime as dt
 import copy
 
-import rasterio
-import rasterio.features
-import rasterio.warp
+import rasterio, rasterio.features, rasterio.warp
+
+import netCDF4
 
 from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
 from shapely.ops import unary_union
+
+import importlib
+fc = importlib.import_module('functions')
 
 WGS84_RADIUS = 6378137
 WGS84_RADIUS_SQUARED = WGS84_RADIUS**2
@@ -54,24 +55,14 @@ def quad_area(lat, lon, deg):
   return (np.sum(angles) - (N-2)*np.pi)*WGS84_RADIUS_SQUARED
 
 
-def tif_filenames(filenames):
-  ret = []
-  for filename in filenames:
-    if '.tif' in filename:
-      ret.append(filename)
-  return ret
-
-def save_plt(plt, folderPath, name, ext):
-  plt.savefig(os.path.join(folderPath, name + '.' + ext), format=ext)
-
-def save_df(df, folderPath, name):
-  # df.to_hdf(os.path.join(folderPath, filename + '.hdf5'), key='data')
-  fd = pd.HDFStore(os.path.join(folderPath, name + '.hdf5'))
-  fd.put('data', df, format='table', data_columns=True, complib='blosc', complevel=5)
-  fd.close()
-  # fd = h5py.File(os.path.join(folderPath, name + '.hdf5'),'w')
-  # fd.create_dataset('data', data=df)
-  # fd.close()
+# def save_df(df, folderPath, name):
+#   # df.to_hdf(os.path.join(folderPath, filename + '.hdf5'), key='data')
+#   fd = pd.HDFStore(os.path.join(folderPath, name + '.hdf5'))
+#   fd.put('data', df, format='table', data_columns=True, complib='blosc', complevel=5)
+#   fd.close()
+#   # fd = h5py.File(os.path.join(folderPath, name + '.hdf5'),'w')
+#   # fd.create_dataset('data', data=df)
+#   # fd.close()
 
 def save_tif(mat, fd, folderPath, name):
   # mat = np.where( mat < 0, 0, mat)
@@ -90,24 +81,11 @@ def save_tif(mat, fd, folderPath, name):
     fd2.close()
   
 
-def utc_time_filename():
-  return dt.datetime.utcnow().strftime('%Y.%m.%d-%H.%M.%S')
-
-def timer_start():
-  return time.time()
-def timer_elapsed(t0):
-  return time.time() - t0
-def timer_restart(t0, msg):
-  print(timer_elapsed(t0), msg)
-  return timer_start()
-
-
 def flatten_list(regular_list):
   return [item for sublist in regular_list for item in sublist]
 
 def lim_length(lim):
   return lim[1] - lim[0]
-
 
 def marker_size(plt, xlim1, ylim1, deg):
   a = 0.4865063 * (deg / 0.25)
@@ -118,59 +96,59 @@ def marker_size(plt, xlim1, ylim1, deg):
   y1 = lim_length(ylim1)
   return (x1*y1*a) / (x*y)
 
-def geojson_filenames(filenames):
-  ret = []
-  for filename in filenames:
-    if '.geo' in filename:
-      ret.append(filename)
-  return ret
-
-# def are_points_inside(basisregion, df):
-#   return [ basisregion.contains(Point(row.lon, row.lat)) for row in df.itertuples() ]
-
+def nearest_index(array, value):
+    array = np.asarray(array)
+    i = (np.abs(array - value)).argmin()
+    # return array[idx]
+    return i
 
 def get_bound_indices(bounds, transform):
   buf = .001
   rc = rasterio.transform.rowcol(transform, [bounds[0] - buf, bounds[2]], [bounds[1] - buf, bounds[3]], op=round, precision=3)
+  # (minx, miny, maxx, maxy)
+  # print(rc)
+  # print(rc[1][0])
   minLon = max(rc[1][0], 0)
   maxLon = rc[1][1]
+  # print(rc[0][1])
   minLat = max(rc[0][1], 0)
   maxLat = rc[0][0]
   return minLat, maxLat, minLon, maxLon
 
 
-def is_mat_smaller(mat, bounds, fd):
-  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, fd.transform)
+def is_mat_smaller(mat, bounds, transform):
+  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
   return minLat == minLon == 0 and maxLat + 1 >= len(mat) and maxLon + 1 >= len(mat[0])
 
 
 
-def bound_ravel(lats_1d, lons_1d, bounds, fd):
+def bound_ravel(lats_1d, lons_1d, bounds, transform):
   # bounds = (-179.995 - buf,-54.845 - buf,179.995,69.845) # entire mat
-  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, fd.transform)
+  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
   lats_1d = np.flip(lats_1d[minLat:maxLat])
   lons_1d = lons_1d[minLon:maxLon]
   return np.ravel(np.rot90(np.matrix([lats_1d for i in lons_1d]))), np.ravel(np.matrix([lons_1d for i in lats_1d]))
 
 
-
 if __name__ == "__main__":
   numArgs = len(sys.argv)
-  startYear, endYear = int(sys.argv[1]), int(sys.argv[2])
+  startDate, endDate = sys.argv[1], sys.argv[2]
   cmap = sys.argv[3]
   geojsonDir = sys.argv[4]
   regionFile = sys.argv[5]
   mapFile = sys.argv[6]
+  isYearly = sys.argv[7] == 'True'
 
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
-  pmDir = os.path.join(ppPath, 'Global Annual PM2.5 Grids')
-  outputDir = os.path.join(pPath, 'read_pm2-5-outfiles')
+  pmDir = os.path.join(ppPath, 'Atmospheric Composition Analysis Group')
+  outputDir = os.path.join(pPath, 'read_acag_pm2-5-outfiles')
   shapefilesDir = os.path.join(pPath, 'shapefiles')
+  
 
-  filenames = os.listdir(os.path.join(pmDir, 'data_0.01'))
   points_in_region_filenames = os.listdir(os.path.join(pmDir, 'points_in_region'))
-  filenames = sorted(tif_filenames(filenames)) # same as in gfedDir_timesArea
+  filenames = [re.split('.nc',l)[0] for l in sorted(os.listdir(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25')))]
+  # exit()
 
 
   # PARAMS
@@ -178,12 +156,11 @@ if __name__ == "__main__":
   # regionFile = 'TENA.geo'
   unit = 'μm_m^-3'
   res = 3 # locmap.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
+  ext = 'hdf5'
   
   # locmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
   locmap = gpd.read_file(os.path.join(shapefilesDir, mapFile))
-
   # locmap = locmap.boundary
-
 
   lats0, lons0, points_in_shape, df, basisregion = None, None, None, None, None
   minLat, maxLat, minLon, maxLon = None, None, None, None
@@ -192,8 +169,7 @@ if __name__ == "__main__":
   
   levels1, levels2 = [], []
 
-
-  t0 = timer_start()
+  t0 = fc.timer_start()
   t1 = t0
 
   # with open(os.path.join(basisregionsDir, regionFile + '.geo.json'), 'r') as f:
@@ -201,62 +177,55 @@ if __name__ == "__main__":
     contents = json.load(f)
     basisregion = shape(contents['features'][0]['geometry'])
 
-  # t0 = timer_restart(t0, 'read basisregion')
+  # t0 = fc.timer_restart(t0, 'read basisregion')
 
   regionFile = regionFile.split('.')[0]
 
   if regionFile + '.hdf5' in points_in_region_filenames:
-    df = pd.read_hdf(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), key='points')
+    # df = pd.read_hdf(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), key='points')
+    df = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
     lats0 = np.array(df['lat'])
     lons0 = np.array(df['lon'])
-    # t0 = timer_restart(t0, 'load df')
+    # t0 = fc.timer_restart(t0, 'load df')
+
 
   for filename in filenames:
-    name = filename.split('.')[0]
-    year = int(name.split('_')[-1])
-    if year < startYear or year > endYear:
+    startend = re.split('_|-',filename)[3:5]
+    
+    if startend[0] < startDate or startend[1] > endDate or (startend[0] == startend[1] and isYearly) or (startend[0] != startend[1] and not isYearly):
       continue
+    
+    fd = fc.read_df(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25'), filename, 'nc') # http://unidata.github.io/netcdf4-python/
+    # print(fd.variables.keys())
+    # print(fd.dimensions['LON'].size)
+    # print(fd.variables['PM25'][:])
 
-    print(filename)
-    fd = rasterio.open(os.path.join(pmDir, 'data_0.01', filename))
-    # print(fd.bounds)
-    # print(fd.crs)
-    # (lon index, lat index) 
-    # print(fd.transform*(0,0))
-    # print(fd.transform)
+    mat = fd.variables['PM25'][:]
 
-    minLat, maxLat, minLon, maxLon = get_bound_indices(basisregion.bounds, fd.transform)
+    deg = np.average(np.abs(fd.variables['LON'][:-1] - fd.variables['LON'][1:]))
+    # print(deg)
 
-    mat = fd.read(1)
-    # t0 = timer_restart(t0, 'read tif')
-    xy = fd.xy(range(len(mat)), range(len(mat)))
+    # transform = rasterio.transform.from_origin(np.round(basisregion.bounds[0], 2), np.round(basisregion.bounds[3], 2), deg,deg)
+    transform = rasterio.transform.from_origin(np.round(np.min(fd.variables['LON'][:]), 2), np.round(np.max(fd.variables['LAT'][:]), 2), deg,deg)
+    minLat, maxLat, minLon, maxLon = get_bound_indices(basisregion.bounds, transform)
+    # print(minLat, maxLat, minLon, maxLon)
+  
+    # t0 = fc.timer_restart(t0, 'read tif')
+    xy = rasterio.transform.xy(transform, range(fd.dimensions['LAT'].size), range(fd.dimensions['LAT'].size))
     lats_1d = np.array(xy[1])
-    xy = fd.xy(range(len(mat[0])), range(len(mat[0])))
+    xy = rasterio.transform.xy(transform, range(fd.dimensions['LON'].size), range(fd.dimensions['LON'].size))
     lons_1d = np.array(xy[0])
 
-    deg = np.abs(lats_1d[0] - lats_1d[1])
-
-    if df is None and not is_mat_smaller(mat, basisregion.bounds, fd):
-      lats0, lons0 = bound_ravel(lats_1d, lons_1d, basisregion.bounds, fd)
+    if df is None and not is_mat_smaller(mat, basisregion.bounds, transform):
+      lats0, lons0 = bound_ravel(lats_1d, lons_1d, basisregion.bounds, transform)
 
       df = pd.DataFrame()
       df['lat'] = lats0
       df['lon'] = lons0
 
-      # print(df)
-
-      # shapely stuff; get indices (impossible time contraint for all .01 TENA points - ~70 days)
-      # df = df[are_points_inside(basisregion, df)]
-      # print(df)
-      # t0 = timer_restart(t0, 'make df')
-
-      with pd.HDFStore(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), mode='w') as f:
-        f.put('points', df, format='table', data_columns=True)
-        f.close()
-
-      # t0 = timer_restart(t0, 'save df')
-    # print(df)
-
+      fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
+      
+      # t0 = fc.timer_restart(t0, 'save df')
 
     lats_1d = lats_1d[minLat:maxLat]
     lons_1d = lons_1d[minLon:maxLon]
@@ -264,22 +233,22 @@ if __name__ == "__main__":
     bounded_mat = mat[minLat:maxLat,minLon:maxLon]          # for contour plotting
     bounded_mat = np.where(bounded_mat < 0, 0, bounded_mat) # for contour plotting
 
+    # print(bounded_mat)
     
     if df is not None:
-      mat = np.ravel(bounded_mat)
-      # t0 = timer_restart(t0, 'mat bound ravel')
-      df[unit] = mat
-      df = df[df[unit] > 0]
-      # t0 = timer_restart(t0, 'df remove <= 0')
+      df[unit] = np.ravel(bounded_mat) # dont remove zero values; not many zeros, will only cause problems
+      # t0 = fc.timer_restart(t0, 'bounded_mat_raveled')
 
 
-    minUnit = np.min(bounded_mat) if df is None else np.min(df[unit])
-    maxUnit = np.max(bounded_mat) if df is None else np.max(df[unit])
+    minUnit = np.nanmin(bounded_mat) if df is None else np.nanmin(df[unit])
+    maxUnit = np.nanmax(bounded_mat) if df is None else np.nanmax(df[unit])
+
+    # print(maxUnit)
 
     norm = cl.Normalize(vmin=minUnit, vmax=maxUnit, clip=False) # clip=False is default
     mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
     # df['color'] = [mapper.to_rgba(v) for v in df[unit]]
-    # # t0 = timer_restart(t0, 'color mapping')
+    # # t0 = fc.timer_restart(t0, 'color mapping')
 
     with plt.style.context(("seaborn", "ggplot")):
       locmap.plot(figsize=(18*res,10*res),
@@ -288,7 +257,8 @@ if __name__ == "__main__":
 
       plt.xlabel("Longitude", fontsize=7*res)
       plt.ylabel("Latitude", fontsize=7*res)
-      plt.title(name + ' (' + unit + ')', fontsize=7*res)
+      plt.title(filename, fontsize=7*res)
+      # plt.title(filename + ' (' + unit + ')', fontsize=7*res)
 
       xlim0 = plt.xlim()
       ylim0 = plt.ylim()
@@ -320,14 +290,14 @@ if __name__ == "__main__":
       # print(ticks)
       plt.colorbar(mapper, ticks=ticks)
 
-      # t0 = timer_restart(t0, 'create plot')
+      # t0 = fc.timer_restart(t0, 'create plot')
       
-      save_plt(plt, outputDir, regionFile + '_' + str(year) + '_' + '{:.3f}'.format(maxUnit) + '_' + utc_time_filename(), 'png')
-      # save_plt(plt, outputDir, name + '_' + regionFile + '_' + '-'.join([str(i) for i in levels2]))
-      # save_df_plt(plt, df, hist_month, hist_year, cldf, stats, outputDir, title + '-' + utc_time_filename())
-      # t0 = timer_restart(t0, 'save outfiles')
+      fc.save_plt(plt, outputDir, regionFile + '_' + startend[0] + '_' + startend[1] + '_' + '{:.3f}'.format(maxUnit) + '_' + fc.utc_time_filename(), 'png')
+      # fc.save_plt(plt, outputDir, name + '_' + regionFile + '_' + '-'.join([str(i) for i in levels2]))
+      # t0 = fc.timer_restart(t0, 'save outfiles')
 
-      t1 = timer_restart(t1, 'total time')
+
+  t1 = fc.timer_restart(t1, 'total time')
 
       # plt.show()
 

@@ -3,7 +3,7 @@ import numpy as np
 import geopandas as gpd
 import pandas as pd
 
-import os, pathlib, re
+import os, pathlib, re, netCDF4
 
 import time
 import datetime as dt
@@ -31,6 +31,8 @@ def read_df(folderPath, name, ext):
     return pd.read_csv(os.path.join(folderPath, name + '.csv'))
   elif ext == 'hdf5':
     return pd.read_hdf(os.path.join(folderPath, name + '.hdf5'))
+  elif ext == 'nc':
+    return netCDF4.Dataset(os.path.join(folderPath, name + '.nc'))
 
 def is_in_dir(folderPath, name, ext):
   return name + '.' + ext in os.listdir(folderPath)

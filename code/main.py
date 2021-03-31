@@ -61,32 +61,49 @@ if __name__ == "__main__":
 
 
   # world = os.path.join('UIA_World_Countries_Boundaries-shp', 'World_Countries__Generalized_.shp')
-  # states = os.path.join('USA_states_counties', 'cb_2018_us_state_500k', 'cb_2018_us_state_500k.shp')
-  # counties = os.path.join('USA_states_counties', 'cb_2017_us_county_500k', 'cb_2017_us_county_500k.shp')
+  states = os.path.join('USA_states_counties', 'cb_2019_us_state_500k', 'cb_2019_us_state_500k.shp')
+  counties = os.path.join('USA_states_counties', 'cb_2019_us_county_500k', 'cb_2019_us_county_500k.shp')
 
   # # 1998, 2016
   # years = np.arange(1998, 2016 + 1)
 
   # for y in years:
-  #   # run(dir, 'read_pm2-5.py', [y, y, 'YlOrRd', 'basisregions', 'TENA.geo.json', states])
-  #   run(dir, 'read_pm2-5.py', [y, y, 'YlOrRd', 'geo-countries', 'geo-countries-union.json', world])
+  #   # run(dir, 'read_sedac_pm2-5.py', [y, y, 'YlOrRd', 'basisregions', 'TENA.geo.json', states])
+  #   run(dir, 'read_sedac_pm2-5.py', [y, y, 'YlOrRd', 'geo-countries', 'geo-countries-union.json', world])
 
-  # run(dir, 'read_pm2-5.py', [2016, 2016, 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), 'CA-California.geojson', counties])
+  # run(dir, 'read_sedac_pm2-5.py', [2000, 2000, 'YlOrRd', 'basisregions', 'TENA.geo.json', states])
+  # run(dir, 'read_sedac_pm2-5.py', [2000, 2000, 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', counties])
   # t0 = timer_restart(t0, '')
 
-  # startYYYYMM, endYYYYMM, pltTitle
-  datesStart = [i for i in dates if i.endswith('01')]
-  datesEnd = [i for i in dates if i.endswith('12')]
-  print(datesStart)
-  print(datesEnd)
+  # exit()
 
-  for d in range(min(len(datesStart), len(datesEnd))):
-    run(dir, 'plot_usa.py', [datesStart[d], datesEnd[d], 'CountyDeaths']) 
+  # max range = '200001', '201812'
+  run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'YlOrRd', 'geo-countries', 'geo-countries-union.json', states, True])
+  # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'YlOrRd', 'basisregions', 'TENA.geo.json', counties, True])
+  # run(dir, 'read_acag_pm2-5.py', ['200001', '200001', 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', states, True])
+  
+  # exit()
+
+
+  # # startYYYYMM, endYYYYMM, pltTitle
+  # dates01 = [i for i in dates if i.endswith('01')]
+  # dates12 = [i for i in dates if i.endswith('12')]
+  # print(dates01)
+  # print(dates12)
+
+  # for d in range(min(len(dates01), len(dates12))):
+  #   run(dir, 'plot_usa.py', [dates01[d], dates12[d], 'CountyDeaths']) 
+
+
+
 
   # for d in dates:
   #   run(dir, 'plot_usa.py', [d, d, 'CountyDeaths']) 
   
   # run(dir, 'plot_usa.py', [dates[0], dates[-1], 'CountyDeaths']) 
+  # run(dir, 'plot_usa.py', [dates[30], dates[30], 'CountyDeaths']) 
 
-  t1 = timer_restart(t1, 'total time')
+
+
+  t1 = timer_restart(t1, 'main total time')
   
