@@ -145,12 +145,13 @@ def is_mat_smaller(mat, bounds, fd):
 
 
 
-def bound_ravel(lats_1d, lons_1d, bounds, fd):
+def bound_ravel(lats_1d, lons_1d, bounds, transform):
   # bounds = (-179.995 - buf,-54.845 - buf,179.995,69.845) # entire mat
-  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, fd.transform)
-  lats_1d = np.flip(lats_1d[minLat:maxLat])
+  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
+  lats_1d = lats_1d[minLat:maxLat]
   lons_1d = lons_1d[minLon:maxLon]
-  return np.ravel(np.rot90(np.matrix([lats_1d for i in lons_1d]))), np.ravel(np.matrix([lons_1d for i in lats_1d]))
+  X, Y = np.meshgrid(lons_1d, np.flip(lats_1d))
+  return np.ravel(Y), np.ravel(X)
 
 
 
@@ -257,13 +258,11 @@ if __name__ == "__main__":
       # t0 = timer_restart(t0, 'save df')
     # print(df)
 
-
     lats_1d = lats_1d[minLat:maxLat]
     lons_1d = lons_1d[minLon:maxLon]
 
     bounded_mat = mat[minLat:maxLat,minLon:maxLon]          # for contour plotting
     bounded_mat = np.where(bounded_mat < 0, 0, bounded_mat) # for contour plotting
-
     
     if df is not None:
       mat = np.ravel(bounded_mat)
@@ -271,7 +270,6 @@ if __name__ == "__main__":
       df[unit] = mat
       df = df[df[unit] > 0]
       # t0 = timer_restart(t0, 'df remove <= 0')
-
 
     minUnit = np.min(bounded_mat) if df is None else np.min(df[unit])
     maxUnit = np.max(bounded_mat) if df is None else np.max(df[unit])
@@ -297,17 +295,6 @@ if __name__ == "__main__":
       plt.ylim((np.min(lats_1d) - deg, np.max(lats_1d) + deg))
 
       ## contour lines
-      # levels2 = np.arange(0,25,2)
-      # levels2 = np.arange(0,maxUnit,2)
-      # levels2 = np.arange(0,maxUnit,4)
-      # contours = plt.contour(lons_1d, lats_1d, bounded_mat, levels=levels2, colors='white', linewidths=0, alpha=1)
-      # labels = plt.clabel(contours, fontsize=3*res, colors='black')
-
-      ## contour filler
-      # levels1 = np.arange(minUnit,maxUnit,0.6)
-      # levels1 = np.arange(0,25,0.2)
-      # levels1 = np.arange(0,maxUnit,0.2)
-      # levels1 = levels2
       levels1 = np.arange(0,maxUnit,4)
       plt.contourf(lons_1d, lats_1d, bounded_mat, levels=levels1, cmap=cmap, alpha=0.6)
 
@@ -323,8 +310,6 @@ if __name__ == "__main__":
       # t0 = timer_restart(t0, 'create plot')
       
       save_plt(plt, outputDir, regionFile + '_' + str(year) + '_' + '{:.3f}'.format(maxUnit) + '_' + utc_time_filename(), 'png')
-      # save_plt(plt, outputDir, name + '_' + regionFile + '_' + '-'.join([str(i) for i in levels2]))
-      # save_df_plt(plt, df, hist_month, hist_year, cldf, stats, outputDir, title + '-' + utc_time_filename())
       # t0 = timer_restart(t0, 'save outfiles')
 
       t1 = timer_restart(t1, 'total time')

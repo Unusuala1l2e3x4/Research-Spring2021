@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
 import matplotlib.cm as cm
+import matplotlib.path as mplp
 import xarray
 import bottleneck as bn
 
@@ -22,7 +23,7 @@ import rasterio, rasterio.features, rasterio.warp
 
 import netCDF4
 
-from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
+from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon, LineString, MultiLineString
 from shapely.ops import unary_union
 
 import importlib
@@ -54,15 +55,6 @@ def quad_area(lat, lon, deg):
       angles[i] = arccos(cos(-beta1)*cos(-beta2) + sin(-beta1)*sin(-beta2))
   return (np.sum(angles) - (N-2)*np.pi)*WGS84_RADIUS_SQUARED
 
-
-# def save_df(df, folderPath, name):
-#   # df.to_hdf(os.path.join(folderPath, filename + '.hdf5'), key='data')
-#   fd = pd.HDFStore(os.path.join(folderPath, name + '.hdf5'))
-#   fd.put('data', df, format='table', data_columns=True, complib='blosc', complevel=5)
-#   fd.close()
-#   # fd = h5py.File(os.path.join(folderPath, name + '.hdf5'),'w')
-#   # fd.create_dataset('data', data=df)
-#   # fd.close()
 
 def save_tif(mat, fd, folderPath, name):
   # mat = np.where( mat < 0, 0, mat)
@@ -125,9 +117,71 @@ def is_mat_smaller(mat, bounds, transform):
 def bound_ravel(lats_1d, lons_1d, bounds, transform):
   # bounds = (-179.995 - buf,-54.845 - buf,179.995,69.845) # entire mat
   minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
-  lats_1d = np.flip(lats_1d[minLat:maxLat])
+  lats_1d = lats_1d[minLat:maxLat]
   lons_1d = lons_1d[minLon:maxLon]
-  return np.ravel(np.rot90(np.matrix([lats_1d for i in lons_1d]))), np.ravel(np.matrix([lons_1d for i in lats_1d]))
+  X, Y = np.meshgrid(lons_1d, lats_1d)
+  return np.ravel(Y), np.ravel(X)
+
+def boundary_to_mask(boundary, x, y):
+  mpath = mplp.Path(boundary)
+  X, Y = np.meshgrid(x, y)
+  points = np.array((X.flatten(), Y.flatten())).T
+  mask = mpath.contains_points(points).reshape(X.shape)
+  return 
+  
+
+
+def rasterize_geoids(bounds, transform, shapeData, lats_1d, lons_1d): # https://stackoverflow.com/a/38095929
+  df = pd.DataFrame()
+  df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, bounds, transform)
+
+  geoidMat = np.empty((len(lats_1d), len(lons_1d)), dtype='<U20')
+
+  for row in shapeData.itertuples():
+    # if row.GEOID != '53051': # test
+    #   continue
+    # print(row.GEOID,row.NAME)
+
+    if row.geometry.boundary.geom_type == 'LineString':
+      minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary.bounds, transform)
+      if minLat == maxLat or minLon == maxLon:
+        continue
+      mask = boundary_to_mask(row.geometry.boundary, lons_1d[minLon:maxLon], lats_1d[minLat:maxLat])
+      mask = np.where(mask, row.GEOID, '')
+      geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask) # https://numpy.org/doc/stable/reference/routines.char.html#module-numpy.char
+    else:
+      for linestring in row.geometry.boundary:
+        minLat, maxLat, minLon, maxLon = get_bound_indices(linestring.bounds, transform)
+        if minLat == maxLat or minLon == maxLon:
+          continue
+        mask = boundary_to_mask(linestring, lons_1d[minLon:maxLon], lats_1d[minLat:maxLat])
+        mask = np.where(mask, row.GEOID, '')
+        geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask)  
+
+    # break # test
+  
+  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
+  # print(minLat, maxLat, minLon, maxLon)
+
+  df['GEOID'] = np.ravel(geoidMat[minLat:maxLat,minLon:maxLon])
+  print(df[df['GEOID'] != ''])
+  
+  return df
+
+
+
+def overlaps_df(df):
+  pairs = set()
+  for row in df.itertuples():
+    l = len(row.GEOID)
+    if l <= 5:
+      continue
+    items = list( dict.fromkeys([row.GEOID[j:j+5] for j in range(0,l,5)]) )
+    pairs.add(tuple(items))
+  print(sorted(pairs), len(pairs))
+
+
+
 
 
 if __name__ == "__main__":
@@ -155,14 +209,21 @@ if __name__ == "__main__":
   # cmap = 'YlOrRd'
   # regionFile = 'TENA.geo'
   unit = 'μm_m^-3'
-  res = 3 # locmap.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
+  res = 3 # shapeData.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
   ext = 'hdf5'
-  
-  # locmap = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
-  locmap = gpd.read_file(os.path.join(shapefilesDir, mapFile))
-  # locmap = locmap.boundary
+  testing = False
 
-  lats0, lons0, points_in_shape, df, basisregion = None, None, None, None, None
+
+  # shapeData = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+  shapeData = gpd.read_file(os.path.join(shapefilesDir, mapFile)).sort_values(by=['GEOID']).reset_index(drop=True)
+  shapeData = fc.clean_states_reset_index(shapeData)
+  shapeData = fc.county_changes_deaths_reset_index(shapeData) # removes 08014
+  # print(shapeData)
+
+  # exit()
+
+
+  points_in_shape, df, basisregion = None, None, None
   minLat, maxLat, minLon, maxLon = None, None, None, None
   lats_1d, lons_1d = None, None
   bounded_mat = None
@@ -177,17 +238,45 @@ if __name__ == "__main__":
     contents = json.load(f)
     basisregion = shape(contents['features'][0]['geometry'])
 
-  # t0 = fc.timer_restart(t0, 'read basisregion')
+  t0 = fc.timer_restart(t0, 'read basisregion')
 
   regionFile = regionFile.split('.')[0]
 
   if regionFile + '.hdf5' in points_in_region_filenames:
     # df = pd.read_hdf(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), key='points')
     df = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
-    lats0 = np.array(df['lat'])
-    lons0 = np.array(df['lon'])
-    # t0 = fc.timer_restart(t0, 'load df')
 
+    if testing:
+        
+      overlaps = [i for i in df['GEOID'] if len(i)>5]
+      print(set(overlaps))
+
+      a1 = set([i[0:5] for i in overlaps])
+      a2 = set([i[5:10] for i in overlaps])
+      a3 = set([i[10:15] for i in overlaps])
+      a4 = set([i[15:] for i in overlaps])
+
+      print(a1)
+      print(a2)
+      print(a3)
+      print(a4)
+      
+      u = set().union(a1, a2, a3, a4)
+      
+      s51 = [i[2:] for i in list(u) if i[:2] == '51']
+      s08 = [i[2:] for i in list(u) if i[:2] == '08']
+      s13 = [i[2:] for i in list(u) if i[:2] == '13']
+      
+      print(sorted(s08)) # ['005', '031'] - Arapahoe, City and County of Denver (all in pop data, all in deaths data)
+      print(sorted(s13)) # ['249', '269'] - Schley, Taylor (all in pop data, all in deaths data)
+      print(sorted(s51)) # many independent cities overlapping with counties (all in pop data, all in deaths data)
+      # ['003', '005', '015', '059', '069', '081', '089', '153', '161', '163', '165', '195', '530', '540', '580', '595', '600', '660', '678', '683', '685', '690', '720', '770', '775', 
+      # '790', '820', '840'] 
+
+    overlaps_df(df)
+
+    t0 = fc.timer_restart(t0, 'load df')
+  exit()
 
   for filename in filenames:
     startend = re.split('_|-',filename)[3:5]
@@ -210,34 +299,33 @@ if __name__ == "__main__":
     minLat, maxLat, minLon, maxLon = get_bound_indices(basisregion.bounds, transform)
     # print(minLat, maxLat, minLon, maxLon)
   
-    # t0 = fc.timer_restart(t0, 'read tif')
+    t0 = fc.timer_restart(t0, 'get transform')
     xy = rasterio.transform.xy(transform, range(fd.dimensions['LAT'].size), range(fd.dimensions['LAT'].size))
     lats_1d = np.array(xy[1])
     xy = rasterio.transform.xy(transform, range(fd.dimensions['LON'].size), range(fd.dimensions['LON'].size))
     lons_1d = np.array(xy[0])
+    
 
     if df is None and not is_mat_smaller(mat, basisregion.bounds, transform):
-      lats0, lons0 = bound_ravel(lats_1d, lons_1d, basisregion.bounds, transform)
-
-      df = pd.DataFrame()
-      df['lat'] = lats0
-      df['lon'] = lons0
+      df = rasterize_geoids(basisregion.bounds, transform, shapeData, lats_1d, lons_1d)
 
       fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
+      fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'csv') # helper
       
-      # t0 = fc.timer_restart(t0, 'save df')
-
+      t0 = fc.timer_restart(t0, 'save df')
+    # exit()
     lats_1d = lats_1d[minLat:maxLat]
     lons_1d = lons_1d[minLon:maxLon]
+    # print(lats_1d.shape, lons_1d.shape)
+    # exit()
 
     bounded_mat = mat[minLat:maxLat,minLon:maxLon]          # for contour plotting
     bounded_mat = np.where(bounded_mat < 0, 0, bounded_mat) # for contour plotting
 
-    # print(bounded_mat)
-    
+
     if df is not None:
       df[unit] = np.ravel(bounded_mat) # dont remove zero values; not many zeros, will only cause problems
-      # t0 = fc.timer_restart(t0, 'bounded_mat_raveled')
+      t0 = fc.timer_restart(t0, 'bounded_mat_raveled')
 
 
     minUnit = np.nanmin(bounded_mat) if df is None else np.nanmin(df[unit])
@@ -248,10 +336,10 @@ if __name__ == "__main__":
     norm = cl.Normalize(vmin=minUnit, vmax=maxUnit, clip=False) # clip=False is default
     mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
     # df['color'] = [mapper.to_rgba(v) for v in df[unit]]
-    # # t0 = fc.timer_restart(t0, 'color mapping')
+    # t0 = fc.timer_restart(t0, 'color mapping')
 
     with plt.style.context(("seaborn", "ggplot")):
-      locmap.plot(figsize=(18*res,10*res),
+      shapeData.plot(figsize=(18*res,10*res),
                   color="white",
                   edgecolor = "black")
 
@@ -267,17 +355,6 @@ if __name__ == "__main__":
       plt.ylim((np.min(lats_1d) - deg, np.max(lats_1d) + deg))
 
       ## contour lines
-      # levels2 = np.arange(0,25,2)
-      # levels2 = np.arange(0,maxUnit,2)
-      # levels2 = np.arange(0,maxUnit,4)
-      # contours = plt.contour(lons_1d, lats_1d, bounded_mat, levels=levels2, colors='white', linewidths=0, alpha=1)
-      # labels = plt.clabel(contours, fontsize=3*res, colors='black')
-
-      ## contour filler
-      # levels1 = np.arange(minUnit,maxUnit,0.6)
-      # levels1 = np.arange(0,25,0.2)
-      # levels1 = np.arange(0,maxUnit,0.2)
-      # levels1 = levels2
       levels1 = np.arange(0,maxUnit,4)
       plt.contourf(lons_1d, lats_1d, bounded_mat, levels=levels1, cmap=cmap, alpha=0.6)
 
@@ -290,16 +367,15 @@ if __name__ == "__main__":
       # print(ticks)
       plt.colorbar(mapper, ticks=ticks)
 
-      # t0 = fc.timer_restart(t0, 'create plot')
+      t0 = fc.timer_restart(t0, 'create plot')
       
       fc.save_plt(plt, outputDir, regionFile + '_' + startend[0] + '_' + startend[1] + '_' + '{:.3f}'.format(maxUnit) + '_' + fc.utc_time_filename(), 'png')
-      # fc.save_plt(plt, outputDir, name + '_' + regionFile + '_' + '-'.join([str(i) for i in levels2]))
-      # t0 = fc.timer_restart(t0, 'save outfiles')
-
-
-  t1 = fc.timer_restart(t1, 'total time')
+      t0 = fc.timer_restart(t0, 'save outfiles')
 
       # plt.show()
+  t1 = fc.timer_restart(t1, 'total time')
+
+      
 
 
 

@@ -122,9 +122,12 @@ def county_changes_deaths_reset_index(df): # see code/write_county_month_pop_tes
   # 08014 created from parts of 08001, 08013, 08059, 08123 (2001)
   # data unavailable for it (no unsuppressed data).
     # Thus: divide pop by 4, add result to original 4
+    # Edit: if not in data, add and set pop to 0 #####################
   temp1 = df[df.GEOID == '08014']
-  if len(temp1.GEOID) != 0:
-    df = df.drop([temp1.index[0]])
+  # if len(temp1.GEOID) != 0:
+  #   df = df.drop([temp1.index[0]])
+  if len(temp1.GEOID) == 0:
+    df = df.append(pd.DataFrame([['08014'] + [0]*len(dates)], columns=['GEOID']+dates))
 
   return df.sort_values(by='GEOID').reset_index(drop=True)
 

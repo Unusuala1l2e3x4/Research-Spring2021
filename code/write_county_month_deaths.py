@@ -4,7 +4,7 @@ import numpy as np
 from numpy.core.numeric import NaN
 import pandas as pd
 
-import os, pathlib, copy
+import os, pathlib, copy, sys
 
 import importlib
 fc = importlib.import_module('functions')
@@ -25,8 +25,6 @@ def make_geoid_dates_df(data):
       if ret.GEOID[i] == temp.GEOID[j]:
         ret[date][i] = temp.deaths[j]
         j += 1
-  ret = fc.clean_states_reset_index(ret)
-  ret = fc.county_changes_deaths_reset_index(ret)
   return ret
 
 
@@ -39,6 +37,9 @@ def limit_dates(df, dates):
 
 
 if __name__ == "__main__":
+  mode = sys.argv[1]
+  ext = sys.argv[2]
+
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
   # pmDir = os.path.join(ppPath, 'Global Annual PM2.5 Grids')
@@ -56,7 +57,7 @@ if __name__ == "__main__":
   stateTitle = 'By state - ' + title
 
   suppValString = '-1' #None
-  ext = 'hdf5' # csv/hdf5
+  # ext = 'hdf5' # csv/hdf5
   
   testing = False
   # END PARAMS
@@ -73,17 +74,20 @@ if __name__ == "__main__":
   statePop = pd.read_hdf(os.path.join(usCensusDir, 'TENA_state_pop_1999_2019.hdf5'))
   statePop = fc.makeStateFileGEOIDs(statePop)
   
-  if fc.is_in_dir(cdcWonderDir, countyTitle, ext):
+  if fc.is_in_dir(cdcWonderDir, countyTitle, ext) and mode != 'w':
     countyData = fc.read_df(cdcWonderDir, countyTitle, ext)
   else:
     countyData = make_geoid_dates_df(fc.deaths_by_date_geoid(os.path.join(cdcWonderDir, countyTitle), suppValString)) # has missing rows
+    countyData = fc.clean_states_reset_index(countyData)
+    countyData = fc.county_changes_deaths_reset_index(countyData)
     fc.save_df(countyData, cdcWonderDir, countyTitle, ext)
   countyData = fc.makeCountyFileGEOIDs_STATEFPs(countyData)
 
-  if fc.is_in_dir(cdcWonderDir, stateTitle, ext):
+  if fc.is_in_dir(cdcWonderDir, stateTitle, ext) and mode != 'w':
     stateData = fc.read_df(cdcWonderDir, stateTitle, ext)
   else:
     stateData = make_geoid_dates_df(fc.deaths_by_date_geoid(os.path.join(cdcWonderDir, stateTitle), suppValString)) # no missing rows  
+    stateData = fc.clean_states_reset_index(stateData)
     fc.save_df(stateData, cdcWonderDir, stateTitle, ext)
   stateData = fc.makeStateFileGEOIDs(stateData)
 
@@ -109,7 +113,7 @@ if __name__ == "__main__":
   dates = sorted(set(deathsDates) & set(popDates))
   
 
-  if fc.is_in_dir(cdcWonderDir, 'stateDataUnsup', ext):
+  if fc.is_in_dir(cdcWonderDir, 'stateDataUnsup', ext) and mode != 'w':
     stateDataUnsup = fc.read_df(cdcWonderDir, 'stateDataUnsup', ext)
   else:
     stateDataUnsup = copy.deepcopy(stateData)
@@ -135,11 +139,12 @@ if __name__ == "__main__":
   countyPopUnsup = fc.makeCountyFileGEOIDs_STATEFPs(countyPopUnsup)
   countyPopUnsup = countyPopUnsup.sort_values(by='GEOID').reset_index(drop=True)
   countyData = copy.deepcopy(countyPopUnsup) # including all GEOIDS
+  countyPopUnsup = countyPopUnsup.replace([0],NaN)
   countyPopUnsup.loc[:, dates] = countyPop.loc[:, dates] * (countyPopUnsup.loc[:, dates] / countyPopUnsup.loc[:, dates])
 
   # print(countyPop)
 
-  if fc.is_in_dir(cdcWonderDir, 'statePopUnsup', ext):
+  if fc.is_in_dir(cdcWonderDir, 'statePopUnsup', ext) and mode != 'w':
     statePopUnsup = fc.read_df(cdcWonderDir, 'statePopUnsup', ext)
   else:
     statePopUnsup = copy.deepcopy(statePop)
@@ -149,52 +154,16 @@ if __name__ == "__main__":
   statePopUnsup = fc.makeStateFileGEOIDs(statePopUnsup)
 
   t0 = fc.timer_restart(t0, 'get unsuppressed data')
-  
-  # print(statePopUnsup)
-  # print(statePop)
 
   dS = copy.deepcopy(stateData)
   dS.loc[:, dates] = dS.loc[:, dates] - stateDataUnsup.loc[:, dates]
   # print(dS)
 
-
   pS = copy.deepcopy(statePop)
   pS.loc[:, dates] = pS.loc[:, dates] - statePopUnsup.loc[:, dates]
   # print(pS)
 
-
-
-  # print(statePop.loc[9, '199902'])                                                        # 7969952.916666667
-  # print(statePopUnsup.loc[9, '199902'] + pS.loc[9, '199902'])                              # 7969952.916666666
-  # print(statePopUnsup.loc[9, '199902'] + pS.loc[9, '199902'] == statePop.loc[9, '199902']) # False
-
-
-  # print(countyPopUnsup)
-  # # print(countyPop.count())
-  # print(countyData)
-  # print(stateData)
-
-  # print(stateData.loc[6:7, ['GEOID']+dates[-14:]])
-  # print()
-  # print(stateDataUnsup.loc[6:7, ['GEOID']+dates[-14:]])
-  # print()
-  # print(dS.loc[6:7, ['GEOID']+dates[-14:]])
-  # print()
-  # print()
-  # print(statePop.loc[6:7, ['GEOID']+dates[-14:]])
-  # print()
-  # print(statePopUnsup.loc[6:7, ['GEOID']+dates[-14:]])
-  # print()
-  # print(pS.loc[6:7, ['GEOID']+dates[-14:]])
-  # print()
-  # print()
-  # print(dS.loc[6:7, ['GEOID']+dates[-14:]])
-  # print()
-  # print(pS.loc[6:7, ['GEOID']+dates[-14:]])
-  # print()
-  # print(rS.loc[6:7, ['GEOID']+dates[-14:]])
-
-
+  countyData = countyData.replace([0],NaN)
   countyDataNew = copy.deepcopy(countyData)
   countyDataNew.loc[:, dates] = countyData.loc[:, dates] / countyData.loc[:, dates]
   
@@ -226,7 +195,7 @@ if __name__ == "__main__":
   t0 = fc.timer_restart(t0, 'make county data with suppressed estimates')
 
   del countyDataNew['STATEFP']
-  # fc.save_df(countyDataNew, cdcWonderDir, countyTitle + ', suppressed estimates', ext)
+  fc.save_df(countyDataNew, cdcWonderDir, countyTitle + ', suppressed estimates', ext)
 
   t1 = fc.timer_restart(t1, 'total time')
 

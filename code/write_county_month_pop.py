@@ -4,9 +4,7 @@ import numpy as np
 import geopandas as gpd
 import pandas as pd
 
-import os, pathlib
-
-import io
+import os, pathlib, io, sys
 
 import importlib
 fc = importlib.import_module('functions')
@@ -15,6 +13,9 @@ fc = importlib.import_module('functions')
 
 
 if __name__ == "__main__":
+  mode = sys.argv[1]
+  ext = sys.argv[2]
+
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
   # pmDir = os.path.join(ppPath, 'Global Annual PM2.5 Grids')
@@ -32,10 +33,9 @@ if __name__ == "__main__":
   stateTitle = 'By state - ' + title
 
   testing = False
-  doChanges = True
   origDataMonth = '07'
   suppValString = '-1'
-  ext = 'hdf5'
+  # ext = 'hdf5'
   # END PARAMS
 
   all_dfs = []
@@ -51,13 +51,13 @@ if __name__ == "__main__":
   data_GEOIDs = []
   all_filenames = []
   
-  # 1998 - 1999 data files - (write 1999 monthly pop)
+  # 1998 - 1999 data files - (write 1999 monthly pop)    # no 08014
   filenames = [name for name in os.listdir(usCensusDir) if name.startswith('stch-icen') and name.endswith('.txt')]
   for filename in filenames:
     print(filename)
     outFileName = filename.split('.')[0] + '_totals'
     # if outFileName + '.csv' in os.listdir(usCensusDir): 
-    if fc.is_in_dir(usCensusDir, outFileName, ext):
+    if fc.is_in_dir(usCensusDir, outFileName, ext) and mode != 'w':
       # df = pd.read_csv(os.path.join(usCensusDir, outFileName + '.csv'))
       df = fc.read_df(usCensusDir, outFileName, ext)
       # df['GEOID'] = [countyGEOIDstring(item) for item in df['GEOID']]
@@ -77,9 +77,8 @@ if __name__ == "__main__":
       df[yyyymm] = sums
       fc.save_df(df, usCensusDir, outFileName, ext)
     # print(df)
-
-    if doChanges:
-      df = fc.county_changes_deaths_reset_index(df)
+    df = fc.makeCountyFileGEOIDs(df)
+    df = fc.county_changes_deaths_reset_index(df)
 
     all_dfs.append(df)
     
@@ -106,8 +105,7 @@ if __name__ == "__main__":
     df = df[['GEOID']+yearColumns2]
     # print(df)
 
-    if doChanges:
-      df = fc.county_changes_deaths_reset_index(df)
+    df = fc.county_changes_deaths_reset_index(df)
 
     all_dfs.append(df)
 
@@ -174,7 +172,7 @@ if __name__ == "__main__":
     t0 = fc.timer_restart(t0, 'show issubsets')
 
 
-  if doChanges and testing:
+  if testing:
     all_GEOIDs = [list(df['GEOID']) for df in all_dfs]
     all_GEOIDs_union = sorted(set().union(*[set(i) for i in all_GEOIDs]))
     for i in range(len(all_GEOIDs)): # see if all geoids equal + sorted across all files (by comparing to union)

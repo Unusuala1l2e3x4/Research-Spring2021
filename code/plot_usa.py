@@ -45,13 +45,13 @@ if __name__ == "__main__":
 
   stateMapFile = 'cb_2019_us_state_500k'
   stateMapData = gpd.read_file(os.path.join(usaDir, stateMapFile, stateMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
-  stateMapData = stateMapData[stateMapData.STATEFP <= '56']
+  # stateMapData = stateMapData[stateMapData.STATEFP <= '56']
   # print(stateMapData)
   # t0 = fc.timer_restart(t0, 'read stateMapData')
 
   countyMapFile = 'cb_2019_us_county_500k'
   countyMapData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
-  countyMapData = countyMapData[countyMapData.STATEFP <= '56']
+  # countyMapData = countyMapData[countyMapData.STATEFP <= '56']
   # print(countyMapData)
   # t0 = fc.timer_restart(t0, 'read countyMapData')
 

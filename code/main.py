@@ -78,9 +78,9 @@ if __name__ == "__main__":
   # exit()
 
   # max range = '200001', '201812'
-  run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'YlOrRd', 'geo-countries', 'geo-countries-union.json', states, True])
-  # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'YlOrRd', 'basisregions', 'TENA.geo.json', counties, True])
-  # run(dir, 'read_acag_pm2-5.py', ['200001', '200001', 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', states, True])
+  # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'YlOrRd', 'geo-countries', 'geo-countries-union.json', states, True])
+  run(dir, 'read_acag_pm2-5.py', ['200001', '200001', 'YlOrRd', 'basisregions', 'TENA.geo.json', counties, False])
+  # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', counties, True])
   
   # exit()
 
