@@ -98,6 +98,8 @@ def clean_states_reset_index(df):
   return df.reset_index(drop=True)
 
 def county_changes_deaths_reset_index(df): # see code/write_county_month_pop_testing.txt
+  statefps = set([item[0:2] for item in df.GEOID])
+
   dates = [i for i in df.keys() if i != 'GEOID' and i != 'STATEFP']
 
   # 51515 put into   51019 (2013)
@@ -126,7 +128,7 @@ def county_changes_deaths_reset_index(df): # see code/write_county_month_pop_tes
   temp1 = df[df.GEOID == '08014']
   # if len(temp1.GEOID) != 0:
   #   df = df.drop([temp1.index[0]])
-  if len(temp1.GEOID) == 0:
+  if len(temp1.GEOID) == 0 and '08' in statefps:
     df = df.append(pd.DataFrame([['08014'] + [0]*len(dates)], columns=['GEOID']+dates))
 
   return df.sort_values(by='GEOID').reset_index(drop=True)

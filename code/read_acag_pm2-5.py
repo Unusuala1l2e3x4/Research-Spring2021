@@ -1,59 +1,23 @@
-import h5py
 import numpy as np
-from numpy import cos, sin, arctan2, arccos
 
 import json
 import geopandas as gpd
-from numpy.testing._private.utils import print_assert_equal
+from numpy.core.numeric import NaN
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
 import matplotlib.cm as cm
 import matplotlib.path as mplp
-import xarray
-import bottleneck as bn
 
 import os, pathlib, sys, re
-
-import time
-import datetime as dt
 import copy
-
+from pandas._libs.missing import NA
 import rasterio, rasterio.features, rasterio.warp
 
-import netCDF4
-
-from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon, LineString, MultiLineString
-from shapely.ops import unary_union
+from shapely.geometry import shape, MultiPoint
 
 import importlib
 fc = importlib.import_module('functions')
-
-WGS84_RADIUS = 6378137
-WGS84_RADIUS_SQUARED = WGS84_RADIUS**2
-d2r = np.pi/180
-
-def greatCircleBearing(lon1, lat1, lon2, lat2):
-    dLong = lon1 - lon2
-    s = cos(d2r*lat2)*sin(d2r*dLong)
-    c = cos(d2r*lat1)*sin(d2r*lat2) - sin(lat1*d2r)*cos(d2r*lat2)*cos(d2r*dLong)
-    return arctan2(s, c)
-
-def quad_area(lat, lon, deg):
-  deg = deg / 2
-  lons = [lon+deg,lon+deg,lon-deg,lon-deg]
-  lats = [lat+deg,lat-deg,lat-deg,lat+deg]
-  N = 4 # len(lons)
-  angles = np.empty(N)
-  for i in range(N):
-      phiB1, phiA, phiB2 = np.roll(lats, i)[:3]
-      lB1, lA, lB2 = np.roll(lons, i)[:3]
-      # calculate angle with north (eastward)
-      beta1 = greatCircleBearing(lA, phiA, lB1, phiB1)
-      beta2 = greatCircleBearing(lA, phiA, lB2, phiB2)
-      # calculate angle between the polygons and add to angle array
-      angles[i] = arccos(cos(-beta1)*cos(-beta2) + sin(-beta1)*sin(-beta2))
-  return (np.sum(angles) - (N-2)*np.pi)*WGS84_RADIUS_SQUARED
 
 
 def save_tif(mat, fd, folderPath, name):
@@ -71,7 +35,6 @@ def save_tif(mat, fd, folderPath, name):
   ) as fd2:
     fd2.write(mat, 1)
     fd2.close()
-  
 
 def flatten_list(regular_list):
   return [item for sublist in regular_list for item in sublist]
@@ -88,15 +51,7 @@ def marker_size(plt, xlim1, ylim1, deg):
   y1 = lim_length(ylim1)
   return (x1*y1*a) / (x*y)
 
-def nearest_index(array, value):
-    array = np.asarray(array)
-    i = (np.abs(array - value)).argmin()
-    # return array[idx]
-    return i
-
 def get_bound_indices(bounds, transform):
-  # buf = .001
-  # rc = rasterio.transform.rowcol(transform, [bounds[0] - buf, bounds[2]], [bounds[1] - buf, bounds[3]], op=round, precision=3)
   rc = rasterio.transform.rowcol(transform, [bounds[0], bounds[2]], [bounds[1], bounds[3]], op=round, precision=4)
   minLon = max(rc[1][0], 0)
   maxLon = rc[1][1]
@@ -104,37 +59,31 @@ def get_bound_indices(bounds, transform):
   maxLat = rc[0][0]
   return minLat, maxLat, minLon, maxLon
 
-
 def is_mat_smaller(mat, bounds, transform):
   minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
   return minLat == minLon == 0 and maxLat + 1 >= len(mat) and maxLon + 1 >= len(mat[0])
 
-
 def bound_ravel(lats_1d, lons_1d, bounds, transform):
-  # bounds = (-179.995 - buf,-54.845 - buf,179.995,69.845) # entire mat
   minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
   lats_1d = lats_1d[minLat:maxLat]
   lons_1d = lons_1d[minLon:maxLon]
   X, Y = np.meshgrid(lons_1d, lats_1d)
   return np.ravel(Y), np.ravel(X)
 
-def boundary_to_mask(boundary, x, y):
+def boundary_to_mask(boundary, x, y):  # https://stackoverflow.com/questions/34585582/how-to-mask-the-specific-array-data-based-on-the-shapefile/38095929#38095929
   mpath = mplp.Path(boundary)
   X, Y = np.meshgrid(x, y)
   points = np.array((X.flatten(), Y.flatten())).T
   mask = mpath.contains_points(points).reshape(X.shape)
   return mask
   
-
-def rasterize_geoids(bounds, transform, shapeData, lats_1d, lons_1d): # https://stackoverflow.com/a/38095929
+def rasterize_geoids(bounds, transform, shapeData, lats_1d, lons_1d):
   df = pd.DataFrame()
   df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, bounds, transform)
-
   geoidMat = np.empty((len(lats_1d), len(lons_1d)), dtype='<U20')
-
+  minLat0, maxLat0, minLon0, maxLon0 = get_bound_indices(bounds, transform)
   for row in shapeData.itertuples():
-    # print(row.GEOID,row.NAME)
-    if row.geometry.boundary.geom_type == 'LineString':
+    if row.geometry.boundary.geom_type == 'LineString': # assuming there is no
       minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary.bounds, transform)
       if minLat == maxLat or minLon == maxLon:
         continue
@@ -142,29 +91,26 @@ def rasterize_geoids(bounds, transform, shapeData, lats_1d, lons_1d): # https://
       mask = np.where(mask, row.GEOID, '')
       geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask) # https://numpy.org/doc/stable/reference/routines.char.html#module-numpy.char
     else:
-      # print(row.GEOID,row.NAME)
-      for line in row.geometry.boundary:
-        minLat, maxLat, minLon, maxLon = get_bound_indices(line.bounds, transform)
+      # sort line indices by nest depth
+      lineIndexNestDepth = dict()
+      for i in range(len(row.geometry.boundary)):
+        lineIndexNestDepth[i] = [mplp.Path(outerline).contains_path(mplp.Path(row.geometry.boundary[i])) for outerline in row.geometry.boundary if row.geometry.boundary[i] != outerline].count(True)
+      # sort indices by nest depth (sort by dict values)
+      for l in sorted(lineIndexNestDepth, key=lineIndexNestDepth.get): 
+        minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary[l].bounds, transform)
         if minLat == maxLat or minLon == maxLon:
           continue
-        mask = boundary_to_mask(line, lons_1d[minLon:maxLon], lats_1d[minLat:maxLat])
-        if True not in [mplp.Path(outerline).contains_path(mplp.Path(line)) for outerline in row.geometry.boundary if line != outerline]:
-          mask = np.where(mask, row.GEOID, '')
-          geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask)
-        else:
+        mask = boundary_to_mask(row.geometry.boundary[l], lons_1d[minLon:maxLon], lats_1d[minLat:maxLat])
+        if lineIndexNestDepth[l] % 2 == 1: # nest depth = 1
           for r in range(geoidMat[minLat:maxLat,minLon:maxLon].shape[0]):
             for c in range(geoidMat[minLat:maxLat,minLon:maxLon].shape[1]):
-              if mask[r,c]:
-                geoidMat[minLat+r,minLon+c] = ''
-    # break # test
-  
-  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
-  # print(minLat, maxLat, minLon, maxLon)
-
-  df['GEOID'] = np.ravel(geoidMat[minLat:maxLat,minLon:maxLon])
-  print(df[df['GEOID'] != ''])
-  
-  return df
+              if mask[r,c] and geoidMat[minLat+r,minLon+c] != '':
+                geoidMat[minLat+r,minLon+c] = geoidMat[minLat+r,minLon+c][:-5] # remove points from when nest depth = 0
+        else:
+          mask = np.where(mask, row.GEOID, '')
+          geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask)
+  df['GEOID'] = np.ravel(geoidMat[minLat0:maxLat0,minLon0:maxLon0])
+  return df[df['GEOID'] != '']
 
 
 
@@ -191,6 +137,9 @@ if __name__ == "__main__":
   regionFile = sys.argv[5]
   mapFile = sys.argv[6]
   isYearly = sys.argv[7] == 'True'
+  maxMappedValue = None
+  if numArgs == 9:
+    maxMappedValue = float(sys.argv[8])
 
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
@@ -209,8 +158,8 @@ if __name__ == "__main__":
   # regionFile = 'TENA.geo'
   unit = 'μm_m^-3'
   res = 3 # shapeData.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
-  ext = 'hdf5'
-  testing = True
+  # ext = 'hdf5'
+  testing = False
 
 
   # shapeData = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
@@ -237,111 +186,91 @@ if __name__ == "__main__":
     contents = json.load(f)
     basisregion = shape(contents['features'][0]['geometry'])
 
-  t0 = fc.timer_restart(t0, 'read basisregion')
+  # t0 = fc.timer_restart(t0, 'read basisregion')
 
   regionFile = regionFile.split('.')[0]
 
-  if regionFile + '.hdf5' in points_in_region_filenames:
-    # df = pd.read_hdf(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), key='points')
+  if regionFile + '.hdf5' in points_in_region_filenames: # must use hdf5 - preserves indices
     df = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
-
-    if regionFile + '.csv' not in points_in_region_filenames:
-      fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'csv')
-
+    # t0 = fc.timer_restart(t0, 'load df')
     if testing:
-        
       overlaps = [i for i in df['GEOID'] if len(i)>5]
       print(sorted(set(overlaps)))
-      # exit()
-
-      # a1 = set([i[0:5] for i in overlaps])
-      # a2 = set([i[5:10] for i in overlaps])
-      # a3 = set([i[10:15] for i in overlaps])
-      # a4 = set([i[15:] for i in overlaps])
-
-      # print(a1)
-      # print(a2)
-      # print(a3)
-      # print(a4)
-      
-      # u = set().union(a1, a2, a3, a4)
-      
-      # s51 = [i[2:] for i in list(u) if i[:2] == '51']
-      # s08 = [i[2:] for i in list(u) if i[:2] == '08']
-      # s13 = [i[2:] for i in list(u) if i[:2] == '13']
-      
-      # print(sorted(s08)) # ['005', '031'] - Arapahoe, City and County of Denver (all in pop data, all in deaths data)
-      # print(sorted(s13)) # ['249', '269'] - Schley, Taylor (all in pop data, all in deaths data)
-      # print(sorted(s51)) # many independent cities overlapping with counties (all in pop data, all in deaths data)
-      # # ['003', '005', '015', '059', '069', '081', '089', '153', '161', '163', '165', '195', '530', '540', '580', '595', '600', '660', '678', '683', '685', '690', '720', '770', '775', 
-      # # '790', '820', '840'] 
-
-    # df = 
-    overlaps_df(df)
-
-    t0 = fc.timer_restart(t0, 'load df')
+      overlaps_df(df)
   # exit()
 
   for filename in filenames:
     startend = re.split('_|-',filename)[3:5]
-    
     if startend[0] < startDate or startend[1] > endDate or (startend[0] == startend[1] and isYearly) or (startend[0] != startend[1] and not isYearly):
       continue
-    
-    fd = fc.read_df(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25'), filename, 'nc') # http://unidata.github.io/netcdf4-python/
-    # print(fd.variables.keys())
-    # print(fd.dimensions['LON'].size)
-    # print(fd.variables['PM25'][:])
 
+    fd = fc.read_df(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25'), filename, 'nc') # http://unidata.github.io/netcdf4-python/
     mat = fd.variables['PM25'][:]
 
     deg = np.average(np.abs(fd.variables['LON'][:-1] - fd.variables['LON'][1:]))
     # print(deg)
 
-    # transform = rasterio.transform.from_origin(np.round(basisregion.bounds[0], 2), np.round(basisregion.bounds[3], 2), deg,deg)
     transform = rasterio.transform.from_origin(np.round(np.min(fd.variables['LON'][:]), 2), np.round(np.max(fd.variables['LAT'][:]), 2), deg,deg)
     minLat, maxLat, minLon, maxLon = get_bound_indices(basisregion.bounds, transform)
-    # print(minLat, maxLat, minLon, maxLon)
-  
-    t0 = fc.timer_restart(t0, 'get transform')
+
+    # t0 = fc.timer_restart(t0, 'get transform')
     xy = rasterio.transform.xy(transform, range(fd.dimensions['LAT'].size), range(fd.dimensions['LAT'].size))
     lats_1d = np.array(xy[1])
     xy = rasterio.transform.xy(transform, range(fd.dimensions['LON'].size), range(fd.dimensions['LON'].size))
     lons_1d = np.array(xy[0])
     
-
     if df is None and not is_mat_smaller(mat, basisregion.bounds, transform):
       df = rasterize_geoids(basisregion.bounds, transform, shapeData, lats_1d, lons_1d)
-      t0 = fc.timer_restart(t0, 'rasterize_geoids')
-
+      # t0 = fc.timer_restart(t0, 'rasterize_geoids')
       fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
-      t0 = fc.timer_restart(t0, 'save df hdf5')
-      # fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'csv') # helper
+      # t0 = fc.timer_restart(t0, 'save df hdf5')
+      fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'csv') # helper
       # t0 = fc.timer_restart(t0, 'save df csv')
-    exit()
-    lats_1d = lats_1d[minLat:maxLat]
-    lons_1d = lons_1d[minLon:maxLon]
-    # print(lats_1d.shape, lons_1d.shape)
+
+    if regionFile + '.geojson' not in points_in_region_filenames and df is not None: # ~29 min for TENA.geojson
+      geodf = copy.deepcopy(shapeData) 
+      geodf.geometry = [ MultiPoint([(row.lon, row.lat) for row in df.loc[df.GEOID == geodf.GEOID[r], ['lon','lat']].itertuples()]) for r in range(len(geodf)) ]
+      geodf.to_file(os.path.join(pmDir, 'points_in_region', regionFile + '.geojson'), driver='GeoJSON')
+      # t0 = fc.timer_restart(t0, 'save df geojson')
     # exit()
 
     bounded_mat = mat[minLat:maxLat,minLon:maxLon]          # for contour plotting
     bounded_mat = np.where(bounded_mat < 0, 0, bounded_mat) # for contour plotting
 
 
-    if df is not None:
-      df[unit] = np.ravel(bounded_mat) # dont remove zero values; not many zeros, will only cause problems
-      t0 = fc.timer_restart(t0, 'bounded_mat_raveled')
+    if df is not None: # and not is_mat_smaller
+      df = df.reindex(pd.Index(np.arange(0,bounded_mat.shape[0]*bounded_mat.shape[1])))
+      df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, basisregion.bounds, transform)
+      df[unit] = np.ravel(bounded_mat)
+      df['GEOID'] = df['GEOID'].replace(NaN,'')
+
+      ## remove points outside region from bounded_mat
+      # df.loc[df.GEOID == '', unit] = np.repeat(NaN, len(df.loc[df.GEOID == ''])) 
+      # bounded_mat = np.reshape(np.array(df[unit]), bounded_mat.shape)
+
+      df = df[df.GEOID != '']
+
+      # t0 = fc.timer_restart(t0, 'bounded_mat_raveled')
+    # exit()
+
+    lats_1d = lats_1d[minLat:maxLat]
+    lons_1d = lons_1d[minLon:maxLon]
+    # print(lats_1d.shape, lons_1d.shape)
+    # exit()
 
 
+    
     minUnit = np.nanmin(bounded_mat) if df is None else np.nanmin(df[unit])
     maxUnit = np.nanmax(bounded_mat) if df is None else np.nanmax(df[unit])
+    if maxMappedValue is None:
+      maxMappedValue = maxUnit
 
     # print(maxUnit)
 
-    norm = cl.Normalize(vmin=minUnit, vmax=maxUnit, clip=False) # clip=False is default
+    norm = cl.Normalize(vmin=minUnit, vmax=maxMappedValue, clip=False) # clip=False is default
     mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
     # df['color'] = [mapper.to_rgba(v) for v in df[unit]]
-    # t0 = fc.timer_restart(t0, 'color mapping')
+    # # t0 = fc.timer_restart(t0, 'color mapping')
 
     with plt.style.context(("seaborn", "ggplot")):
       shapeData.plot(figsize=(18*res,10*res),
@@ -360,7 +289,7 @@ if __name__ == "__main__":
       plt.ylim((np.min(lats_1d) - deg, np.max(lats_1d) + deg))
 
       ## contour lines
-      levels1 = np.arange(0,maxUnit,4)
+      levels1 = np.arange(0,maxMappedValue,4)
       plt.contourf(lons_1d, lats_1d, bounded_mat, levels=levels1, cmap=cmap, alpha=0.6)
 
       # ms = marker_size(plt, xlim0, ylim0, deg)
@@ -368,14 +297,13 @@ if __name__ == "__main__":
       # plt.scatter(df.lon, df.lat, s=ms, c='red', alpha=1, linewidths=0, marker='s')
       # plt.scatter(df.lon, df.lat, s=ms, c=df.color, alpha=1, linewidths=0, marker='s')
 
-      ticks = np.sort([minUnit] + list(levels1) + [maxUnit])
-      # print(ticks)
+      ticks = sorted([minUnit, maxUnit, maxMappedValue] + list(levels1))
       plt.colorbar(mapper, ticks=ticks)
 
-      t0 = fc.timer_restart(t0, 'create plot')
+      # t0 = fc.timer_restart(t0, 'create plot')
       
-      fc.save_plt(plt, outputDir, regionFile + '_' + startend[0] + '_' + startend[1] + '_' + '{:.3f}'.format(maxUnit) + '_' + fc.utc_time_filename(), 'png')
-      t0 = fc.timer_restart(t0, 'save outfiles')
+      fc.save_plt(plt, outputDir, regionFile + '_' + startend[0] + '_' + startend[1] + '_' + '{:.3f}'.format(maxMappedValue) + '_' + fc.utc_time_filename(), 'png')
+      # t0 = fc.timer_restart(t0, 'save outfiles')
 
       # plt.show()
   t1 = fc.timer_restart(t1, 'total time')

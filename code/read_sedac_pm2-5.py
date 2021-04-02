@@ -1,6 +1,4 @@
-import h5py
 import numpy as np
-from numpy import cos, sin, arctan2, arccos
 
 import json
 import geopandas as gpd
@@ -9,8 +7,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
 import matplotlib.cm as cm
-import xarray
-import bottleneck as bn
 
 import os
 import pathlib
@@ -18,40 +14,13 @@ import sys
 
 import time
 import datetime as dt
-import copy
 
 import rasterio
 import rasterio.features
 import rasterio.warp
 
-from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
-from shapely.ops import unary_union
+from shapely.geometry import shape
 
-WGS84_RADIUS = 6378137
-WGS84_RADIUS_SQUARED = WGS84_RADIUS**2
-d2r = np.pi/180
-
-def greatCircleBearing(lon1, lat1, lon2, lat2):
-    dLong = lon1 - lon2
-    s = cos(d2r*lat2)*sin(d2r*dLong)
-    c = cos(d2r*lat1)*sin(d2r*lat2) - sin(lat1*d2r)*cos(d2r*lat2)*cos(d2r*dLong)
-    return arctan2(s, c)
-
-def quad_area(lat, lon, deg):
-  deg = deg / 2
-  lons = [lon+deg,lon+deg,lon-deg,lon-deg]
-  lats = [lat+deg,lat-deg,lat-deg,lat+deg]
-  N = 4 # len(lons)
-  angles = np.empty(N)
-  for i in range(N):
-      phiB1, phiA, phiB2 = np.roll(lats, i)[:3]
-      lB1, lA, lB2 = np.roll(lons, i)[:3]
-      # calculate angle with north (eastward)
-      beta1 = greatCircleBearing(lA, phiA, lB1, phiB1)
-      beta2 = greatCircleBearing(lA, phiA, lB2, phiB2)
-      # calculate angle between the polygons and add to angle array
-      angles[i] = arccos(cos(-beta1)*cos(-beta2) + sin(-beta1)*sin(-beta2))
-  return (np.sum(angles) - (N-2)*np.pi)*WGS84_RADIUS_SQUARED
 
 
 def tif_filenames(filenames):

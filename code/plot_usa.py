@@ -9,11 +9,7 @@ import matplotlib.cm as cm
 
 import os, pathlib, re, json, sys
 
-import time
-import datetime as dt
-
-from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
-from shapely.ops import unary_union
+from shapely.geometry import shape, GeometryCollection
 
 import rasterio, rasterio.features, rasterio.warp
 

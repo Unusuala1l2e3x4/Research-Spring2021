@@ -61,30 +61,35 @@ if __name__ == "__main__":
 
 
   # world = os.path.join('UIA_World_Countries_Boundaries-shp', 'World_Countries__Generalized_.shp')
-  states = os.path.join('USA_states_counties', 'cb_2019_us_state_500k', 'cb_2019_us_state_500k.shp')
-  counties = os.path.join('USA_states_counties', 'cb_2019_us_county_500k', 'cb_2019_us_county_500k.shp')
+  USAstates = os.path.join('USA_states_counties', 'cb_2019_us_state_500k', 'cb_2019_us_state_500k.shp')
+  USAcounties = os.path.join('USA_states_counties', 'cb_2019_us_county_500k', 'cb_2019_us_county_500k.shp')
 
   # # 1998, 2016
   # years = np.arange(1998, 2016 + 1)
 
   # for y in years:
-  #   # run(dir, 'read_sedac_pm2-5.py', [y, y, 'YlOrRd', 'basisregions', 'TENA.geo.json', states])
+  #   # run(dir, 'read_sedac_pm2-5.py', [y, y, 'YlOrRd', 'basisregions', 'TENA.geo.json', USAstates])
   #   run(dir, 'read_sedac_pm2-5.py', [y, y, 'YlOrRd', 'geo-countries', 'geo-countries-union.json', world])
 
-  # run(dir, 'read_sedac_pm2-5.py', [2000, 2000, 'YlOrRd', 'basisregions', 'TENA.geo.json', states])
-  # run(dir, 'read_sedac_pm2-5.py', [2000, 2000, 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', counties])
+  # run(dir, 'read_sedac_pm2-5.py', [2000, 2000, 'YlOrRd', 'basisregions', 'TENA.geo.json', USAstates])
+  # run(dir, 'read_sedac_pm2-5.py', [2000, 2000, 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', USAcounties])
   # t0 = timer_restart(t0, '')
 
   # exit()
 
   # max range = '200001', '201812'
-  # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'YlOrRd', 'geo-countries', 'geo-countries-union.json', states, True])
-  run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'YlOrRd', 'basisregions', 'TENA.geo.json', counties, True])
-  # run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'YlOrRd', 'basisregions', 'TENA.geo.json', counties, True])
-  # run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'YlOrRd', 'basisregions', 'TENA.geo.json', counties, True])
-  # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', counties, True])
-  
-  # exit()
+  # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'YlOrRd', 'geo-countries', 'geo-countries-union.json', USAstates, True])
+
+  run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'YlOrRd', 'basisregions', 'TENA.geo.json', USAcounties, True, 49.800])
+
+
+  # run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'YlOrRd', 'basisregions', 'TENA.geo.json', USAcounties, True])
+
+  # run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', USAcounties, True])
+
+
+  # for filename in ['08-CO-Colorado.geojson','13-GA-Georgia.geojson','51-VA-Virginia.geojson']:
+  #   run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), filename, os.path.join('USA_states_counties', 'us_states_counties', filename), True])
 
 
   # # startYYYYMM, endYYYYMM, pltTitle
