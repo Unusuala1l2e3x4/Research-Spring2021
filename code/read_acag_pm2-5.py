@@ -95,14 +95,11 @@ def nearest_index(array, value):
     return i
 
 def get_bound_indices(bounds, transform):
-  buf = .001
-  rc = rasterio.transform.rowcol(transform, [bounds[0] - buf, bounds[2]], [bounds[1] - buf, bounds[3]], op=round, precision=3)
-  # (minx, miny, maxx, maxy)
-  # print(rc)
-  # print(rc[1][0])
+  # buf = .001
+  # rc = rasterio.transform.rowcol(transform, [bounds[0] - buf, bounds[2]], [bounds[1] - buf, bounds[3]], op=round, precision=3)
+  rc = rasterio.transform.rowcol(transform, [bounds[0], bounds[2]], [bounds[1], bounds[3]], op=round, precision=4)
   minLon = max(rc[1][0], 0)
   maxLon = rc[1][1]
-  # print(rc[0][1])
   minLat = max(rc[0][1], 0)
   maxLat = rc[0][0]
   return minLat, maxLat, minLon, maxLon
@@ -111,7 +108,6 @@ def get_bound_indices(bounds, transform):
 def is_mat_smaller(mat, bounds, transform):
   minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
   return minLat == minLon == 0 and maxLat + 1 >= len(mat) and maxLon + 1 >= len(mat[0])
-
 
 
 def bound_ravel(lats_1d, lons_1d, bounds, transform):
@@ -127,9 +123,8 @@ def boundary_to_mask(boundary, x, y):
   X, Y = np.meshgrid(x, y)
   points = np.array((X.flatten(), Y.flatten())).T
   mask = mpath.contains_points(points).reshape(X.shape)
-  return 
+  return mask
   
-
 
 def rasterize_geoids(bounds, transform, shapeData, lats_1d, lons_1d): # https://stackoverflow.com/a/38095929
   df = pd.DataFrame()
@@ -138,10 +133,7 @@ def rasterize_geoids(bounds, transform, shapeData, lats_1d, lons_1d): # https://
   geoidMat = np.empty((len(lats_1d), len(lons_1d)), dtype='<U20')
 
   for row in shapeData.itertuples():
-    # if row.GEOID != '53051': # test
-    #   continue
     # print(row.GEOID,row.NAME)
-
     if row.geometry.boundary.geom_type == 'LineString':
       minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary.bounds, transform)
       if minLat == maxLat or minLon == maxLon:
@@ -150,14 +142,20 @@ def rasterize_geoids(bounds, transform, shapeData, lats_1d, lons_1d): # https://
       mask = np.where(mask, row.GEOID, '')
       geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask) # https://numpy.org/doc/stable/reference/routines.char.html#module-numpy.char
     else:
-      for linestring in row.geometry.boundary:
-        minLat, maxLat, minLon, maxLon = get_bound_indices(linestring.bounds, transform)
+      # print(row.GEOID,row.NAME)
+      for line in row.geometry.boundary:
+        minLat, maxLat, minLon, maxLon = get_bound_indices(line.bounds, transform)
         if minLat == maxLat or minLon == maxLon:
           continue
-        mask = boundary_to_mask(linestring, lons_1d[minLon:maxLon], lats_1d[minLat:maxLat])
-        mask = np.where(mask, row.GEOID, '')
-        geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask)  
-
+        mask = boundary_to_mask(line, lons_1d[minLon:maxLon], lats_1d[minLat:maxLat])
+        if True not in [mplp.Path(outerline).contains_path(mplp.Path(line)) for outerline in row.geometry.boundary if line != outerline]:
+          mask = np.where(mask, row.GEOID, '')
+          geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask)
+        else:
+          for r in range(geoidMat[minLat:maxLat,minLon:maxLon].shape[0]):
+            for c in range(geoidMat[minLat:maxLat,minLon:maxLon].shape[1]):
+              if mask[r,c]:
+                geoidMat[minLat+r,minLon+c] = ''
     # break # test
   
   minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
@@ -176,7 +174,8 @@ def overlaps_df(df):
     l = len(row.GEOID)
     if l <= 5:
       continue
-    items = list( dict.fromkeys([row.GEOID[j:j+5] for j in range(0,l,5)]) )
+    items = list( dict.fromkeys([row.GEOID[j:j+5] for j in range(0,l,5)]) ) # preserves order
+    items += [round(row.lat, 3), round(row.lon, 3)]
     pairs.add(tuple(items))
   print(sorted(pairs), len(pairs))
 
@@ -211,7 +210,7 @@ if __name__ == "__main__":
   unit = 'μm_m^-3'
   res = 3 # shapeData.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
   ext = 'hdf5'
-  testing = False
+  testing = True
 
 
   # shapeData = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
@@ -246,37 +245,42 @@ if __name__ == "__main__":
     # df = pd.read_hdf(os.path.join(pmDir, 'points_in_region', regionFile + '.hdf5'), key='points')
     df = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
 
+    if regionFile + '.csv' not in points_in_region_filenames:
+      fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'csv')
+
     if testing:
         
       overlaps = [i for i in df['GEOID'] if len(i)>5]
-      print(set(overlaps))
+      print(sorted(set(overlaps)))
+      # exit()
 
-      a1 = set([i[0:5] for i in overlaps])
-      a2 = set([i[5:10] for i in overlaps])
-      a3 = set([i[10:15] for i in overlaps])
-      a4 = set([i[15:] for i in overlaps])
+      # a1 = set([i[0:5] for i in overlaps])
+      # a2 = set([i[5:10] for i in overlaps])
+      # a3 = set([i[10:15] for i in overlaps])
+      # a4 = set([i[15:] for i in overlaps])
 
-      print(a1)
-      print(a2)
-      print(a3)
-      print(a4)
+      # print(a1)
+      # print(a2)
+      # print(a3)
+      # print(a4)
       
-      u = set().union(a1, a2, a3, a4)
+      # u = set().union(a1, a2, a3, a4)
       
-      s51 = [i[2:] for i in list(u) if i[:2] == '51']
-      s08 = [i[2:] for i in list(u) if i[:2] == '08']
-      s13 = [i[2:] for i in list(u) if i[:2] == '13']
+      # s51 = [i[2:] for i in list(u) if i[:2] == '51']
+      # s08 = [i[2:] for i in list(u) if i[:2] == '08']
+      # s13 = [i[2:] for i in list(u) if i[:2] == '13']
       
-      print(sorted(s08)) # ['005', '031'] - Arapahoe, City and County of Denver (all in pop data, all in deaths data)
-      print(sorted(s13)) # ['249', '269'] - Schley, Taylor (all in pop data, all in deaths data)
-      print(sorted(s51)) # many independent cities overlapping with counties (all in pop data, all in deaths data)
-      # ['003', '005', '015', '059', '069', '081', '089', '153', '161', '163', '165', '195', '530', '540', '580', '595', '600', '660', '678', '683', '685', '690', '720', '770', '775', 
-      # '790', '820', '840'] 
+      # print(sorted(s08)) # ['005', '031'] - Arapahoe, City and County of Denver (all in pop data, all in deaths data)
+      # print(sorted(s13)) # ['249', '269'] - Schley, Taylor (all in pop data, all in deaths data)
+      # print(sorted(s51)) # many independent cities overlapping with counties (all in pop data, all in deaths data)
+      # # ['003', '005', '015', '059', '069', '081', '089', '153', '161', '163', '165', '195', '530', '540', '580', '595', '600', '660', '678', '683', '685', '690', '720', '770', '775', 
+      # # '790', '820', '840'] 
 
+    # df = 
     overlaps_df(df)
 
     t0 = fc.timer_restart(t0, 'load df')
-  exit()
+  # exit()
 
   for filename in filenames:
     startend = re.split('_|-',filename)[3:5]
@@ -308,12 +312,13 @@ if __name__ == "__main__":
 
     if df is None and not is_mat_smaller(mat, basisregion.bounds, transform):
       df = rasterize_geoids(basisregion.bounds, transform, shapeData, lats_1d, lons_1d)
+      t0 = fc.timer_restart(t0, 'rasterize_geoids')
 
       fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
-      fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'csv') # helper
-      
-      t0 = fc.timer_restart(t0, 'save df')
-    # exit()
+      t0 = fc.timer_restart(t0, 'save df hdf5')
+      # fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'csv') # helper
+      # t0 = fc.timer_restart(t0, 'save df csv')
+    exit()
     lats_1d = lats_1d[minLat:maxLat]
     lons_1d = lons_1d[minLon:maxLon]
     # print(lats_1d.shape, lons_1d.shape)
