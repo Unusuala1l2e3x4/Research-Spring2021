@@ -124,6 +124,19 @@ def bound_ravel(lats_1d, lons_1d, bounds, transform):
 
 
 
+# in main.py:
+  # # 1998, 2016
+  # years = np.arange(1998, 2016 + 1)
+
+  # for y in years:
+  #   # run(dir, 'read_sedac_pm2-5.py', [y, y, 'YlOrRd', 'basisregions', 'TENA.geo.json', USAstates])
+  #   run(dir, 'read_sedac_pm2-5.py', [y, y, 'YlOrRd', 'geo-countries', 'geo-countries-union.json', world])
+  # run(dir, 'read_sedac_pm2-5.py', [2000, 2000, 'YlOrRd', 'basisregions', 'TENA.geo.json', USAstates])
+  # run(dir, 'read_sedac_pm2-5.py', [2000, 2000, 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', USAcounties])
+  # t0 = timer_restart(t0, '')
+  # exit()
+
+
 if __name__ == "__main__":
   numArgs = len(sys.argv)
   startYear, endYear = int(sys.argv[1]), int(sys.argv[2])

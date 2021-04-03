@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as cl
 import matplotlib.cm as cm
 import matplotlib.path as mplp
+import matplotlib.font_manager as fm
 
 import os, pathlib, sys, re
 import copy
@@ -77,7 +78,7 @@ def boundary_to_mask(boundary, x, y):  # https://stackoverflow.com/questions/345
   mask = mpath.contains_points(points).reshape(X.shape)
   return mask
   
-def rasterize_geoids(bounds, transform, shapeData, lats_1d, lons_1d):
+def rasterize_geoids_df(bounds, transform, shapeData, lats_1d, lons_1d):
   df = pd.DataFrame()
   df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, bounds, transform)
   geoidMat = np.empty((len(lats_1d), len(lons_1d)), dtype='<U20')
@@ -126,20 +127,26 @@ def overlaps_df(df):
   print(sorted(pairs), len(pairs))
 
 
+def closest(lst, K):
+  return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))]
 
-
-
+def shortestAxisLength(bounds):
+  return min(bounds[2]-bounds[0], bounds[3]-bounds[1])
+  
+contourSpacings = [0.01,0.02,0.05,0.1,0.2,0.5,1] # 2, 5, 10, 20    # may need to be adjusted in consideration
+tickSpacings = [0.1,0.2,0.5,1,2,5]
 if __name__ == "__main__":
   numArgs = len(sys.argv)
   startDate, endDate = sys.argv[1], sys.argv[2]
   cmap = sys.argv[3]
-  geojsonDir = sys.argv[4]
+  regionDir = sys.argv[4]
   regionFile = sys.argv[5]
   mapFile = sys.argv[6]
   isYearly = sys.argv[7] == 'True'
   maxMappedValue = None
   if numArgs == 9:
     maxMappedValue = float(sys.argv[8])
+  isMaxMappedValueGiven = maxMappedValue is not None
 
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
@@ -148,8 +155,8 @@ if __name__ == "__main__":
   shapefilesDir = os.path.join(pPath, 'shapefiles')
   
 
-  points_in_region_filenames = os.listdir(os.path.join(pmDir, 'points_in_region'))
-  filenames = [re.split('.nc',l)[0] for l in sorted(os.listdir(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25')))]
+  points_in_region_fnames = os.listdir(os.path.join(pmDir, 'points_in_region'))
+  pm_fnames = [re.split('.nc',l)[0] for l in sorted(os.listdir(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25')))]
   # exit()
 
 
@@ -157,7 +164,7 @@ if __name__ == "__main__":
   # cmap = 'YlOrRd'
   # regionFile = 'TENA.geo'
   unit = 'μm_m^-3'
-  res = 3 # shapeData.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
+  res = 3 # shapeData.plot figsize=(18*res,10*res); plt.clabel fontsize=10*res
   # ext = 'hdf5'
   testing = False
 
@@ -167,6 +174,7 @@ if __name__ == "__main__":
   shapeData = fc.clean_states_reset_index(shapeData)
   shapeData = fc.county_changes_deaths_reset_index(shapeData) # removes 08014
   # print(shapeData)
+  
 
   # exit()
 
@@ -176,21 +184,20 @@ if __name__ == "__main__":
   lats_1d, lons_1d = None, None
   bounded_mat = None
   
-  levels1, levels2 = [], []
+  levelsDiscrete, levelsContinuous = [], []
 
   t0 = fc.timer_start()
   t1 = t0
 
   # with open(os.path.join(basisregionsDir, regionFile + '.geo.json'), 'r') as f:
-  with open(os.path.join(shapefilesDir, geojsonDir, regionFile), 'r') as f:
+  with open(os.path.join(shapefilesDir, regionDir, regionFile), 'r') as f:
     contents = json.load(f)
     basisregion = shape(contents['features'][0]['geometry'])
-
   # t0 = fc.timer_restart(t0, 'read basisregion')
 
   regionFile = regionFile.split('.')[0]
 
-  if regionFile + '.hdf5' in points_in_region_filenames: # must use hdf5 - preserves indices
+  if regionFile + '.hdf5' in points_in_region_fnames: # must use hdf5 - preserves indices
     df = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
     # t0 = fc.timer_restart(t0, 'load df')
     if testing:
@@ -199,12 +206,14 @@ if __name__ == "__main__":
       overlaps_df(df)
   # exit()
 
-  for filename in filenames:
-    startend = re.split('_|-',filename)[3:5]
+
+
+  for pm_fname in pm_fnames:
+    startend = re.split('_|-',pm_fname)[3:5]
     if startend[0] < startDate or startend[1] > endDate or (startend[0] == startend[1] and isYearly) or (startend[0] != startend[1] and not isYearly):
       continue
 
-    fd = fc.read_df(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25'), filename, 'nc') # http://unidata.github.io/netcdf4-python/
+    fd = fc.read_df(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25'), pm_fname, 'nc') # http://unidata.github.io/netcdf4-python/
     mat = fd.variables['PM25'][:]
 
     deg = np.average(np.abs(fd.variables['LON'][:-1] - fd.variables['LON'][1:]))
@@ -220,14 +229,14 @@ if __name__ == "__main__":
     lons_1d = np.array(xy[0])
     
     if df is None and not is_mat_smaller(mat, basisregion.bounds, transform):
-      df = rasterize_geoids(basisregion.bounds, transform, shapeData, lats_1d, lons_1d)
-      # t0 = fc.timer_restart(t0, 'rasterize_geoids')
+      df = rasterize_geoids_df(basisregion.bounds, transform, shapeData, lats_1d, lons_1d)
+      # t0 = fc.timer_restart(t0, 'rasterize_geoids_df')
       fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
       # t0 = fc.timer_restart(t0, 'save df hdf5')
       fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'csv') # helper
       # t0 = fc.timer_restart(t0, 'save df csv')
 
-    if regionFile + '.geojson' not in points_in_region_filenames and df is not None: # ~29 min for TENA.geojson
+    if regionFile + '.geojson' not in points_in_region_fnames and df is not None: # ~29 min for TENA.geojson
       geodf = copy.deepcopy(shapeData) 
       geodf.geometry = [ MultiPoint([(row.lon, row.lat) for row in df.loc[df.GEOID == geodf.GEOID[r], ['lon','lat']].itertuples()]) for r in range(len(geodf)) ]
       geodf.to_file(os.path.join(pmDir, 'points_in_region', regionFile + '.geojson'), driver='GeoJSON')
@@ -262,25 +271,37 @@ if __name__ == "__main__":
     
     minUnit = np.nanmin(bounded_mat) if df is None else np.nanmin(df[unit])
     maxUnit = np.nanmax(bounded_mat) if df is None else np.nanmax(df[unit])
-    if maxMappedValue is None:
+    if maxMappedValue is None or not isMaxMappedValueGiven:
       maxMappedValue = maxUnit
+    
+    print(maxMappedValue)
+    contourSpacing = closest(contourSpacings, shortestAxisLength(basisregion.bounds)/30)
+    print('contourSpacing =',contourSpacing)
+    tickSpacing = closest(tickSpacings, maxMappedValue/100)
+    print('tickSpacing =',tickSpacing)
+
 
     # print(maxUnit)
+    cmap = copy.copy(cm.get_cmap(cmap))
 
-    norm = cl.Normalize(vmin=minUnit, vmax=maxMappedValue, clip=False) # clip=False is default
+    vmaxbuf = 0.05
+
+    norm = cl.Normalize(vmin=minUnit, vmax=maxMappedValue, clip=False) # clip=False is default; see https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize
     mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
     # df['color'] = [mapper.to_rgba(v) for v in df[unit]]
     # # t0 = fc.timer_restart(t0, 'color mapping')
 
+
+    # shapeData = shapeData.boundary
     with plt.style.context(("seaborn", "ggplot")):
-      shapeData.plot(figsize=(18*res,10*res),
+      shapeData.boundary.plot(figsize=(18*res,10*res),
                   color="white",
                   edgecolor = "black")
 
       plt.xlabel("Longitude", fontsize=7*res)
       plt.ylabel("Latitude", fontsize=7*res)
-      plt.title(filename, fontsize=7*res)
-      # plt.title(filename + ' (' + unit + ')', fontsize=7*res)
+      plt.title(pm_fname+', cmap='+sys.argv[3], fontsize=10*res)
+      # plt.title(pm_fname + ' (' + unit + ')', fontsize=10*res)
 
       xlim0 = plt.xlim()
       ylim0 = plt.ylim()
@@ -289,16 +310,24 @@ if __name__ == "__main__":
       plt.ylim((np.min(lats_1d) - deg, np.max(lats_1d) + deg))
 
       ## contour lines
-      levels1 = np.arange(0,maxMappedValue,4)
-      plt.contourf(lons_1d, lats_1d, bounded_mat, levels=levels1, cmap=cmap, alpha=0.6)
+      levelsDiscrete = np.arange(0,maxMappedValue + vmaxbuf,tickSpacing)
+      levelsContinuous = np.arange(0,maxMappedValue + vmaxbuf,contourSpacing)
+      # print(levelsDiscrete)
+      # img = plt.contourf(lons_1d, lats_1d, bounded_mat, levels=levelsContinuous, cmap=cmap, alpha=0.6, extend='both')
+      img = plt.imshow(bounded_mat, vmin=minUnit, vmax=maxMappedValue, cmap=cmap, origin='lower', extent=[lons_1d[0], lons_1d[-1], lats_1d[0], lats_1d[-1]])
+      img.cmap.set_over('black')
+      img.cmap.set_under('white')
+      img.changed()
 
       # ms = marker_size(plt, xlim0, ylim0, deg)
       # print(ms)
       # plt.scatter(df.lon, df.lat, s=ms, c='red', alpha=1, linewidths=0, marker='s')
       # plt.scatter(df.lon, df.lat, s=ms, c=df.color, alpha=1, linewidths=0, marker='s')
 
-      ticks = sorted([minUnit, maxUnit, maxMappedValue] + list(levels1))
-      plt.colorbar(mapper, ticks=ticks)
+      ticks = sorted(set([minUnit, maxUnit, maxMappedValue] + list(levelsDiscrete)))
+      cb = plt.colorbar(mapper, ticks=ticks, drawedges=True, label=unit, pad=0.001)
+      cb.ax.yaxis.label.set_font_properties(fm.FontProperties(size=7*res))
+      cb.ax.tick_params(labelsize=5*res)
 
       # t0 = fc.timer_restart(t0, 'create plot')
       

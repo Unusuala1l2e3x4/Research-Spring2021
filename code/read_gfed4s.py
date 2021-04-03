@@ -169,6 +169,30 @@ def get_unit(dataset):
 
 world = geopandas.read_file(geopandas.datasets.get_path("naturalearth_lowres"))
 
+
+
+
+# in main.py:
+  # run(dir, 'read_gfed4s.py', '2016 12 2016 12 burned_area burned_fraction cool')
+  # run(dir, 'read_gfed4s.py', [1997, 1, 2016, 12, 'burned_area', 'burned_fraction', 'cool', 'TENA'])
+
+  # run(dir, 'read_gfed4s.py', [2020, 10, 2020, 10, 'emissions', 'C', 'YlOrRd', 'TENA'])
+  
+  # run(dir, 'read_gfed4s.py', [1997, 1, 2016, 12, 'burned_area', 'burned_fraction', 'YlOrRd', 'TENA'])
+  # t0 = timer_restart(t0, '')
+  # run(dir, 'read_gfed4s.py', [1997, 1, 2016, 12, 'burned_area', 'burned_fraction', 'YlOrRd'])
+  # t0 = timer_restart(t0, '')
+  # run(dir, 'read_gfed4s.py', [1997, 1, 2020, 10, 'emissions', 'C', 'YlOrRd', 'TENA'])
+  # t0 = timer_restart(t0, '')
+  # run(dir, 'read_gfed4s.py', [1997, 1, 2020, 10, 'emissions', 'C', 'YlOrRd'])
+  # t0 = timer_restart(t0, '')
+  # run(dir, 'read_gfed4s.py', [1997, 1, 2020, 10, 'emissions', 'DM', 'YlOrRd', 'TENA'])
+  # t0 = timer_restart(t0, '')
+  # run(dir, 'read_gfed4s.py', [1997, 1, 2020, 10, 'emissions', 'DM', 'YlOrRd'])
+  # t0 = timer_restart(t0, '')
+
+
+
 if __name__ == "__main__":
   numArgs = len(sys.argv)
   startYear, startMonth = int(sys.argv[1]), int(sys.argv[2])

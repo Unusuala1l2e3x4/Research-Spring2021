@@ -26,7 +26,7 @@ def save_df(df, folderPath, name, ext):
   # fd.close()
 
 def read_df(folderPath, name, ext):
-  print('read', os.path.join(folderPath, name + '.' + ext))
+  # print('read', os.path.join(folderPath, name + '.' + ext))
   if ext == 'csv':
     return pd.read_csv(os.path.join(folderPath, name + '.csv'))
   elif ext == 'hdf5':
