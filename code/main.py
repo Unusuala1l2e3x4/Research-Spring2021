@@ -4,6 +4,7 @@ import pathlib
 import time
 from typing import Optional
 import numpy as np
+from multiprocessing import Process, process
 
 def run(dir, file, args=None):
   # a = "python " + dir + '/' + file
@@ -35,8 +36,24 @@ dates = ['199901', '199902', '199903', '199904', '199905', '199906', '199907', '
 USAstates = os.path.join('USA_states_counties', 'cb_2019_us_state_500k', 'cb_2019_us_state_500k.shp')
 USAcounties = os.path.join('USA_states_counties', 'cb_2019_us_county_500k', 'cb_2019_us_county_500k.shp')
 
-if __name__ == "__main__":
+def runMulti(dir, file, args=None):
+  startDates = args[0]
+  endDates = args[1]
+  startDates = [startDates] if type(startDates) is not list else startDates
+  endDates = [endDates] if type(endDates) is not list else endDates
+  proc = []
+  for i in range(min(len(startDates),len(endDates))):
+    p = Process(target=run, args=(dir, file, [startDates[i], endDates[i]] + args[2:] ))
+    proc.append(p)
+  for p in proc:
+    p.start()
+  for p in proc:
+    p.join()
 
+
+
+
+def main():
   dir = str(pathlib.Path(__file__).parent.absolute())
 
   # cmap options: https://matplotlib.org/stable/tutorials/colors/colormaps.html
@@ -45,25 +62,33 @@ if __name__ == "__main__":
   t0 = timer_start()
   t1 = t0
 
+  startDates = ['200001', '200501', '201001', '201501']
+  endDates = ['200412', '200912', '201412', '201812']
+
   # startDate (200001), endDate (201812), cmap, regionDir, regionFile, mapFile, isYearly, maxMappedValue (optional)
   # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'gist_stern', 'geo-countries', 'geo-countries-union.json', USAstates, True, 115])
   # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'gist_stern', 'basisregions', 'TENA.geo.json', USAcounties, True])
-  # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'gist_stern', 'basisregions', 'TENA.geo.json', USAcounties, True, 50])
+  # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, True, 50])
   # run(dir, 'read_acag_pm2-5.py', ['200101', '200112', 'YlOrRd', 'basisregions', 'TENA.geo.json', USAcounties, True])
   # run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', USAcounties, True])
 
+  # runMulti(dir, 'read_acag_pm2-5.py', [startDates, endDates, 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, False, 215]) # ~ 5.8 min (dont set save_maxVals = True)
+  # runMulti(dir, 'read_acag_pm2-5.py', [startDates, endDates, 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, True, 50]) # 36.56 sec
+  run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, True, 50]) # 36.56 sec
+
+  # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, False, 215]) # ~ 17.6 min
+
   # for filename in ['06-CA-California','08-CO-Colorado','13-GA-Georgia','22-LA-Louisiana','51-VA-Virginia']: # 
   #   run(dir, 'read_acag_pm2-5.py', ['200101', '200112', 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), \
-  #     filename + '.geojson', os.path.join('USA_states_counties', 'us_states_counties', filename + '.geojson'), True])
+  #     filename + '.geojson', os.path.join('USA_states_counties', 'us_states_counties', filename + '.geojson'), True, 26.5])
 
 
-  # tested cmaps (ranked best to worst): turbo
-  # avoid: terrain
-  
-  for filename in ['16-ID-Idaho']: # ,'30-MT-Montana'
-    for cmap in ['gist_stern']: # ,'turbo','rainbow','gist_ncar','terrain','nipy_spectral'
-      run(dir, 'read_acag_pm2-5.py', ['200006', '200010', cmap, os.path.join('USA_states_counties', 'us_states'), \
-        filename + '.geojson', os.path.join('USA_states_counties', 'us_states_counties', filename + '.geojson'), False])
+  # best: gist_stern
+  # bad: terrain
+  # for filename in ['16-ID-Idaho']: # ,'30-MT-Montana'
+  #   for cmap in ['gist_stern']: # ,'turbo','rainbow','gist_ncar','terrain','nipy_spectral'
+  #     run(dir, 'read_acag_pm2-5.py', ['200006', '200010', cmap, os.path.join('USA_states_counties', 'us_states'), \
+  #       filename + '.geojson', os.path.join('USA_states_counties', 'us_states_counties', filename + '.geojson'), False])
 
 
   # for filename in ['16-ID-Idaho','30-MT-Montana']: # ,'22-LA-Louisiana'
@@ -71,25 +96,29 @@ if __name__ == "__main__":
   #     run(dir, 'read_acag_pm2-5.py', ['200008', '200008', 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), \
   #       filename + '.geojson', os.path.join('USA_states_counties', 'us_states_counties', filename + '.geojson'), False, maxval])
 
+
+
+
+  # # plot_usa.py - requires changing parameters in the file
+  # run(dir, 'plot_usa.py', [dates[0], dates[-1], 'CountyDeaths'])
+  # # run(dir, 'plot_usa.py', [dates[0], dates[-1], 'StateDeaths']) 
+
+
   # # startYYYYMM, endYYYYMM, pltTitle
   # dates01 = [i for i in dates if i.endswith('01')]
   # dates12 = [i for i in dates if i.endswith('12')]
-  # print(dates01)
-  # print(dates12)
+  # l = min(len(dates01), len(dates12))
+  # dates01 = dates01[:l]
+  # dates12 = dates12[:l]
+  # for i in range(0,l,4):
+  #   runMulti(dir, 'plot_usa.py', [dates01[i:i+4], dates12[i:i+4], 'CountyDeaths', 3150])
 
-  # for d in range(min(len(dates01), len(dates12))):
-  #   run(dir, 'plot_usa.py', [dates01[d], dates12[d], 'CountyDeaths']) 
-
-
-
-
-  # for d in dates:
-  #   run(dir, 'plot_usa.py', [d, d, 'CountyDeaths']) 
-  
-  # run(dir, 'plot_usa.py', [dates[0], dates[-1], 'CountyDeaths']) 
-  # run(dir, 'plot_usa.py', [dates[30], dates[30], 'CountyDeaths']) 
 
 
 
   t1 = timer_restart(t1, 'main total time')
   
+
+
+if __name__ == "__main__":
+  main()

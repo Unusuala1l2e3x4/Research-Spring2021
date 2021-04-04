@@ -61,7 +61,7 @@ def GEOID_string_state_county(state, county):
   return state + county
   
 def countyGEOIDstring(geo):
-  geo = str(geo)
+  geo = str(int(geo))
   while len(geo) != 5:
     geo = '0' + geo
   return geo
@@ -128,7 +128,7 @@ def county_changes_deaths_reset_index(df): # see code/write_county_month_pop_tes
   temp1 = df[df.GEOID == '08014']
   # if len(temp1.GEOID) != 0:
   #   df = df.drop([temp1.index[0]])
-  if len(temp1.GEOID) == 0 and '08' in statefps:
+  if len(temp1.GEOID) == 0 and '08' in statefps and statefps != set(df.GEOID):
     df = df.append(pd.DataFrame([['08014'] + [0]*len(dates)], columns=['GEOID']+dates))
 
   return df.sort_values(by='GEOID').reset_index(drop=True)
@@ -161,3 +161,10 @@ def deaths_by_date_geoid(title, suppValString):
   ret = pd.DataFrame(linesAll, columns=['GEOID', 'YYYYMM', 'deaths']).sort_values(by=['YYYYMM','GEOID']).reset_index(drop=True)
   ret['deaths'] = pd.to_numeric(ret['deaths'])
   return ret
+
+
+def closest(lst, K):
+  return lst[min(range(len(lst)), key = lambda i: abs(lst[i]-K))]
+
+def shortestAxisLength(bounds):
+  return min(bounds[2]-bounds[0], bounds[3]-bounds[1])

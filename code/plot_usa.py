@@ -6,8 +6,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
 import matplotlib.cm as cm
+import matplotlib.font_manager as fm
 
-import os, pathlib, re, json, sys
+import os, pathlib, re, json, sys, copy
 
 from shapely.geometry import shape, GeometryCollection
 
@@ -23,9 +24,14 @@ fc = importlib.import_module('functions')
 
 # https://stackoverflow.com/questions/47846178/how-to-rasterize-simple-geometry-from-geojson-file-using-gdal
 
-
+tickSpacings = [1,2,5,10,50,100,200,500,1000,2000,5000,10000,20000,50000,100000]
 if __name__ == "__main__":
-  # numArgs = len(sys.argv)
+  numArgs = len(sys.argv)
+  maxMappedValue = None
+  if numArgs == 5:
+    maxMappedValue = float(sys.argv[4])
+  isMaxMappedValueGiven = maxMappedValue is not None
+
 
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
@@ -75,31 +81,31 @@ if __name__ == "__main__":
 
   deathsData = fc.makeCountyFileGEOIDs(fc.read_df(cdcWonderDir, countySupEstTitle, ext))
   # deathsData = fc.makeCountyFileGEOIDs(fc.read_df(cdcWonderDir, countyTitle, ext))
+  shapeData = countyMapData
+
   # deathsData = fc.makeCountyFileGEOIDs(fc.read_df(cdcWonderDir, stateTitle, ext))
+  # shapeData = stateMapData
+
   # t0 = fc.timer_restart(t0, 'read deaths data')
 
   startYYYYMM, endYYYYMM = sys.argv[1], sys.argv[2]
   # startYYYYMM, endYYYYMM = '199901', '201907'
-
-  shapeData = countyMapData
-
-  pltTitle = sys.argv[3] + ' (' + startYYYYMM + '-' + endYYYYMM + ')'
-  # pltTitle = countySupEstTitle + ' (' + startYYYYMM + '-' + endYYYYMM + ')'
-
   res = 2 # locmap.plot figsize=(18*res,10*res); plt.clabel fontsize=3*res
   cmap = 'YlOrRd'
-
+  
   # END PARAMS
+  
 
+  cmap = copy.copy(cm.get_cmap(cmap))
 
   shapeData = fc.clean_states_reset_index(shapeData)
-  shapeData = fc.county_changes_deaths_reset_index(shapeData) # removes 08014
+  shapeData = fc.county_changes_deaths_reset_index(shapeData)
   # print(list(shapeData.GEOID) == list(deathsData.GEOID)) # True
 
   dates = sorted(i for i in deathsData if i != 'GEOID' and i >= startYYYYMM and i <= endYYYYMM)
   # print(dates)
 
-  # print(np.sum(deathsData.loc[:, dates], axis=0)) # totals for each YYYYM
+  # print(np.sum(deathsData.loc[:, dates], axis=0)) # totals for each YYYYMM
   # print(np.sum(deathsData.loc[:, dates], axis=1)) # totals for each GEOID
 
   shapeData[unit] = np.sum(deathsData.loc[:, dates], axis=1)
@@ -114,49 +120,59 @@ if __name__ == "__main__":
 
   minUnit = np.min(shapeData[unit])
   maxUnit = np.max(shapeData[unit])
+  if maxMappedValue is None or not isMaxMappedValueGiven:
+    maxMappedValue = maxUnit
+
+  tickSpacing = fc.closest(tickSpacings, maxMappedValue/50)
+
   # maxUnit = 15
-  norm = cl.Normalize(vmin=minUnit, vmax=maxUnit, clip=False) # clip=False is default
+  norm = cl.Normalize(vmin=0, vmax=maxMappedValue, clip=False) # clip=False is default
   mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
-  shapeData['color'] = [mapper.to_rgba(v) for v in shapeData[unit]]
+  # shapeData['color'] = [mapper.to_rgba(v) for v in shapeData[unit]]
+
+  # print(shapeData)
   
 
-
+  pltTitle = sys.argv[3] + ' (' + startYYYYMM + '-' + endYYYYMM + ')' + '_' + str(maxUnit) + '_' + str(maxMappedValue)
+  # pltTitle = countySupEstTitle + ' (' + startYYYYMM + '-' + endYYYYMM + ')'
+  
   # t0 = fc.timer_restart(t0, 'color mapping')
 
   with plt.style.context(("seaborn", "ggplot")):
-    shapeData.plot(figsize=(18*res,10*res),
-                # color="white",
-                color=shapeData['color'],
-                edgecolor = "black")
+    shapeData.plot(column = unit, figsize=(18*res,10*res), edgecolor='black', linewidth=0.3*res, cmap = cmap)
 
     plt.xlabel("Longitude", fontsize=7*res)
     plt.ylabel("Latitude", fontsize=7*res)
+    plt.xticks(fontsize=7*res)
+    plt.yticks(fontsize=7*res)
     plt.title(pltTitle)
 
     xlim0 = plt.xlim()
     ylim0 = plt.ylim()
 
-
     bounds = basisregion.bounds
     # (minx, miny, maxx, maxy)
-
 
     plt.xlim((bounds[0] - deg, bounds[2] + deg))
     plt.ylim((bounds[1] - deg, bounds[3] + deg))
 
-    levels1 = np.arange(0,maxUnit+1,(maxUnit/10))
+    levels1 = np.arange(0,maxMappedValue + tickSpacing*0.99,tickSpacing)
 
     # ticks = np.sort([minUnit] + list(levels1) + [maxUnit])
     ticks = np.sort(list(levels1))
     # print(ticks)
-    plt.colorbar(mapper, ticks=ticks)
+    ticks = sorted([minUnit, maxUnit] + list(set([maxMappedValue] + list(levels1) )))
+    cb = plt.colorbar(mapper, ticks=ticks, drawedges=True, label=unit, pad=0.001)
+    cb.ax.yaxis.label.set_font_properties(fm.FontProperties(size=7*res))
+    cb.ax.tick_params(labelsize=5*res)
+    # plt.grid(False)
 
     # t0 = fc.timer_restart(t0, 'create plot')
 
     # # fc.save_plt(plt,outputDir,'TENA_land_to_total_area_ratio', 'png')
     fc.save_plt(plt,outputDir, pltTitle, 'png')
 
-    t1 = fc.timer_restart(t1, 'total time')
+    # t1 = fc.timer_restart(t1, 'total time')
 
     # plt.show()
 
