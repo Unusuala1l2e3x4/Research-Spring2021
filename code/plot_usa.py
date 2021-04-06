@@ -24,7 +24,7 @@ fc = importlib.import_module('functions')
 
 # https://stackoverflow.com/questions/47846178/how-to-rasterize-simple-geometry-from-geojson-file-using-gdal
 
-tickSpacings = [1,2,5,10,50,100,200,500,1000,2000,5000,10000,20000,50000,100000]
+tickSpacings = [1e-6,2e-6,5e-6,1e-5,2e-5,5e-5,1e-4,2e-4,5e-4,1e-3,2e-3,5e-3,1e-2,2e-2,5e-2,1e-1,2e-1,5e-1, 1,2,5,10,50,100,200,500,1000,2000,5000,10000,20000,50000,100000]
 if __name__ == "__main__":
   numArgs = len(sys.argv)
   maxMappedValue = None
@@ -83,10 +83,20 @@ if __name__ == "__main__":
   # deathsData = fc.makeCountyFileGEOIDs(fc.read_df(cdcWonderDir, countyTitle, ext))
   shapeData = countyMapData
 
+  shapeData = fc.clean_states_reset_index(shapeData)
+  shapeData = fc.county_changes_deaths_reset_index(shapeData)
+  # print(list(shapeData.GEOID) == list(deathsData.GEOID)) # True
+  
+
   # deathsData = fc.makeCountyFileGEOIDs(fc.read_df(cdcWonderDir, stateTitle, ext))
   # shapeData = stateMapData
 
   # t0 = fc.timer_restart(t0, 'read deaths data')
+
+
+
+
+
 
   startYYYYMM, endYYYYMM = sys.argv[1], sys.argv[2]
   # startYYYYMM, endYYYYMM = '199901', '201907'
@@ -98,17 +108,33 @@ if __name__ == "__main__":
 
   cmap = copy.copy(cm.get_cmap(cmap))
 
-  shapeData = fc.clean_states_reset_index(shapeData)
-  shapeData = fc.county_changes_deaths_reset_index(shapeData)
-  # print(list(shapeData.GEOID) == list(deathsData.GEOID)) # True
 
   dates = sorted(i for i in deathsData if i != 'GEOID' and i >= startYYYYMM and i <= endYYYYMM)
-  # print(dates)
+  
 
-  # print(np.sum(deathsData.loc[:, dates], axis=0)) # totals for each YYYYMM
-  # print(np.sum(deathsData.loc[:, dates], axis=1)) # totals for each GEOID
+  # shapeData[unit] = np.sum(deathsData.loc[:, dates], axis=1)
 
-  shapeData[unit] = np.sum(deathsData.loc[:, dates], axis=1)
+
+
+
+  usCensusDir = os.path.join(ppPath, 'US Census Bureau', 'population')
+  popData = fc.read_df(usCensusDir, 'TENA_county_pop_1999_2019', ext)
+  popData = fc.clean_states_reset_index(popData) # does nothing
+  popData = fc.county_changes_deaths_reset_index(popData) # does nothing
+  deathsSum = np.sum(deathsData.loc[:, dates], axis=1)
+  popSum = np.sum(popData.loc[:, dates], axis=1)
+  unit = 'monthly_death_rate'
+  shapeData[unit] = deathsSum / popSum
+
+
+
+
+
+  # print(deathsSum)
+  # print(popSum)
+  # print(shapeData[unit])
+
+  # exit()
 
   # shapeData['LANDPERCENTAGE'] = np.divide(list(map(float, shapeData['ALAND'])), np.array(list(map(float, shapeData['ALAND']))) + np.array(list(map(float, shapeData['AWATER']))))
   # minUnit = np.min(shapeData['LANDPERCENTAGE'])

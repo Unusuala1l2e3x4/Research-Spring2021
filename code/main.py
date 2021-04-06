@@ -68,13 +68,17 @@ def main():
   # startDate (200001), endDate (201812), cmap, regionDir, regionFile, mapFile, isYearly, maxMappedValue (optional)
   # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'gist_stern', 'geo-countries', 'geo-countries-union.json', USAstates, True, 115])
   # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'gist_stern', 'basisregions', 'TENA.geo.json', USAcounties, True])
-  # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, True, 50])
+
+  # run(dir, 'read_acag_pm2-5.py', ['201701', '201712', 'YlOrRd', 'basisregions', 'TENA.geo.json', USAstates, True])
+
   # run(dir, 'read_acag_pm2-5.py', ['200101', '200112', 'YlOrRd', 'basisregions', 'TENA.geo.json', USAcounties, True])
   # run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', USAcounties, True])
 
-  runMulti(dir, 'read_acag_pm2-5.py', [startDates, endDates, 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, False, 215]) # ~ 5.8 min (dont set save_maxVals = True)
+  # runMulti(dir, 'read_acag_pm2-5.py', [startDates, endDates, 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, False, 215]) # ~ 5.8 min (dont set save_maxVals = True)
   # runMulti(dir, 'read_acag_pm2-5.py', [startDates, endDates, 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, True, 50]) # 36.56 sec
-  # run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, True, 50]) # 36.56 sec
+  runMulti(dir, 'read_acag_pm2-5.py', [startDates, endDates, 'YlOrRd', 'basisregions', 'TENA.geo.json', USAstates, True]) # 36.56 sec
+
+  # run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, True, 50])
 
   # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, False, 215]) # ~ 17.6 min
 
@@ -104,14 +108,18 @@ def main():
   # # run(dir, 'plot_usa.py', [dates[0], dates[-1], 'StateDeaths']) 
 
 
+
+
+
   # # startYYYYMM, endYYYYMM, pltTitle
-  # dates01 = [i for i in dates if i.endswith('01')]
-  # dates12 = [i for i in dates if i.endswith('12')]
-  # l = min(len(dates01), len(dates12))
-  # dates01 = dates01[:l]
-  # dates12 = dates12[:l]
-  # for i in range(0,l,4):
-  #   runMulti(dir, 'plot_usa.py', [dates01[i:i+4], dates12[i:i+4], 'CountyDeaths', 3150])
+  dates01 = [i for i in dates if i.endswith('01')]
+  dates12 = [i for i in dates if i.endswith('12')]
+  l = min(len(dates01), len(dates12))
+  dates01 = dates01[:l]
+  dates12 = dates12[:l]
+  for i in range(0,l,4):
+    runMulti(dir, 'plot_usa.py', [dates01[i:i+4], dates12[i:i+4], 'MonthlyDeathRateByCounty', 0.000151])
+    # runMulti(dir, 'plot_usa.py', [dates01[i:i+4], dates12[i:i+4], 'CountyDeaths', 3150])
 
 
 

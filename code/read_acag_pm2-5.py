@@ -283,7 +283,7 @@ if __name__ == "__main__":
 
     # shapeData = shapeData.boundary
     with plt.style.context(("seaborn", "ggplot")):
-      shapeData.boundary.plot(figsize=(18*res,10*res), edgecolor='black', color="white", alpha=0.5, linewidth=0.3*res)
+      shapeData.boundary.plot(figsize=(18*res,10*res), edgecolor='black', color="white", linewidth=0.3*res)
 
       plt.xlabel("Longitude", fontsize=7*res)
       plt.ylabel("Latitude", fontsize=7*res)
