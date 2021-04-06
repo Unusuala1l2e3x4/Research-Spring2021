@@ -72,9 +72,9 @@ def main():
   # run(dir, 'read_acag_pm2-5.py', ['200101', '200112', 'YlOrRd', 'basisregions', 'TENA.geo.json', USAcounties, True])
   # run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'YlOrRd', os.path.join('USA_states_counties', 'us_states'), '06-CA-California.geojson', USAcounties, True])
 
-  # runMulti(dir, 'read_acag_pm2-5.py', [startDates, endDates, 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, False, 215]) # ~ 5.8 min (dont set save_maxVals = True)
+  runMulti(dir, 'read_acag_pm2-5.py', [startDates, endDates, 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, False, 215]) # ~ 5.8 min (dont set save_maxVals = True)
   # runMulti(dir, 'read_acag_pm2-5.py', [startDates, endDates, 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, True, 50]) # 36.56 sec
-  run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, True, 50]) # 36.56 sec
+  # run(dir, 'read_acag_pm2-5.py', ['200001', '200012', 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, True, 50]) # 36.56 sec
 
   # run(dir, 'read_acag_pm2-5.py', ['200001', '201812', 'gist_stern', 'basisregions', 'TENA.geo.json', USAstates, False, 215]) # ~ 17.6 min
 
