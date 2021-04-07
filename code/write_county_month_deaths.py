@@ -55,6 +55,7 @@ if __name__ == "__main__":
   title = 'Underlying Cause of Death - Chronic lower respiratory diseases, 1999-2019'
   countyTitle = 'By county - ' + title
   stateTitle = 'By state - ' + title
+  countySupEstTitle = countyTitle + ', suppressed estimates'
 
   suppValString = '-1' #None
   # ext = 'hdf5' # csv/hdf5
@@ -194,8 +195,10 @@ if __name__ == "__main__":
 
   t0 = fc.timer_restart(t0, 'make county data with suppressed estimates')
 
+  
+
   del countyDataNew['STATEFP']
-  fc.save_df(countyDataNew, cdcWonderDir, countyTitle + ', suppressed estimates', ext)
+  fc.save_df(countyDataNew, cdcWonderDir, countySupEstTitle, ext)
 
   t1 = fc.timer_restart(t1, 'total time')
 

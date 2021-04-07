@@ -41,8 +41,8 @@ as the Federal Aviation Administration.  To improve coverage in western states
 and along international borders, nClimDiv also includes the National 
 Interagency Fire Center (NIFC) Remote Automatic Weather Station (RAWS) network, 
 the USDA Snow Telemetry (SNOTEL) network, the Environment Canada (EC) 
-network (south of 52°N), and part of Mexicos Servicio Meteorologico Nacional 
-(SMN) network (north of 24°N).  Note that nClimDiv does not incorporate 
+network (south of 52ï¿½N), and part of Mexicos Servicio Meteorologico Nacional 
+(SMN) network (north of 24ï¿½N).  Note that nClimDiv does not incorporate 
 precipitation data from RAWS because that networks tipping-bucket gauges are 
 unheated, leading to suspect cold-weather data.
 
