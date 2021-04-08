@@ -78,9 +78,9 @@ def boundary_to_mask(boundary, x, y):  # https://stackoverflow.com/questions/345
   mask = mpath.contains_points(points).reshape(X.shape)
   return mask
   
-def rasterize_geoids_df(bounds, transform, shapeData, lats_1d, lons_1d):
-  df = pd.DataFrame()
-  df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, bounds, transform)
+
+
+def get_geoidMat(bounds, transform, shapeData, lats_1d, lons_1d):
   geoidMat = np.empty((len(lats_1d), len(lons_1d)), dtype='<U20')
   minLat0, maxLat0, minLon0, maxLon0 = get_bound_indices(bounds, transform)
   for row in shapeData.itertuples():
@@ -110,7 +110,13 @@ def rasterize_geoids_df(bounds, transform, shapeData, lats_1d, lons_1d):
         else:
           mask = np.where(mask, row.GEOID, '')
           geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask)
-  df['GEOID'] = np.ravel(geoidMat[minLat0:maxLat0,minLon0:maxLon0])
+  return geoidMat[minLat0:maxLat0,minLon0:maxLon0]
+
+
+def rasterize_geoids_df(bounds, transform, shapeData, lats_1d, lons_1d):
+  df = pd.DataFrame()
+  df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, bounds, transform)
+  df['GEOID'] = np.ravel(get_geoidMat(bounds, transform, shapeData, lats_1d, lons_1d))
   return df[df['GEOID'] != '']
 
 
@@ -269,7 +275,7 @@ if __name__ == "__main__":
 
     # print(maxMappedValue)
 
-    tickSpacing = fc.closest(tickSpacings, maxMappedValue/50)
+    tickSpacing = fc.closest(tickSpacings, maxMappedValue/15)
     # print('tickSpacing =',tickSpacing)
 
     # print(maxUnit)
@@ -285,11 +291,11 @@ if __name__ == "__main__":
     with plt.style.context(("seaborn", "ggplot")):
       shapeData.boundary.plot(figsize=(18*res,10*res), edgecolor='black', color="white", linewidth=0.3*res)
 
-      plt.xlabel("Longitude", fontsize=7*res)
-      plt.ylabel("Latitude", fontsize=7*res)
-      plt.xticks(fontsize=7*res)
-      plt.yticks(fontsize=7*res)
-      plt.title(pm_fname+', cmap='+sys.argv[3], fontsize=10*res)
+      plt.xlabel("Longitude", fontsize=12*res)
+      plt.ylabel("Latitude", fontsize=12*res)
+      plt.xticks(fontsize=12*res)
+      plt.yticks(fontsize=12*res)
+      plt.title('Average Monthly PM2.5 concentration (' + startend[0] + '-' + startend[1] + ')', fontsize=12*res)
       # plt.title(pm_fname + ' (' + unit + ')', fontsize=10*res)
 
       xlim0 = plt.xlim()
@@ -299,8 +305,8 @@ if __name__ == "__main__":
       plt.ylim((lats_1d[maxLat] - deg, lats_1d[minLat] + deg))
 
       ## contour lines
-      levelsDiscrete = np.arange(0,maxMappedValue + tickSpacing*0.99,tickSpacing)
-      # levelsContinuous = np.arange(0,maxMappedValue + tickSpacing*0.99,contourSpacing)
+      levelsDiscrete = np.arange(0,maxMappedValue + tickSpacing,tickSpacing)
+      # levelsContinuous = np.arange(0,maxMappedValue + tickSpacing,contourSpacing)
       # print(levelsDiscrete)
       # img = plt.contourf(lons_1d, lats_1d, bounded_mat, levels=levelsContinuous, cmap=cmap, alpha=0.6, extend='both')
       img = plt.imshow(bounded_mat, vmin=minUnit, vmax=maxMappedValue, cmap=cmap, origin='lower', alpha=0.5, extent=[lons_1d[minLon], lons_1d[maxLon], lats_1d[minLat], lats_1d[maxLat]])
@@ -308,15 +314,15 @@ if __name__ == "__main__":
       img.cmap.set_under('white')
       img.changed()
 
-      ticks = sorted([minUnit, maxUnit] + list(set([maxMappedValue] + list(levelsDiscrete) )))
-      cb = plt.colorbar(mapper, ticks=ticks, drawedges=True, label=unit, pad=0.001)
-      cb.ax.yaxis.label.set_font_properties(fm.FontProperties(size=7*res))
-      cb.ax.tick_params(labelsize=5*res)
+      ticks = sorted(list(set([maxMappedValue] + list(levelsDiscrete) ))) # [minUnit, maxUnit] + 
+      cb = plt.colorbar(mapper, ticks=ticks, drawedges=True, label='μm/m^3', pad=0.001)
+      cb.ax.yaxis.label.set_font_properties(fm.FontProperties(size=12*res))
+      cb.ax.tick_params(labelsize=9*res)
       plt.grid(False)
 
       # t0 = fc.timer_restart(t0, 'create plot')
       
-      fc.save_plt(plt, outputDir, regionFile + '_' + startend[0] + '_' + startend[1] + '_' + str(maxUnit) + '_' + str(maxMappedValue) + '_' + fc.utc_time_filename(), 'png')
+      fc.save_plt(plt, outputDir, regionFile + '_' + startend[0] + '_' + startend[1] + '_' + "{:.3f}".format(maxUnit) + '_' + "{:.3f}".format(maxMappedValue) + '_' + fc.utc_time_filename(), 'png')
       # t0 = fc.timer_restart(t0, 'save outfiles')
 
       # plt.show()

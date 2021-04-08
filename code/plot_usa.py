@@ -114,7 +114,7 @@ if __name__ == "__main__":
 
   # shapeData[unit] = np.sum(deathsData.loc[:, dates], axis=1)
 
-
+  rateper = 1000000
 
 
   usCensusDir = os.path.join(ppPath, 'US Census Bureau', 'population')
@@ -124,9 +124,9 @@ if __name__ == "__main__":
   deathsSum = np.sum(deathsData.loc[:, dates], axis=1)
   popSum = np.sum(popData.loc[:, dates], axis=1)
   unit = 'monthly_death_rate'
-  shapeData[unit] = deathsSum / popSum
+  shapeData[unit] = (deathsSum / popSum) * rateper
 
-
+  maxMappedValue = maxMappedValue * rateper
 
 
 
@@ -149,7 +149,7 @@ if __name__ == "__main__":
   if maxMappedValue is None or not isMaxMappedValueGiven:
     maxMappedValue = maxUnit
 
-  tickSpacing = fc.closest(tickSpacings, maxMappedValue/50)
+  tickSpacing = fc.closest(tickSpacings, maxMappedValue/15)
 
   # maxUnit = 15
   norm = cl.Normalize(vmin=0, vmax=maxMappedValue, clip=False) # clip=False is default
@@ -159,7 +159,7 @@ if __name__ == "__main__":
   # print(shapeData)
   
 
-  pltTitle = sys.argv[3] + ' (' + startYYYYMM + '-' + endYYYYMM + ')' + '_' + str(maxUnit) + '_' + str(maxMappedValue)
+  pltTitle = sys.argv[3] + ' (' + startYYYYMM + '-' + endYYYYMM + ')' + '_' + "{:.3f}".format(maxUnit) + '_' + "{:.3f}".format(maxMappedValue)
   # pltTitle = countySupEstTitle + ' (' + startYYYYMM + '-' + endYYYYMM + ')'
   
   # t0 = fc.timer_restart(t0, 'color mapping')
@@ -167,11 +167,11 @@ if __name__ == "__main__":
   with plt.style.context(("seaborn", "ggplot")):
     shapeData.plot(column = unit, figsize=(18*res,10*res), edgecolor='black', linewidth=0.3*res, cmap = cmap)
 
-    plt.xlabel("Longitude", fontsize=7*res)
-    plt.ylabel("Latitude", fontsize=7*res)
-    plt.xticks(fontsize=7*res)
-    plt.yticks(fontsize=7*res)
-    plt.title(pltTitle)
+    plt.xlabel("Longitude", fontsize=12*res)
+    plt.ylabel("Latitude", fontsize=12*res)
+    plt.xticks(fontsize=12*res)
+    plt.yticks(fontsize=12*res)
+    plt.title('Average Monthly Death Rate (per 1 million people) (' + startYYYYMM + '-' + endYYYYMM + ')', fontsize=12*res)
 
     xlim0 = plt.xlim()
     ylim0 = plt.ylim()
@@ -182,15 +182,15 @@ if __name__ == "__main__":
     plt.xlim((bounds[0] - deg, bounds[2] + deg))
     plt.ylim((bounds[1] - deg, bounds[3] + deg))
 
-    levels1 = np.arange(0,maxMappedValue + tickSpacing*0.99,tickSpacing)
+    levels1 = np.arange(0,maxMappedValue + tickSpacing,tickSpacing)
 
     # ticks = np.sort([minUnit] + list(levels1) + [maxUnit])
     ticks = np.sort(list(levels1))
     # print(ticks)
-    ticks = sorted([minUnit, maxUnit] + list(set([maxMappedValue] + list(levels1) )))
-    cb = plt.colorbar(mapper, ticks=ticks, drawedges=True, label=unit, pad=0.001)
-    cb.ax.yaxis.label.set_font_properties(fm.FontProperties(size=7*res))
-    cb.ax.tick_params(labelsize=5*res)
+    ticks = sorted(list(set([maxMappedValue] + list(levels1) ))) # [minUnit, maxUnit] + 
+    cb = plt.colorbar(mapper, ticks=ticks, drawedges=True, label='Average Monthly Death Rate (per 1 million people)', pad=0.001)
+    cb.ax.yaxis.label.set_font_properties(fm.FontProperties(size=12*res))
+    cb.ax.tick_params(labelsize=9*res)
     # plt.grid(False)
 
     # t0 = fc.timer_restart(t0, 'create plot')

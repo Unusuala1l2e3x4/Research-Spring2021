@@ -9,6 +9,7 @@ from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPol
 # https://stackoverflow.com/a/19398136 <-- source of code
 
 WGS84_RADIUS = 6378137
+# 6366113.579189922
 WGS84_RADIUS_SQUARED = WGS84_RADIUS**2
 d2r = np.pi/180
 
@@ -57,16 +58,25 @@ def polygon_area(coords):
 
 # pt = {'lon':-102.055,'lat':40.995}
 pt = [-102.055, 40.995]
-area = quad_area(pt[0], pt[1], 0.1)
-print(area / 1000000, 'sq km')
+area = quad_area(pt[0], pt[1], 0.01)
+print(area, 'sq m')
+
+pt = [-102.055, 0]
+area = quad_area(pt[0], pt[1], 0.01)
+print(area, 'sq m')
+
+print(1100**2)
 
 
-dir = str(pathlib.Path(__file__).parent.absolute())
-statesDir = os.path.join( dir, 'shapefiles\\USA_states_counties\\us_states')
-filename = '08-CO-Colorado'
-with open(os.path.join(statesDir, filename + '.geojson'), 'r') as f:
-  stateItems = json.load(f)
-print(polygon_area(stateItems['features'][0]['geometry']['coordinates'][0]), 'sq m (coords from \'08-CO-Colorado.geojson\', using polygon_area)')
+
+
+
+# dir = str(pathlib.Path(__file__).parent.absolute())
+# statesDir = os.path.join( dir, 'shapefiles\\USA_states_counties\\us_states')
+# filename = '08-CO-Colorado'
+# with open(os.path.join(statesDir, filename + '.geojson'), 'r') as f:
+#   stateItems = json.load(f)
+# print(polygon_area(stateItems['features'][0]['geometry']['coordinates'][0]), 'sq m (coords from \'08-CO-Colorado.geojson\', using polygon_area)')
 # doesnt match
 
 # polygon = Polygon(stateItems['features'][0]['geometry'])

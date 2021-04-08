@@ -13,16 +13,17 @@ fc = importlib.import_module('functions')
 
 
 if __name__ == '__main__':
-
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
-
 
   outputDir = os.path.join(pPath, 'random_forest-outfiles')
   shapefilesDir = os.path.join(pPath, 'shapefiles')
   usaDir = os.path.join(shapefilesDir, 'USA_states_counties')
   cdcWonderDir = os.path.join(ppPath, 'CDC data', 'CDC WONDER datasets')
   usCensusDir = os.path.join(ppPath, 'US Census Bureau', 'population')
+  nClimDivDir = os.path.join(ppPath, 'nClimDiv data')
+
+
   countyMapFile = 'cb_2019_us_county_500k'
 
   title = 'Underlying Cause of Death - Chronic lower respiratory diseases, 1999-2019'
@@ -33,26 +34,25 @@ if __name__ == '__main__':
   ext = 'hdf5'
 
   # startYYYYMM, endYYYYMM = sys.argv[1], sys.argv[2]
-
-
+  startYYYYMM, endYYYYMM = '200001', '201812'
 
   deathsData = fc.makeCountyFileGEOIDs(fc.read_df(cdcWonderDir, countySupEstTitle, ext))
+  dates = sorted(i for i in deathsData if i != 'GEOID' and i >= startYYYYMM and i <= endYYYYMM)
+  # print(dates)
 
-
-
-  dates = sorted(i for i in deathsData if i != 'GEOID') #  and i >= startYYYYMM and i <= endYYYYMM
-
-
-
-  
   shapeData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
   shapeData = fc.clean_states_reset_index(shapeData)
   shapeData = fc.county_changes_deaths_reset_index(shapeData)
   print(list(shapeData.GEOID) == list(deathsData.GEOID)) # True
 
-
   popData = fc.read_df(usCensusDir, 'TENA_county_pop_1999_2019', ext)
   print(list(shapeData.GEOID) == list(popData.GEOID)) # True
+
+  precipData = fc.read_df(nClimDivDir, 'climdiv-pcpncy-v1.0', ext)
+  print(list(shapeData.GEOID) == list(precipData.GEOID))
+
+  tempData = fc.read_df(nClimDivDir, 'climdiv-tmpccy-v1.0', ext)
+  print(list(shapeData.GEOID) == list(tempData.GEOID))
 
   deathsSum = np.sum(deathsData.loc[:, dates], axis=1)
   popSum = np.sum(popData.loc[:, dates], axis=1)
@@ -62,10 +62,11 @@ if __name__ == '__main__':
 
 
 
-
-  print(deathsData)
-  print(shapeData)
-  print(popData)
+  # print(shapeData)
+  # print(deathsData)
+  # print(popData)
+  # print(precipData)
+  # print(tempData)
 
 
 
