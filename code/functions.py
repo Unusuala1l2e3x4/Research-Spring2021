@@ -47,8 +47,9 @@ def timer_start():
   return time.time()
 def timer_elapsed(t0):
   return time.time() - t0
-def timer_restart(t0, msg):
-  print(timer_elapsed(t0), msg)
+def timer_restart(t0, msg=None):
+  if msg is not None:
+    print(timer_elapsed(t0), msg)
   return timer_start()
 
 def GEOID_string_state_county(state, county):

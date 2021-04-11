@@ -60,12 +60,6 @@ def bound_ravel(lats_1d, lons_1d, bounds, transform):
   X, Y = np.meshgrid(lons_1d, lats_1d)
   return np.ravel(Y), np.ravel(X)
 
-def boundary_to_mask(boundary, x, y):  # https://stackoverflow.com/questions/34585582/how-to-mask-the-specific-array-data-based-on-the-shapefile/38095929#38095929
-  mpath = mplp.Path(boundary)
-  X, Y = np.meshgrid(x, y)
-  points = np.array((X.flatten(), Y.flatten())).T
-  mask = mpath.contains_points(points).reshape(X.shape)
-  return mask
   
 def aggregate_pm25(areaMat, mat, geoidMat, transform, shapeData):
   ret = []
@@ -92,7 +86,6 @@ if __name__ == "__main__":
   usaDir = os.path.join(shapefilesDir, 'USA_states_counties')
   nClimDivDir = os.path.join(ppPath, 'nClimDiv data')
   
-  
   points_in_region_fnames = os.listdir(os.path.join(pmDir, 'points_in_region'))
   pm_fnames = [re.split('.nc',l)[0] for l in sorted(os.listdir(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25')))]
 
@@ -107,10 +100,7 @@ if __name__ == "__main__":
   t0 = fc.timer_start()
   t1 = t0
 
-  df, tf = None, None
-  minLat, maxLat, minLon, maxLon = None, None, None, None
-  lats_1d, lons_1d = None, None
-  geoidMat, areaMat, latAreas = None, None, None
+  df, tf, geoidMat, areaMat, latAreas = None, None, None, None, None
 
   
   with open(os.path.join(shapefilesDir, regionDir, regionFile), 'r') as f:
@@ -132,22 +122,18 @@ if __name__ == "__main__":
 
   # df2 = df.sort_values(by='lat', ascending=False).reset_index(drop=True)
   # print(list(df.lat) == list(df2.lat)) # True
-
-  
   
   countyMapFile = 'cb_2019_us_county_500k'
-  shapeData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
+  shapeData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp'))
   shapeData = fc.clean_states_reset_index(shapeData)
   shapeData = fc.county_changes_deaths_reset_index(shapeData)
-  # shapeData = shapeData.sort_values(by=['GEOID']).reset_index(drop=True)
+  shapeData = shapeData.sort_values(by=['GEOID']).reset_index(drop=True)
 
   shapeData['ATOTAL'] = shapeData['ALAND'] + shapeData['AWATER']
-
   # print(shapeData)
-  # exit()
+
   deg = 0.01
   templon = 0
-
 
   countyPM25 = pd.DataFrame()
   countyPM25['GEOID'] = shapeData['GEOID']
@@ -198,7 +184,7 @@ if __name__ == "__main__":
       # print(areaMat.shape, mat.shape, geoidMat.shape)
       # print(areaMat[minLat:maxLat,minLon:maxLon], mat[minLat:maxLat,minLon:maxLon], geoidMat[minLat:maxLat,minLon:maxLon])
 
-      t0 = fc.timer_restart(t0, 'initialize tf, geoMat, lats_1d, lons_1d, cellsArea')
+      t0 = fc.timer_restart(t0, 'initialize')
 
     countyPM25[startend[0]] = aggregate_pm25(areaMat, mat, geoidMat, tf, shapeData)
 
@@ -206,7 +192,7 @@ if __name__ == "__main__":
     # print(countyPM25[startend[0]])
 
   
-  t0 = fc.timer_restart(t0, 'run loop')
+  t0 = fc.timer_restart(t0, 'run loop') # ~6.7 min
 
   # print(countyPM25)
 
