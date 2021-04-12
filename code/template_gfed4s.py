@@ -42,6 +42,8 @@ import datetime as dt
 from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
 from shapely.ops import unary_union
 
+import importlib
+fc = importlib.import_module('functions')
 
 # print(fd)
 # print(fd.keys())
@@ -55,12 +57,6 @@ from shapely.ops import unary_union
 
 regionNums = {'BONA':1, 'TENA':2, 'CEAM':3, 'NHSA':4, 'SHSA':5, 'EURO':6, 'MIDE':7, 'NHAF':8, 'SHAF':9, 'BOAS':10, 'CEAS':11, 'SEAS':12, 'EQAS':13, 'AUST':14}
 
-def month_str(month):
-  if month < 10:
-    return '0' + str(month)
-  else:
-    return str(month)
-
 
 def burned_area(fd, month, dataset_name):
   """[1997 - 2016]
@@ -73,7 +69,7 @@ def burned_area(fd, month, dataset_name):
   
   source (of burned area): what data was used to construct the burned area maps excluding small fires. In general, ATSR and VIRS data was used before 2001, MODIS after 2001. This solely concerns the GFED4 burned area dataset.
   """
-  return fd['burned_area'][month_str(month)][dataset_name]
+  return fd['burned_area'][fc.month_str(month)][dataset_name]
 
 
 def emissions(fd, month, dataset_name):
@@ -115,7 +111,7 @@ def emissions(fd, month, dataset_name):
     SAVA (Savanna, grassland, and shrubland fires); BORF (Boreal forest fires); TEMF (Temperature forest fires);
       DEFO (Tropical forest fires [deforestation and degradation]); PEAT (Peat fires); AGRI (Agricultural waste burning)
       """
-  return fd['emissions'][month_str(month)][dataset_name]
+  return fd['emissions'][fc.month_str(month)][dataset_name]
 
 
 def biosphere(fd, month, dataset_name):
@@ -128,7 +124,7 @@ def biosphere(fd, month, dataset_name):
 
       /BB: fire emissions
       """
-  return fd['biosphere'][month_str(month)][dataset_name]
+  return fd['biosphere'][fc.month_str(month)][dataset_name]
 
 
 def ancill(fd, dataset_name):

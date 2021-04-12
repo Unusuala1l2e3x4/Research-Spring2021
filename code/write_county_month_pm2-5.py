@@ -5,15 +5,11 @@ import geopandas as gpd
 from numpy.core.numeric import NaN
 import pandas as pd
 
-import os, pathlib, io, sys, copy, re, json
-from shapely.geometry import shape, MultiPoint
+import os, pathlib, re, json
+from shapely.geometry import shape
 import rasterio, rasterio.features, rasterio.warp
 
-import matplotlib.path as mplp
-
 import importlib
-
-from shapely.ops import transform
 fc = importlib.import_module('functions')
 
 
@@ -45,35 +41,6 @@ def quad_area(lon, lat, deg):
   return (np.sum(angles) - (N-2)*np.pi)*WGS84_RADIUS_SQUARED
 
 
-def get_bound_indices(bounds, transform):
-  rc = rasterio.transform.rowcol(transform, [bounds[0], bounds[2]], [bounds[1], bounds[3]], op=round, precision=4)
-  minLon = max(rc[1][0], 0)
-  maxLon = rc[1][1]
-  minLat = max(rc[0][1], 0)
-  maxLat = rc[0][0]
-  return minLat, maxLat, minLon, maxLon
-
-def bound_ravel(lats_1d, lons_1d, bounds, transform):
-  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
-  lats_1d = lats_1d[minLat:maxLat]
-  lons_1d = lons_1d[minLon:maxLon]
-  X, Y = np.meshgrid(lons_1d, lats_1d)
-  return np.ravel(Y), np.ravel(X)
-
-  
-def aggregate_pm25(areaMat, mat, geoidMat, transform, shapeData):
-  ret = []
-  for row in shapeData.itertuples():
-    minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary.bounds, transform)
-    mask = np.where(geoidMat[minLat:maxLat,minLon:maxLon] == row.GEOID, 1, 0)
-    pm25Mask = mask * mat[minLat:maxLat,minLon:maxLon]
-    areaMask = mask * areaMat[minLat:maxLat,minLon:maxLon]
-    pm25_area = np.nansum(pm25Mask*areaMask)
-    area = np.sum(areaMask)
-    pm25 = pm25_area / area
-    ret.append(pm25)
-    # print(row.GEOID, row.ATOTAL, area, pm25)
-  return ret
 
 
 if __name__ == "__main__":
@@ -154,7 +121,7 @@ if __name__ == "__main__":
     if tf is None: # if geoidMat is None and areaMat is None -> same effect
       deg = np.average(np.abs(fd.variables['LON'][:-1] - fd.variables['LON'][1:]))
       tf = rasterio.transform.from_origin(np.round(np.min(fd.variables['LON'][:]), 2), np.round(np.max(fd.variables['LAT'][:]), 2), deg,deg)
-      minLat, maxLat, minLon, maxLon = get_bound_indices(basisregion.bounds, tf)
+      minLat, maxLat, minLon, maxLon = fc.get_bound_indices(basisregion.bounds, tf)
       # print(minLat, maxLat, minLon, maxLon)
       xy = rasterio.transform.xy(tf, range(fd.dimensions['LAT'].size), range(fd.dimensions['LAT'].size))
       lats_1d = np.array(xy[1])
@@ -164,7 +131,7 @@ if __name__ == "__main__":
       bounded_mat = mat[minLat:maxLat,minLon:maxLon]
       # print(bounded_mat.shape)
       df = df.reindex(pd.Index(np.arange(0,bounded_mat.shape[0]*bounded_mat.shape[1])))
-      df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, basisregion.bounds, tf)
+      df['lat'], df['lon'] = fc.bound_ravel(lats_1d, lons_1d, basisregion.bounds, tf)
       # df[unit] = np.ravel(bounded_mat)
       df['GEOID'] = df['GEOID'].replace(NaN,'')
       # df = df[df.GEOID != '']
@@ -186,9 +153,9 @@ if __name__ == "__main__":
 
       t0 = fc.timer_restart(t0, 'initialize')
 
-    countyPM25[startend[0]] = aggregate_pm25(areaMat, mat, geoidMat, tf, shapeData)
+    countyPM25[startend[0]] = fc.aggregate_by_geoid(areaMat, mat, geoidMat, tf, shapeData)
 
-    # t0 = fc.timer_restart(t0, 'aggregate_pm25 '+startend[0] + '-' + startend[1])
+    # t0 = fc.timer_restart(t0, 'aggregate_by_geoid '+startend[0] + '-' + startend[1])
     # print(countyPM25[startend[0]])
 
   

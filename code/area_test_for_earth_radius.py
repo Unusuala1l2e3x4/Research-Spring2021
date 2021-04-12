@@ -6,6 +6,9 @@ import json, h5py
 
 from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
 
+import importlib
+fc = importlib.import_module('functions')
+
 # https://stackoverflow.com/questions/4681737/how-to-calculate-the-area-of-a-polygon-on-the-earths-surface-using-python
 # https://stackoverflow.com/a/19398136 <-- source of code
 
@@ -37,12 +40,7 @@ def quad_area(lon, lat, deg, radius):
 
 
 
-def gfed_filenames(gfed_fnames):
-  ret = []
-  for filename in gfed_fnames:
-    if '.hdf5' in filename:
-      ret.append(filename)
-  return ret
+
 
 if __name__ == "__main__":
   pPath = str(pathlib.Path(__file__).parent.absolute())
@@ -55,7 +53,7 @@ if __name__ == "__main__":
   
   
   gfed_fnames = os.listdir(gfedDir)
-  gfed_fnames = sorted(gfed_filenames(gfed_fnames)) # same as in gfedDir_timesArea
+  gfed_fnames = sorted(fc.gfed_filenames(gfed_fnames)) # same as in gfedDir_timesArea
 
   fd_timesArea = h5py.File(os.path.join(gfedDir_timesArea, gfed_fnames[0]), 'r')
 

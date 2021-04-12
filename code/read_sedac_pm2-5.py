@@ -2,7 +2,6 @@ import numpy as np
 
 import json
 import geopandas as gpd
-from numpy.testing._private.utils import print_assert_equal
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
@@ -12,15 +11,15 @@ import os
 import pathlib
 import sys
 
-import time
-import datetime as dt
-
 import rasterio
 import rasterio.features
 import rasterio.warp
 
 from shapely.geometry import shape
 
+
+import importlib
+fc = importlib.import_module('functions')
 
 
 def tif_filenames(filenames):
@@ -29,63 +28,6 @@ def tif_filenames(filenames):
     if '.tif' in filename:
       ret.append(filename)
   return ret
-
-def save_plt(plt, folderPath, name, ext):
-  plt.savefig(os.path.join(folderPath, name + '.' + ext), format=ext)
-
-def save_df(df, folderPath, name):
-  # df.to_hdf(os.path.join(folderPath, filename + '.hdf5'), key='data')
-  fd = pd.HDFStore(os.path.join(folderPath, name + '.hdf5'))
-  fd.put('data', df, format='table', data_columns=True, complib='blosc', complevel=5)
-  fd.close()
-  # fd = h5py.File(os.path.join(folderPath, name + '.hdf5'),'w')
-  # fd.create_dataset('data', data=df)
-  # fd.close()
-
-def save_tif(mat, fd, folderPath, name):
-  # mat = np.where( mat < 0, 0, mat)
-  with rasterio.open(
-    os.path.join(folderPath, name + '.tif'),
-    'w',
-    driver='GTiff',
-    height=mat.shape[0],
-    width=mat.shape[1],
-    count=1,
-    dtype=mat.dtype,
-    crs=fd.crs,
-    transform=fd.transform,
-  ) as fd2:
-    fd2.write(mat, 1)
-    fd2.close()
-  
-
-def utc_time_filename():
-  return dt.datetime.utcnow().strftime('%Y.%m.%d-%H.%M.%S')
-
-def timer_start():
-  return time.time()
-def timer_elapsed(t0):
-  return time.time() - t0
-def timer_restart(t0, msg):
-  print(timer_elapsed(t0), msg)
-  return timer_start()
-
-
-def flatten_list(regular_list):
-  return [item for sublist in regular_list for item in sublist]
-
-def lim_length(lim):
-  return lim[1] - lim[0]
-
-
-def marker_size(plt, xlim1, ylim1, deg):
-  a = 0.4865063 * (deg / 0.25)
-  # 0.4378557
-  x = lim_length(plt.xlim())
-  y = lim_length(plt.ylim())
-  x1 = lim_length(xlim1)
-  y1 = lim_length(ylim1)
-  return (x1*y1*a) / (x*y)
 
 def geojson_filenames(filenames):
   ret = []
@@ -176,7 +118,7 @@ if __name__ == "__main__":
   levels1, levels2 = [], []
 
 
-  t0 = timer_start()
+  t0 = fc.timer_start()
   t1 = t0
 
   # with open(os.path.join(basisregionsDir, regionFile + '.geo.json'), 'r') as f:
@@ -280,7 +222,7 @@ if __name__ == "__main__":
       levels1 = np.arange(0,maxUnit,4)
       plt.contourf(lons_1d, lats_1d, bounded_mat, levels=levels1, cmap=cmap, alpha=0.6)
 
-      # ms = marker_size(plt, xlim0, ylim0, deg)
+      # ms = fc.marker_size(plt, xlim0, ylim0, deg)
       # print(ms)
       # plt.scatter(df.lon, df.lat, s=ms, c='red', alpha=1, linewidths=0, marker='s')
       # plt.scatter(df.lon, df.lat, s=ms, c=df.color, alpha=1, linewidths=0, marker='s')
@@ -291,10 +233,10 @@ if __name__ == "__main__":
 
       # t0 = timer_restart(t0, 'create plot')
       
-      save_plt(plt, outputDir, regionFile + '_' + str(year) + '_' + '{:.3f}'.format(maxUnit) + '_' + utc_time_filename(), 'png')
+      fc.save_plt(plt, outputDir, regionFile + '_' + str(year) + '_' + '{:.3f}'.format(maxUnit) + '_' + fc.utc_time_filename(), 'png')
       # t0 = timer_restart(t0, 'save outfiles')
 
-      t1 = timer_restart(t1, 'total time')
+      t1 = fc.timer_restart(t1, 'total time')
 
       # plt.show()
 

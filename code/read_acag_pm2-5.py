@@ -7,12 +7,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
 import matplotlib.cm as cm
-import matplotlib.path as mplp
 import matplotlib.font_manager as fm
 
 import os, pathlib, sys, re
 import copy
-from pandas._libs.missing import NA
 import rasterio, rasterio.features, rasterio.warp
 
 from shapely.geometry import shape, MultiPoint
@@ -21,103 +19,6 @@ import importlib
 fc = importlib.import_module('functions')
 
 
-def save_tif(mat, fd, folderPath, name):
-  # mat = np.where( mat < 0, 0, mat)
-  with rasterio.open(
-    os.path.join(folderPath, name + '.tif'),
-    'w',
-    driver='GTiff',
-    height=mat.shape[0],
-    width=mat.shape[1],
-    count=1,
-    dtype=mat.dtype,
-    crs=fd.crs,
-    transform=fd.transform,
-  ) as fd2:
-    fd2.write(mat, 1)
-    fd2.close()
-
-def flatten_list(regular_list):
-  return [item for sublist in regular_list for item in sublist]
-
-def lim_length(lim):
-  return lim[1] - lim[0]
-
-def marker_size(plt, xlim1, ylim1, deg):
-  a = 0.4865063 * (deg / 0.25)
-  # 0.4378557
-  x = lim_length(plt.xlim())
-  y = lim_length(plt.ylim())
-  x1 = lim_length(xlim1)
-  y1 = lim_length(ylim1)
-  return (x1*y1*a) / (x*y)
-
-def get_bound_indices(bounds, transform):
-  rc = rasterio.transform.rowcol(transform, [bounds[0], bounds[2]], [bounds[1], bounds[3]], op=round, precision=4)
-  minLon = max(rc[1][0], 0)
-  maxLon = rc[1][1]
-  minLat = max(rc[0][1], 0)
-  maxLat = rc[0][0]
-  return minLat, maxLat, minLon, maxLon
-
-def is_mat_smaller(mat, bounds, transform):
-  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
-  return minLat == minLon == 0 and maxLat + 1 >= len(mat) and maxLon + 1 >= len(mat[0])
-
-def bound_ravel(lats_1d, lons_1d, bounds, transform):
-  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
-  lats_1d = lats_1d[minLat:maxLat]
-  lons_1d = lons_1d[minLon:maxLon]
-  X, Y = np.meshgrid(lons_1d, lats_1d)
-  return np.ravel(Y), np.ravel(X)
-
-def boundary_to_mask(boundary, x, y):  # https://stackoverflow.com/questions/34585582/how-to-mask-the-specific-array-data-based-on-the-shapefile/38095929#38095929
-  mpath = mplp.Path(boundary)
-  X, Y = np.meshgrid(x, y)
-  points = np.array((X.flatten(), Y.flatten())).T
-  mask = mpath.contains_points(points).reshape(X.shape)
-  return mask
-  
-
-
-def get_geoidMat(bounds, transform, shapeData, lats_1d, lons_1d):
-  geoidMat = np.empty((len(lats_1d), len(lons_1d)), dtype='<U20')
-  minLat0, maxLat0, minLon0, maxLon0 = get_bound_indices(bounds, transform)
-  for row in shapeData.itertuples():
-    if row.geometry.boundary.geom_type == 'LineString': # assuming there is no
-      minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary.bounds, transform)
-      if minLat == maxLat or minLon == maxLon:
-        continue
-      mask = boundary_to_mask(row.geometry.boundary, lons_1d[minLon:maxLon], lats_1d[minLat:maxLat])
-      mask = np.where(mask, row.GEOID, '')
-      geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask) # https://numpy.org/doc/stable/reference/routines.char.html#module-numpy.char
-    else:
-      # sort line indices by nest depth
-      lineIndexNestDepth = dict()
-      for i in range(len(row.geometry.boundary)):
-        lineIndexNestDepth[i] = [mplp.Path(outerline).contains_path(mplp.Path(row.geometry.boundary[i])) for outerline in row.geometry.boundary if row.geometry.boundary[i] != outerline].count(True)
-      # sort indices by nest depth (sort by dict values)
-      for l in sorted(lineIndexNestDepth, key=lineIndexNestDepth.get): 
-        minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary[l].bounds, transform)
-        if minLat == maxLat or minLon == maxLon:
-          continue
-        mask = boundary_to_mask(row.geometry.boundary[l], lons_1d[minLon:maxLon], lats_1d[minLat:maxLat])
-        if lineIndexNestDepth[l] % 2 == 1: # nest depth = 1
-          for r in range(geoidMat[minLat:maxLat,minLon:maxLon].shape[0]):
-            for c in range(geoidMat[minLat:maxLat,minLon:maxLon].shape[1]):
-              if mask[r,c] and geoidMat[minLat+r,minLon+c] != '':
-                geoidMat[minLat+r,minLon+c] = geoidMat[minLat+r,minLon+c][:-5] # remove points from when nest depth = 0
-        else:
-          mask = np.where(mask, row.GEOID, '')
-          geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask)
-  return geoidMat[minLat0:maxLat0,minLon0:maxLon0]
-
-
-def rasterize_geoids_df(bounds, transform, shapeData, lats_1d, lons_1d):
-  df = pd.DataFrame()
-  df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, bounds, transform)
-  df['GEOID'] = np.ravel(get_geoidMat(bounds, transform, shapeData, lats_1d, lons_1d))
-  return df[df['GEOID'] != '']
 
 
 
@@ -228,7 +129,7 @@ if __name__ == "__main__":
       deg = np.average(np.abs(fd.variables['LON'][:-1] - fd.variables['LON'][1:]))
       # print(deg)
       transform = rasterio.transform.from_origin(np.round(np.min(fd.variables['LON'][:]), 2), np.round(np.max(fd.variables['LAT'][:]), 2), deg,deg)
-      minLat, maxLat, minLon, maxLon = get_bound_indices(basisregion.bounds, transform)
+      minLat, maxLat, minLon, maxLon = fc.get_bound_indices(basisregion.bounds, transform)
 
       # t0 = fc.timer_restart(t0, 'get transform')
       xy = rasterio.transform.xy(transform, range(fd.dimensions['LAT'].size), range(fd.dimensions['LAT'].size))
@@ -236,8 +137,8 @@ if __name__ == "__main__":
       xy = rasterio.transform.xy(transform, range(fd.dimensions['LON'].size), range(fd.dimensions['LON'].size))
       lons_1d = np.array(xy[0])
     
-    if df is None and not is_mat_smaller(mat, basisregion.bounds, transform):
-      df = rasterize_geoids_df(basisregion.bounds, transform, shapeData, lats_1d, lons_1d)
+    if df is None and not fc.is_mat_smaller(mat, basisregion.bounds, transform):
+      df = fc.rasterize_geoids_df(basisregion.bounds, transform, shapeData, lats_1d, lons_1d)
       # t0 = fc.timer_restart(t0, 'rasterize_geoids_df')
       fc.save_df(df, os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
       # t0 = fc.timer_restart(t0, 'save df hdf5')
@@ -256,7 +157,7 @@ if __name__ == "__main__":
 
     if only_points_in_region and df is not None: # and not is_mat_smaller
       df = df.reindex(pd.Index(np.arange(0,bounded_mat.shape[0]*bounded_mat.shape[1])))
-      df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, basisregion.bounds, transform)
+      df['lat'], df['lon'] = fc.bound_ravel(lats_1d, lons_1d, basisregion.bounds, transform)
       df[unit] = np.ravel(bounded_mat)
       df['GEOID'] = df['GEOID'].replace(NaN,'')
       df = df[df.GEOID != '']

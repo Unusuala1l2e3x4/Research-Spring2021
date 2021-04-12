@@ -1,5 +1,3 @@
-from datetime import date
-from joblib.parallel import DEFAULT_N_JOBS
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import KFold, StratifiedKFold, GridSearchCV, cross_val_score, cross_validate
 import pandas as pd
@@ -7,14 +5,11 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
 
-from time import time
+# from time import time
 
-
-import os, pathlib, re, json, sys, copy
+import os, pathlib
 
 import importlib
-
-from sklearn.utils import shuffle
 fc = importlib.import_module('functions')
 
 
@@ -39,20 +34,20 @@ def n_estimators_given_max_samples(X, n_estimators_base, max_samples_base, max_s
   return int(np.ceil( total_samples / max_samples ))
 
 
-def estimate_time(params): # assuming 10-fold CV, n_jobs = DEFAULT_N_JOBS = 5
+
+
+def estimate_time(params, n_jobs, cv_indices): # assuming n_jobs = DEFAULT_N_JOBS = 5
   assert [type(i) == float for i in params['max_samples']]
+  folds = cv_indices.get_n_splits()
   s = np.sum(params['max_samples']) # all floats
   n = np.sum(params['n_estimators']) # all ints
   m = np.prod([len(params[i]) for i in params.keys() if i not in ['max_samples', 'n_estimators']]) # all lengths (int)
-  hrs = (10*s*n*m)/(2875)
-  
+
+  hrs =  (5/n_jobs)*(folds*s*n*m)/(2324.89) # 3600*folds*10*0.1*m/prev_time
+
   print(hrs, 'hrs, or')
   print(hrs*60, 'min, or')
   print(hrs*3600, 'sec')
-
-
-
-
 
 
 def plotGiniImportance(importances):
@@ -63,6 +58,7 @@ def plotGiniImportance(importances):
   plt.yticks(list(np.arange(0,max(importances['importance'])+0.02,0.02)))
   plt.grid(color='#95a5a6', linestyle='--', linewidth=1, axis='y', alpha=0.7)
   return plt
+
 
 def main():
   pPath = str(pathlib.Path(__file__).parent.absolute())
@@ -124,13 +120,19 @@ def main():
 
   data['ALAND_km2'] = ravel_by_dates('a', shapeData.ALAND, dates).a / 1000**2
   data['popuDensity_ALAND_km2'] = data.popu / data.ALAND_km2
+
+  # data['AWATER_km2'] = ravel_by_dates('a', shapeData.AWATER, dates).a / 1000**2
+  # data['AWATER_km2'] = data['AWATER_km2'].replace(NaN, 0)
   
   data['ATOTAL_km2'] = ravel_by_dates('a', shapeData.ATOTAL, dates).a / 1000**2
   data['popuDensity_ATOTAL_km2'] = data.popu / data.ATOTAL_km2
 
+  data['ALAND_ATOTAL_ratio'] = data.ALAND_km2 / data.ATOTAL_km2
+
   data['month'] = [int(i[-2:]) for i in data.YYYYMM]
 
   # print(data)
+  # exit()
 
 
   # https://scikit-learn.org/stable/modules/ensemble.html#forests-of-randomized-trees
@@ -158,20 +160,22 @@ def main():
   #   https://scikit-learn.org/stable/modules/model_evaluation.html#r2-score-the-coefficient-of-determination
 
 
-  # columns = [i for i in data if i not in ['deathRate','GEOID','YYYYMM','deaths','popu','ALAND_km2']]
-  columns = [i for i in data if i not in ['deathRate','GEOID','YYYYMM','deaths','popu','ALAND_km2', 'ATOTAL_km2', 'popuDensity_ATOTAL_km2']]
+  columns = [i for i in data if i in ['precip_in', 'temp_F', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'ALAND_ATOTAL_ratio']]
+  # columns = [i for i in data if i not in ['deathRate','GEOID','YYYYMM','deaths','popu','ALAND_km2', 'ATOTAL_km2', 'popuDensity_ATOTAL_km2']] # ,'AWATER_km2','ALAND_km2', 'ATOTAL_km2', 'popuDensity_ATOTAL_km2'
   # print(columns)
   
   X = data[columns]
   y = data.deathRate
-  # print(X)
+  print(X)
   # print(y)
+
+  # exit()
 
 
   t0 = fc.timer_restart(t0, 'data')
 
   crossvalidate = True
-  refit = False
+  refit = True
 
   if crossvalidate: 
     print('crossvalidate', crossvalidate)
@@ -201,16 +205,14 @@ def main():
 
 
     # exit()
-    param_grid = {'max_samples': [0.1], 'n_estimators': [300,350,400], 'min_samples_leaf': [2]} # , 'max_depth':[None]
+    param_grid = {'max_samples': [0.1], 'n_estimators': [170], 'min_samples_leaf': [2], 'min_samples_split': [4]} # , 'max_depth':[None]
 
-    estimate_time(param_grid)
-    exit()
+    estimate_time(param_grid, DEFAULT_N_JOBS, cv_indices)
+    # exit()
 
 
     # param_grid = {'max_samples': [0.1,0.2,0.3], 'n_estimators': [60,80,100,120,140,160,180], 'min_samples_leaf': [1,2,3,4]} # , 'max_depth':[None]
 
-
-    
 
     gs = GridSearchCV(clf, param_grid=param_grid, refit=False, cv=cv_indices, scoring=scoring, verbose=2, n_jobs=DEFAULT_N_JOBS) # refit=scoringParam, 
     gs.fit(X, y)
@@ -256,7 +258,7 @@ def main():
     print('crossvalidate', crossvalidate)
     clf = RandomForestRegressor(random_state=0)
 
-    bestparams = {'max_samples': 0.1, 'min_samples_leaf': 2, 'n_estimators': 260}                 ############ copy of saved dict
+    bestparams =  {'max_samples': 0.11, 'min_samples_leaf': 3, 'min_samples_split': 3, 'n_estimators': 50}                 ############ copy of saved dict
 
 
     bestparams['n_jobs'] = DEFAULT_N_JOBS

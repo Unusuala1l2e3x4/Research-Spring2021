@@ -1,14 +1,14 @@
 import numpy as np
 
-import geopandas as gpd
 import pandas as pd
 
-import os, pathlib, re, netCDF4
+import os, re, netCDF4
 
 import time
 import datetime as dt
 
-
+import matplotlib.path as mplp
+import rasterio, rasterio.features, rasterio.warp
 
 def save_df(df, folderPath, name, ext):
   print('save', os.path.join(folderPath, name + '.' + ext))
@@ -51,6 +51,15 @@ def timer_restart(t0, msg=None):
   if msg is not None:
     print(timer_elapsed(t0), msg)
   return timer_start()
+
+
+def gfed_filenames(gfed_fnames):
+  ret = []
+  for filename in gfed_fnames:
+    if '.hdf5' in filename:
+      ret.append(filename)
+  return ret
+
 
 def GEOID_string_state_county(state, county):
   state = str(state)
@@ -169,3 +178,102 @@ def closest(lst, K):
 
 def shortestAxisLength(bounds):
   return min(bounds[2]-bounds[0], bounds[3]-bounds[1])
+
+
+
+def lim_length(lim):
+  return lim[1] - lim[0]
+
+def marker_size(plt, xlim1, ylim1, deg):
+  a = 0.4865063 * (deg / 0.25)
+  # 0.4378557
+  x = lim_length(plt.xlim())
+  y = lim_length(plt.ylim())
+  x1 = lim_length(xlim1)
+  y1 = lim_length(ylim1)
+  return (x1*y1*a) / (x*y)
+
+
+def boundary_to_mask(boundary, x, y):  # https://stackoverflow.com/questions/34585582/how-to-mask-the-specific-array-data-based-on-the-shapefile/38095929#38095929
+  mpath = mplp.Path(boundary)
+  X, Y = np.meshgrid(x, y)
+  points = np.array((X.flatten(), Y.flatten())).T
+  mask = mpath.contains_points(points).reshape(X.shape)
+  return mask
+  
+
+def rasterize_geoids_df(bounds, transform, shapeData, lats_1d, lons_1d):
+  df = pd.DataFrame()
+  df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, bounds, transform)
+  df['GEOID'] = np.ravel(get_geoidMat(bounds, transform, shapeData, lats_1d, lons_1d))
+  return df[df['GEOID'] != '']
+
+
+def get_bound_indices(bounds, transform):
+  rc = rasterio.transform.rowcol(transform, [bounds[0], bounds[2]], [bounds[1], bounds[3]], op=round, precision=4)
+  minLon = max(rc[1][0], 0)
+  maxLon = rc[1][1]
+  minLat = max(rc[0][1], 0)
+  maxLat = rc[0][0]
+  return minLat, maxLat, minLon, maxLon
+
+def is_mat_smaller(mat, bounds, transform):
+  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
+  return minLat == minLon == 0 and maxLat + 1 >= len(mat) and maxLon + 1 >= len(mat[0])
+
+def bound_ravel(lats_1d, lons_1d, bounds, transform):
+  minLat, maxLat, minLon, maxLon = get_bound_indices(bounds, transform)
+  lats_1d = lats_1d[minLat:maxLat]
+  lons_1d = lons_1d[minLon:maxLon]
+  X, Y = np.meshgrid(lons_1d, lats_1d)
+  return np.ravel(Y), np.ravel(X)
+
+
+def get_geoidMat(bounds, transform, shapeData, lats_1d, lons_1d):
+  geoidMat = np.empty((len(lats_1d), len(lons_1d)), dtype='<U20')
+  minLat0, maxLat0, minLon0, maxLon0 = get_bound_indices(bounds, transform)
+  for row in shapeData.itertuples():
+    if row.geometry.boundary.geom_type == 'LineString': # assuming there is no
+      minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary.bounds, transform)
+      if minLat == maxLat or minLon == maxLon:
+        continue
+      mask = boundary_to_mask(row.geometry.boundary, lons_1d[minLon:maxLon], lats_1d[minLat:maxLat])
+      mask = np.where(mask, row.GEOID, '')
+      geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask) # https://numpy.org/doc/stable/reference/routines.char.html#module-numpy.char
+    else:
+      # sort line indices by nest depth
+      lineIndexNestDepth = dict()
+      for i in range(len(row.geometry.boundary)):
+        lineIndexNestDepth[i] = [mplp.Path(outerline).contains_path(mplp.Path(row.geometry.boundary[i])) for outerline in row.geometry.boundary if row.geometry.boundary[i] != outerline].count(True)
+      # sort indices by nest depth (sort by dict values)
+      for l in sorted(lineIndexNestDepth, key=lineIndexNestDepth.get): 
+        minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary[l].bounds, transform)
+        if minLat == maxLat or minLon == maxLon:
+          continue
+        mask = boundary_to_mask(row.geometry.boundary[l], lons_1d[minLon:maxLon], lats_1d[minLat:maxLat])
+        if lineIndexNestDepth[l] % 2 == 1: # nest depth = 1
+          for r in range(geoidMat[minLat:maxLat,minLon:maxLon].shape[0]):
+            for c in range(geoidMat[minLat:maxLat,minLon:maxLon].shape[1]):
+              if mask[r,c] and geoidMat[minLat+r,minLon+c] != '':
+                geoidMat[minLat+r,minLon+c] = geoidMat[minLat+r,minLon+c][:-5] # remove points from when nest depth = 0
+        else:
+          mask = np.where(mask, row.GEOID, '')
+          geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask)
+  return geoidMat[minLat0:maxLat0,minLon0:maxLon0]
+
+
+
+  
+def aggregate_by_geoid(areaMat, mat, geoidMat, transform, shapeData):
+  ret = []
+  for row in shapeData.itertuples():
+    minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary.bounds, transform)
+    mask = np.where(geoidMat[minLat:maxLat,minLon:maxLon] == row.GEOID, 1, 0)
+    pm25Mask = mask * mat[minLat:maxLat,minLon:maxLon]
+    areaMask = mask * areaMat[minLat:maxLat,minLon:maxLon]
+    pm25_area = np.nansum(pm25Mask*areaMask)
+    area = np.sum(areaMask)
+    pm25 = pm25_area / area
+    ret.append(pm25)
+    # print(row.GEOID, row.ATOTAL, area, pm25)
+  return ret

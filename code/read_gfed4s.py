@@ -13,29 +13,16 @@ import os
 import pathlib
 import sys
 
-import time
 import datetime as dt
 import copy
 
+import importlib
+fc = importlib.import_module('functions')
 
 regionNums = {None:0, 'BONA':1, 'TENA':2, 'CEAM':3, 'NHSA':4, 'SHSA':5, 'EURO':6, 'MIDE':7, 'NHAF':8, 'SHAF':9, 'BOAS':10, 'CEAS':11, 'SEAS':12, 'EQAS':13, 'AUST':14}
 # GFED file groups: ['ancill', 'biosphere', 'burned_area', 'emissions', 'lat', 'lon']
 
-def month_str(month):
-  if month < 10:
-    return '0' + str(month)
-  else:
-    return str(month)
 
-def gfed_filenames(gfed_fnames):
-  ret = []
-  for filename in gfed_fnames:
-    if '.hdf5' in filename:
-      ret.append(filename)
-  return ret
-
-def flatten_list(regular_list):
-  return [item for sublist in regular_list for item in sublist]
 
 def add_matrices(list):
   return np.sum(list, axis=0)
@@ -77,39 +64,14 @@ def get_bounds_regionsMasked(regions, regionVal, entireGlobe=False):
 def extract_matrix_for_region(mat, bounds, regionBoundedMasked):
   return np.multiply( mat[bounds['minLatIndex']:bounds['maxLatIndex']+1, bounds['minLonIndex']:bounds['maxLonIndex']+1], regionBoundedMasked)
 
-
-def timer_start():
-  return time.time()
-def timer_elapsed(t0):
-  return time.time() - t0
-def timer_restart(t0, msg):
-  print(timer_elapsed(t0), msg)
-  return timer_start()
-
-def lim_length(lim):
-  return lim[1] - lim[0]
-
-def marker_size(plt, xlim1, ylim1):
-  a = 0.4865063
-  # 0.4378557
-  x = lim_length(plt.xlim())
-  y = lim_length(plt.ylim())
-  x1 = lim_length(xlim1)
-  y1 = lim_length(ylim1)
-  return (x1*y1*a) / (x*y)
-
-
-def utc_time_filename():
-  return dt.datetime.utcnow().strftime('%Y.%m.%d-%H.%M.%S')
-  
-
 def fslash(a, b):
   return a + '/' + b
 
-def save_plt(plt, folderPath, name):
-  plt.savefig(os.path.join(folderPath, name + '.png'))
+def save_df_plt(plt, df_nonzero, hist_month, hist_year, cldf, stats, dest, name):
+  folderPath = os.path.join(dest, name)
+  os.makedirs(folderPath)
+  fc.save_plt(plt, folderPath, name, 'png')
 
-def save_df(df_nonzero, hist_month, hist_year, cldf, stats, folderPath, name):
   fd = pd.HDFStore(os.path.join(folderPath, name + '.hdf5'))
   del df_nonzero['color']
   fd.put('data', df_nonzero, format='table', data_columns=True)
@@ -119,13 +81,6 @@ def save_df(df_nonzero, hist_month, hist_year, cldf, stats, folderPath, name):
   fd.put('hist_year', hist_year, format='table', data_columns=True)
   fd.close()
 
-def save_df_plt(plt, df_nonzero, hist_month, hist_year, cldf, stats, dest, name):
-  folderPath = os.path.join(dest, name)
-  os.makedirs(folderPath)
-  save_plt(plt, folderPath, name)
-  save_df(df_nonzero, hist_month, hist_year, cldf, stats, folderPath, name)
-
-  
 
 def add_month(start):
   if start.month == 12: # next year, month = 1
@@ -214,7 +169,7 @@ if __name__ == "__main__":
   unit_timesArea = get_unit_timesArea(dataset)
   unit = get_unit(dataset)
   
-  title = month_str(startMonth) + '-' + str(startYear) + '_' + month_str(endMonth) + '-' + str(endYear) + '_' + dataset
+  title = fc.month_str(startMonth) + '-' + str(startYear) + '_' + fc.month_str(endMonth) + '-' + str(endYear) + '_' + dataset
   if numArgs == 9:
     regionName = sys.argv[8]
     title = regionName + '_' + title
@@ -230,7 +185,7 @@ if __name__ == "__main__":
   
   
   gfed_fnames = os.listdir(gfedDir)
-  gfed_fnames = sorted(gfed_filenames(gfed_fnames)) # same as in gfedDir_timesArea
+  gfed_fnames = sorted(fc.gfed_filenames(gfed_fnames)) # same as in gfedDir_timesArea
 
   startDate = dt.date(startYear, startMonth, 1)
   endDate = dt.date(endYear, endMonth, 1)
@@ -250,7 +205,7 @@ if __name__ == "__main__":
   stats.month_count = [numMonths]
   stats.year_count = [numYears]
 
-  t0 = timer_start()
+  t0 = fc.timer_start()
   t1 = t0
 
 
@@ -285,9 +240,9 @@ if __name__ == "__main__":
         df[unit_timesArea] = df['is_in_region'] * 0.0 # initialize for adding unit_timesArea, eventually will divide by area and numMonths
 
         stats.region_area = [np.sum(df['grid_cell_area'])]
-        t0 = timer_restart(t0, 'df is None')
+        t0 = fc.timer_restart(t0, 'df is None')
 
-      temp_months = [ extract_matrix_for_region(np.matrix(fd_timesArea[group][month_str(month_it)][dataset]), bounds, df['is_in_region']) for month_it in range(curr_startMonth, curr_endMonth + 1) ]
+      temp_months = [ extract_matrix_for_region(np.matrix(fd_timesArea[group][fc.month_str(month_it)][dataset]), bounds, df['is_in_region']) for month_it in range(curr_startMonth, curr_endMonth + 1) ]
       
       df[unit_timesArea] += add_matrices(temp_months)
 
@@ -298,7 +253,7 @@ if __name__ == "__main__":
 
       hist_month = hist_month.append(pd.DataFrame({
         # 'year': [str(currentDate.year)]*(curr_endMonth + 1 - curr_startMonth),
-        'YYYYMM': [str(currentDate.year)+month_str(m) for m in range(curr_startMonth, curr_endMonth + 1)],
+        'YYYYMM': [str(currentDate.year)+fc.month_str(m) for m in range(curr_startMonth, curr_endMonth + 1)],
         unit: monthly_totals,
         unit_timesArea: monthly_totals_timesArea
       }), ignore_index=True)
@@ -312,7 +267,7 @@ if __name__ == "__main__":
       fd_timesArea.close()
 
     
-  t0 = timer_restart(t0, '2nd-last year')
+  t0 = fc.timer_restart(t0, '2nd-last year')
 
   # pd.set_option('display.max_rows', None)
   # print(hist_month)
@@ -351,7 +306,7 @@ if __name__ == "__main__":
   # print(df_nonzero)
   # print(stats)
 
-  t0 = timer_restart(t0, 'flatten df_nonzero')
+  t0 = fc.timer_restart(t0, 'flatten df_nonzero')
   # t0 = timer_restart(t0, 'stats')
 
   plotted_unit = unit + '_monthE-1'
@@ -379,7 +334,7 @@ if __name__ == "__main__":
   cldf['plotted_unit'] = [plotted_unit]
 
   # print(cldf)
-  t0 = timer_restart(t0, 'colormap')
+  t0 = fc.timer_restart(t0, 'colormap')
 
   # plot result
   with plt.style.context(("seaborn", "ggplot")):
@@ -404,16 +359,16 @@ if __name__ == "__main__":
     plt.xlim((min(lonBounds) - .25, max(lonBounds) + .25))
     plt.ylim((min(latBounds) - .25, max(latBounds) + .25))
 
-    ms = marker_size(plt, xlim1, ylim1)
+    ms = fc.marker_size(plt, xlim1, ylim1)
     # print(ms)
     plt.scatter(df_nonzero['lon'], df_nonzero['lat'], s=ms, c=df_nonzero.color, alpha=1, linewidths=0, marker='s')
     plt.colorbar(mapper)
 
-    t0 = timer_restart(t0, 'create plot')
-    # save_df_plt(plt, df_nonzero, hist_month, hist_year, cldf, stats, outputDir, title + '-' + utc_time_filename())
+    t0 = fc.timer_restart(t0, 'create plot')
+    # save_df_plt(plt, df_nonzero, hist_month, hist_year, cldf, stats, outputDir, title + '-' + fc.utc_time_filename())
 
-    t0 = timer_restart(t0, 'save outfiles')
-    t1 = timer_restart(t1, 'total time')
+    t0 = fc.timer_restart(t0, 'save outfiles')
+    t1 = fc.timer_restart(t1, 'total time')
 
     plt.show()
 

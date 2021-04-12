@@ -8,11 +8,9 @@ import matplotlib.colors as cl
 import matplotlib.cm as cm
 import matplotlib.font_manager as fm
 
-import os, pathlib, re, json, sys, copy
+import os, pathlib, json, sys, copy
 
 from shapely.geometry import shape, GeometryCollection
-
-import rasterio, rasterio.features, rasterio.warp
 
 import importlib
 fc = importlib.import_module('functions')

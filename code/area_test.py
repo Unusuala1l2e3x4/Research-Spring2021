@@ -1,9 +1,7 @@
 import numpy as np
 from numpy import cos, sin, arctan2, arccos
-import pathlib, os
-import json
 
-from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
+# from shapely.geometry import shape, GeometryCollection, Point, Polygon, MultiPolygon
 
 # https://stackoverflow.com/questions/4681737/how-to-calculate-the-area-of-a-polygon-on-the-earths-surface-using-python
 # https://stackoverflow.com/a/19398136 <-- source of code

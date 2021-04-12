@@ -23,17 +23,6 @@ GFED4sDir = str(pathlib.Path(__file__).parent.parent.parent.absolute())
 # print(ancillDir)
 
 
-def timer_start():
-  return time.time()
-
-def timer_elapsed(t0):
-  print(time.time() - t0)
-
-def timer_restart(t0):
-  timer_elapsed(t0)
-  return timer_start()
-
-
 months_all       = '01','02','03','04','05','06','07','08','09','10','11','12'
 sources_all      = 'SAVA','BORF','TEMF','DEFO','PEAT','AGRI'
 

@@ -3,13 +3,9 @@ import numpy as np
 import os
 import pathlib
 
+import importlib
+fc = importlib.import_module('functions')
 
-def gfed_filenames(filenames):
-  ret = []
-  for filename in filenames:
-    if '.hdf5' in filename:
-      ret.append(filename)
-  return ret
 
 def fslash(a, b):
   return a + '/' + b
@@ -39,7 +35,7 @@ if __name__ == "__main__":
   dir = os.path.join(ppPath, 'GFED4s_timesArea')
 
   filenames = os.listdir(dir)
-  filenames = sorted(gfed_filenames(filenames))
+  filenames = sorted(fc.gfed_filenames(filenames))
 
 
   grid_cell_area = h5py.File(os.path.join(dir, filenames[10]), 'r')['ancill/grid_cell_area']
