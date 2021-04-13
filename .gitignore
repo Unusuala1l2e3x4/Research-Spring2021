@@ -39,6 +39,7 @@ Global Annual PM2.5 Grids/points_in_region
 Gridded Population of the World
 Natural Disasters - Our World in Data.url
 code/area_test.py
+code/random_forest-outfiles/manually created/~$nEstimators_vs_R2.xlsx
 code/read_pm2-5-outfiles/gwr_pm25_2016_nonnegative.tif
 code/shapefiles/USA_states_counties
 code/test.py
@@ -49,4 +50,3 @@ research papers
 unused data sources
 US Census Bureau/TIGER-Line Shapefiles
 writeup
-code/random_forest-outfiles/manually created/~$nEstimators_vs_R2.xlsx

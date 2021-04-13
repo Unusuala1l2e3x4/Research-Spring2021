@@ -47,7 +47,7 @@ if __name__ == "__main__":
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
   # pmDir = os.path.join(ppPath, 'Global Annual PM2.5 Grids')
-  outputDir = os.path.join(pPath, 'write_county_month_pm2-5-outfiles')
+  # outputDir = os.path.join(pPath, 'write_county_month_pm2-5-outfiles')
   pmDir = os.path.join(ppPath, 'Atmospheric Composition Analysis Group')
   shapefilesDir = os.path.join(pPath, 'shapefiles')
   usaDir = os.path.join(shapefilesDir, 'USA_states_counties')
@@ -119,7 +119,6 @@ if __name__ == "__main__":
     mat = fd.variables['PM25'][:]
 
     if tf is None: # if geoidMat is None and areaMat is None -> same effect
-      deg = np.average(np.abs(fd.variables['LON'][:-1] - fd.variables['LON'][1:]))
       tf = rasterio.transform.from_origin(np.round(np.min(fd.variables['LON'][:]), 2), np.round(np.max(fd.variables['LAT'][:]), 2), deg,deg)
       minLat, maxLat, minLon, maxLon = fc.get_bound_indices(basisregion.bounds, tf)
       # print(minLat, maxLat, minLon, maxLon)

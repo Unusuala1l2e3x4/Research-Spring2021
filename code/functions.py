@@ -26,7 +26,7 @@ def save_df(df, folderPath, name, ext):
   # fd.close()
 
 def read_df(folderPath, name, ext):
-  # print('read', os.path.join(folderPath, name + '.' + ext))
+  print('read', os.path.join(folderPath, name + '.' + ext))
   if ext == 'csv':
     return pd.read_csv(os.path.join(folderPath, name + '.csv'))
   elif ext == 'hdf5':
@@ -269,11 +269,13 @@ def aggregate_by_geoid(areaMat, mat, geoidMat, transform, shapeData):
   for row in shapeData.itertuples():
     minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary.bounds, transform)
     mask = np.where(geoidMat[minLat:maxLat,minLon:maxLon] == row.GEOID, 1, 0)
-    pm25Mask = mask * mat[minLat:maxLat,minLon:maxLon]
-    areaMask = mask * areaMat[minLat:maxLat,minLon:maxLon]
-    pm25_area = np.nansum(pm25Mask*areaMask)
+    # print(mask.shape)
+    # print(mat[minLat:maxLat,minLon:maxLon].shape)
+    dataMask = np.multiply(mask, mat[minLat:maxLat,minLon:maxLon])
+    areaMask = np.multiply(mask, areaMat[minLat:maxLat,minLon:maxLon])
+    data_area = np.nansum(np.multiply(dataMask, areaMask))
     area = np.sum(areaMask)
-    pm25 = pm25_area / area
-    ret.append(pm25)
-    # print(row.GEOID, row.ATOTAL, area, pm25)
+    data = np.divide(data_area, area)
+    ret.append(data)
+    # print(row.GEOID, row.ATOTAL, area, data)
   return ret
