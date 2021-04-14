@@ -26,7 +26,7 @@ def save_df(df, folderPath, name, ext):
   # fd.close()
 
 def read_df(folderPath, name, ext):
-  print('read', os.path.join(folderPath, name + '.' + ext))
+  # print('read', os.path.join(folderPath, name + '.' + ext))
   if ext == 'csv':
     return pd.read_csv(os.path.join(folderPath, name + '.csv'))
   elif ext == 'hdf5':
@@ -52,6 +52,10 @@ def timer_restart(t0, msg=None):
     print(timer_elapsed(t0), msg)
   return timer_start()
 
+
+def rank_decreasing(arr):
+  return [int(i) for i in pd.Series(arr).rank(method='min', ascending=False)]
+  
 
 def gfed_filenames(gfed_fnames):
   ret = []

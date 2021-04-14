@@ -43,7 +43,8 @@ def estimate_time(params, n_jobs, cv_indices): # assuming n_jobs = DEFAULT_N_JOB
   n = np.sum(params['n_estimators']) # all ints
   m = np.prod([len(params[i]) for i in params.keys() if i not in ['max_samples', 'n_estimators']]) # all lengths (int)
 
-  hrs =  (5/n_jobs)*(folds*s*n*m)/(2010.952902) # 3600*folds*0.1*m/prev_time
+  # hrs =  (5/n_jobs)*(folds*s*n*m)/(2010.952902) # 3600*(folds*s*n*m)/prev_time    # 3600*(10*0.1*170*1)/prev_time
+  hrs =  (5/n_jobs)*(folds*s*n*m)/(1206.5717412)    # 11440 sesc
 
   print(hrs, 'hrs, or')
   print(hrs*60, 'min, or')
@@ -87,7 +88,10 @@ def main():
   DEFAULT_N_JOBS = 5 # 4-6; avoid 7, 8
 
   # startYYYYMM, endYYYYMM = sys.argv[1], sys.argv[2]
-  startYYYYMM, endYYYYMM = '200001', '201812'
+
+  # startYYYYMM, endYYYYMM = '200001', '201812'
+  startYYYYMM, endYYYYMM = '200001', '201612'
+
   fileArgs = [('deaths', cdcWonderDir, countySupEstTitle), 
   ('popu', usCensusDir, 'TENA_county_pop_1999_2019'),
   ('precip_in', nClimDivDir, 'climdiv-pcpncy-v1.0'),
@@ -95,7 +99,13 @@ def main():
   ('pm25_ug_m-3', pmDir, 'TENA_county_PM25_200001_201812'),
   ('C_g_m-2', gfedCountyDir, 'TENA_C_200001_201812'),
   ('DM_kg_m-2', gfedCountyDir, 'TENA_DM_200001_201812'),
-  ('burned_frac', gfedCountyDir, 'TENA_burned_fraction_200001_201812')] # 2016 and before
+  ('BB_g_m-2', gfedCountyDir, 'TENA_BB_200001_201812'), # 2016 and before
+  ('NPP_g_m-2', gfedCountyDir, 'TENA_NPP_200001_201812'), # 2016 and before
+  ('Rh_g_m-2', gfedCountyDir, 'TENA_Rh_200001_201812'), # 2016 and before
+  ('burned_frac', gfedCountyDir, 'TENA_burned_fraction_200001_201812'), # 2016 and before
+  ('smallf_frac', gfedCountyDir, 'TENA_small_fire_fraction_200001_201812')] # 2016 and before
+
+
   # END PARAMS
 
   t0 = fc.timer_start()
@@ -135,6 +145,8 @@ def main():
 
   data['month'] = [int(i[-2:]) for i in data.YYYYMM]
 
+
+  # print(data.keys())
   # print(data)
   # exit()
 
@@ -162,15 +174,17 @@ def main():
   #   https://scikit-learn.org/stable/modules/model_evaluation.html#scoring-parameter
   #   https://scikit-learn.org/stable/modules/model_evaluation.html#regression-metrics
   #   https://scikit-learn.org/stable/modules/model_evaluation.html#r2-score-the-coefficient-of-determination
+  #   https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html#sklearn.model_selection.train_test_split
 
 
-  columns = [i for i in data if i in ['precip_in', 'temp_F', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'ALAND_ATOTAL_ratio']]
+# 'ALAND_ATOTAL_ratio', 
+  columns = [i for i in data if i in ['popuDensity_ALAND_km2', 'precip_in', 'temp_F', 'pm25_ug_m-3','C_g_m-2', 'DM_kg_m-2','NPP_g_m-2','BB_g_m-2','Rh_g_m-2','burned_frac','smallf_frac']]
   # columns = [i for i in data if i not in ['deathRate','GEOID','YYYYMM','deaths','popu','ALAND_km2', 'ATOTAL_km2', 'popuDensity_ATOTAL_km2']] # ,'AWATER_km2','ALAND_km2', 'ATOTAL_km2', 'popuDensity_ATOTAL_km2'
   # print(columns)
   
   X = data[columns]
   y = data.deathRate
-  print(X)
+  # print(X)
   # print(y)
 
 
@@ -180,7 +194,7 @@ def main():
 
   t0 = fc.timer_restart(t0, 'data')
 
-  crossvalidate = True
+  crossvalidate = False
   refit = True
 
   if crossvalidate: 
@@ -194,7 +208,7 @@ def main():
     scoringParam = 'r2'
 
     sampleRatio = 0.1
-    print(sampleRatio*X.shape[0])
+    # print(sampleRatio*X.shape[0])
 
 
     clf = RandomForestRegressor(random_state=0)
@@ -210,30 +224,23 @@ def main():
     #               {'max_samples': [0.3], 'n_estimators': [51], 'min_samples_leaf': [2,3]}]
 
     # test = [2e-07, 3e-07, 5e-07, 6e-07, 7e-07, 9e-07, 1.1e-06, 1.3e-06, 1.4e-06, 1.5e-06, 1.7e-06, 1.8e-06, 1.9e-06]
-
     # test = set(np.arange(0,2e-06, 2e-8))
 
-    test = set([0.0, 2e-08, 4e-08, 6.0e-08, 8e-08, 1e-07, 1.2e-07, 1.4e-07, 1.6e-07, 1.8e-07, 2e-07, 2.2e-07,
-    2.40e-07, 2.6e-07, 2.8e-07, 3e-07, 3.2e-07, 3.4e-07, 3.6e-07, 3.8e-07, 4e-07, 4.2e-07, 4.4e-07, 4.6e-07,
-    4.8e-07, 5e-07, 5.2e-07, 5.4e-07, 5.6e-07, 5.8e-07, 6e-07, 6.2e-07, 6.4e-07, 6.6e-07, 6.8e-07,
-    7e-07, 7.2e-07, 7.4e-07, 7.6e-07, 7.8e-07, 8e-07, 8.2e-07, 8.4e-07, 8.6e-07, 8.8e-07, 9.0e-07, 9.2e-07, 9.4e-07, 9.6e-07,
-    9.8e-07, 1e-06, 1.02e-06, 1.04e-06, 1.06e-06, 1.08e-06, 1.1e-06, 1.12e-06, 1.14e-06, 1.16e-06, 1.18e-06, 1.2e-06, 1.22e-06, 1.24e-06,
-    1.26e-06, 1.28e-06, 1.3e-06, 1.32e-06, 1.34e-06, 1.36e-06, 1.38e-06, 1.4e-06, 1.42e-06, 1.44e-06, 1.46e-06, 1.48e-06, 1.5e-06,
-    1.52e-06, 1.54e-06, 1.56e-06, 1.58e-06, 1.6e-06, 1.62e-06, 1.64e-06, 1.66e-06, 1.68e-06, 1.7e-06, 1.72e-06, 1.74e-06, 1.76e-06, 1.78e-06,
-    1.80e-06, 1.82e-06, 1.84e-06, 1.86e-06, 1.88e-06, 1.9e-06, 1.92e-06, 1.94e-06, 1.96e-06, 1.98e-06])
-
-    test = sorted(test - {1e-7, 4e-7, 8e-7, 1e-6, 1.2e-6, 1.6e-6})
-
+    # test = set(np.arange(0,2e-07, 4e-8))
     # print(test, len(test))
+
 
     # exit()
 
+    # 70,90,110,130,150,170
+    param_grid = {'max_samples': [0.1], 'n_estimators': [170], 'min_samples_leaf': [2], 'min_samples_split': [4]   } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
 
-    param_grid = {'max_samples': [0.1], 'n_estimators': [170], 'min_samples_leaf': [2], 'min_samples_split': [4], 'min_impurity_decrease':test   } # , 'max_depth':[None] , 'max_features':list(range(1,X.shape[1]+1))
+    print(param_grid)
 
     estimate_time(param_grid, DEFAULT_N_JOBS, cv_indices)
     # exit()
 
+    
 
     # param_grid = {'max_samples': [0.1,0.2,0.3], 'n_estimators': [60,80,100,120,140,160,180], 'min_samples_leaf': [1,2,3,4]} # , 'max_depth':[None]
 
@@ -272,7 +279,7 @@ def main():
       fc.save_plt(plot, outputDir, 'best_GiniImportance_RF_' + saveTime, 'png')
       fc.save_df(importances, outputDir, 'best_GiniImportance_RF_' + saveTime, 'csv')
 
-      plot.show()
+      # plot.show()
       # plot.close()
     
     # for item in vars(gs):
@@ -280,13 +287,13 @@ def main():
 
   else:
     print('crossvalidate', crossvalidate)
-    clf = RandomForestRegressor(random_state=0)
+    clf = RandomForestRegressor(random_state=0, n_jobs=DEFAULT_N_JOBS)
 
-    bestparams =  {'max_samples': 0.11, 'min_samples_leaf': 3, 'min_samples_split': 3, 'n_estimators': 50}                 ############ copy of saved dict
+    # bestparams =  {'max_samples': 0.1, 'min_samples_leaf': 2, 'min_samples_split': 4, 'n_estimators': 50}  
+    bestparams =  { 'max_samples': 0.1, 'min_samples_leaf': 2, 'min_samples_split': 4, 'n_estimators': 10 }                 ############ copy of saved dict
 
-
-    bestparams['n_jobs'] = DEFAULT_N_JOBS
     clf.set_params(**bestparams)
+    
     # print('base_estimator\t',clf.base_estimator_)
     t0 = fc.timer_restart(t0)
     clf.fit(X,y)
