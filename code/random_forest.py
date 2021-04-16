@@ -1,5 +1,9 @@
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import KFold, StratifiedKFold, GridSearchCV, cross_val_score, cross_validate
+from sklearn.model_selection import KFold, GridSearchCV, ParameterGrid, train_test_split
+from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, mean_squared_error
+from sklearn.inspection import permutation_importance
+from mlxtend.evaluate import bias_variance_decomp
+
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -36,15 +40,15 @@ def n_estimators_given_max_samples(X, n_estimators_base, max_samples_base, max_s
 
 
 
-def estimate_time(params, n_jobs, cv_indices): # assuming n_jobs = DEFAULT_N_JOBS = 5
+def estimate_time(multiplier, params, n_jobs, cv_indices): # assuming n_jobs = DEFAULT_N_JOBS = 5
   assert [type(i) == float for i in params['max_samples']]
   folds = cv_indices.get_n_splits()
   s = np.sum(params['max_samples']) # all floats
   n = np.sum(params['n_estimators']) # all ints
   m = np.prod([len(params[i]) for i in params.keys() if i not in ['max_samples', 'n_estimators']]) # all lengths (int)
 
-  # hrs =  (5/n_jobs)*(folds*s*n*m)/(2010.952902) # 3600*(folds*s*n*m)/prev_time    # 3600*(10*0.1*170*1)/prev_time
-  hrs =  (5/n_jobs)*(folds*s*n*m)/(1206.5717412)    # 11440 sesc
+  # hrs =  (5/n_jobs)*(folds*s*n*m)/(2010.952902) # multiplier*3600*(folds*s*n*m)/prev_time    # 3600*(10*0.1*170*1)/prev_time
+  hrs = multiplier * (5/n_jobs)*(folds*s*n*m)/(1503.79746835443)    # 11440 sesc
 
   print(hrs, 'hrs, or')
   print(hrs*60, 'min, or')
@@ -86,6 +90,7 @@ def main():
 
   crossvalidate = True
   DEFAULT_N_JOBS = 5 # 4-6; avoid 7, 8
+  DEFAULT_RANDOM_STATE = 0
 
   # startYYYYMM, endYYYYMM = sys.argv[1], sys.argv[2]
 
@@ -145,8 +150,9 @@ def main():
 
   data['month'] = [int(i[-2:]) for i in data.YYYYMM]
 
+  t0 = fc.timer_restart(t0, 'load data')
 
-  # print(data.keys())
+  # print(list(data.keys()))
   # print(data)
   # exit()
 
@@ -158,6 +164,10 @@ def main():
 
   # https://scikit-learn.org/stable/modules/tree.html#tree
   # https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html#sklearn.tree.DecisionTreeRegressor.get_depth
+
+
+  # https://stats.stackexchange.com/questions/18856/is-cross-validation-a-proper-substitute-for-validation-set
+
 
   # param tuning advice
   #   https://medium.com/all-things-ai/in-depth-parameter-tuning-for-random-forest-d67bb7e920d
@@ -177,145 +187,147 @@ def main():
   #   https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html#sklearn.model_selection.train_test_split
 
 
-# 'ALAND_ATOTAL_ratio', 
-  columns = [i for i in data if i in ['popuDensity_ALAND_km2', 'precip_in', 'temp_F', 'pm25_ug_m-3','C_g_m-2', 'DM_kg_m-2','NPP_g_m-2','BB_g_m-2','Rh_g_m-2','burned_frac','smallf_frac']]
-  # columns = [i for i in data if i not in ['deathRate','GEOID','YYYYMM','deaths','popu','ALAND_km2', 'ATOTAL_km2', 'popuDensity_ATOTAL_km2']] # ,'AWATER_km2','ALAND_km2', 'ATOTAL_km2', 'popuDensity_ATOTAL_km2'
-  # print(columns)
-  
-  X = data[columns]
-  y = data.deathRate
-  # print(X)
-  # print(y)
+  # Bias-variance
+  #   https://machinelearningmastery.com/calculate-the-bias-variance-trade-off/
+  #   http://rasbt.github.io/mlxtend/user_guide/evaluate/bias_variance_decomp/#example-2-bias-variance-decomposition-of-a-decision-tree-regressor
 
 
-  # print(list(np.arange(0, 2e-6, 1e-7)))
+  # PARAMS
+  crossvalidate = True
+  refit = True
+  do_biasvariancedecomp = False
+  n_splits = 10
+
+
+  columns_list = [] 
+  # columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2'])
+  # columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'ALAND_ATOTAL_ratio'])
+  columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2', 'ALAND_ATOTAL_ratio'])
+
+  scoring=['neg_mean_absolute_error','neg_mean_squared_error','explained_variance','r2']
+  scoringParam = 'r2'
+
+
+
+  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [170] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
+  # print(param_grid)
+  # 70,90,110,130,150,170
+  # param_grid = {'max_samples': [0.1,0.2,0.3], 'n_estimators': [60,80,100,120,140,160,180], 'min_samples_leaf': [1,2,3,4]} # , 'max_depth':[None]
+
+  param_grid_list = ParameterGrid(param_grid)
+
+
+
+  # END PARAMS
+
+  cv_indices = KFold(n_splits=n_splits, shuffle=True, random_state=1) # DEFAULT_N_JOBS*2
+  # for train_indices, test_indices in cv_indices.split(data):
+  #   print('Train: %s | test: %s' % (train_indices, test_indices))
+
+  estimate_time(len(columns_list), param_grid, DEFAULT_N_JOBS, cv_indices)
   # exit()
 
+  t3 = fc.timer_start()
+  for p in param_grid_list:
+    print(p)
+    for columns in columns_list:
+      assert set(columns).issubset(data.keys())
+      print('included:\t',columns)
+      print('not included:\t',set(data.keys()) - set(columns_list[0]))
+      t2 = fc.timer_start()
+      # continue
 
-  t0 = fc.timer_restart(t0, 'data')
+      X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=0.7, random_state=2)
+      # print(X)
+      # print(y)
 
-  crossvalidate = False
-  refit = True
+      if crossvalidate: 
+        clf = RandomForestRegressor(random_state=DEFAULT_RANDOM_STATE)
 
-  if crossvalidate: 
-    print('crossvalidate', crossvalidate)
-    
-    cv_indices = KFold(n_splits=10, shuffle=True, random_state=1) # DEFAULT_N_JOBS*2
-    # for train_indices, test_indices in cv_indices.split(data):
-    #   print('Train: %s | test: %s' % (train_indices, test_indices))
+        p2 = dict()
+        for i in p.keys():
+          p2[i] = [p[i]]
+        gs = GridSearchCV(clf, param_grid=p2, refit=False, cv=cv_indices, scoring=scoring, verbose=2, n_jobs=DEFAULT_N_JOBS) # refit=scoringParam, 
+        t0 = fc.timer_start()
+        gs.fit(X, y)
+        t0 = fc.timer_restart(t0, 'fit GridSearchCV')
+        results = pd.DataFrame.from_dict(gs.cv_results_)
+        results = results.drop([i for i in results.keys() if i.startswith('split')], axis=1) #  or i == 'params'
+        results['n_features'] = len(columns)
+        results['features'] = "['"+ "', '".join(columns)+"']"
 
-    scoring=['neg_mean_absolute_error','neg_mean_squared_error','r2']
-    scoringParam = 'r2'
-
-    sampleRatio = 0.1
-    # print(sampleRatio*X.shape[0])
-
-
-    clf = RandomForestRegressor(random_state=0)
-
-
-
-    # max_samples = [0.1,0.2,0.3]
-
-    # print([n_estimators_given_max_samples(X, 150, 0.1, i) for i in max_samples ]) # [150, 76, 51]
-
-    # param_grid = [{'max_samples': [0.1], 'n_estimators': [150], 'min_samples_leaf': [2,3]},
-    #               {'max_samples': [0.2], 'n_estimators': [76], 'min_samples_leaf': [2,3]},
-    #               {'max_samples': [0.3], 'n_estimators': [51], 'min_samples_leaf': [2,3]}]
-
-    # test = [2e-07, 3e-07, 5e-07, 6e-07, 7e-07, 9e-07, 1.1e-06, 1.3e-06, 1.4e-06, 1.5e-06, 1.7e-06, 1.8e-06, 1.9e-06]
-    # test = set(np.arange(0,2e-06, 2e-8))
-
-    # test = set(np.arange(0,2e-07, 4e-8))
-    # print(test, len(test))
+        print(results)
 
 
-    # exit()
+        saveTime = fc.utc_time_filename()
+        fc.save_df(results, outputDir, 'GridSearchCV_RF_' + saveTime, 'csv')
 
-    # 70,90,110,130,150,170
-    param_grid = {'max_samples': [0.1], 'n_estimators': [170], 'min_samples_leaf': [2], 'min_samples_split': [4]   } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
+        # print(results.loc[results['rank_test_'+scoringParam]==1, :])
+        bestparams = next(iter(dict(results.loc[results['rank_test_'+scoringParam]==1, ['params']]['params'] ).items()))[1]
+        print('best_params_\t',bestparams)
 
-    print(param_grid)
+        if refit:
+          print('refit')
+          bestparams['n_jobs'] = DEFAULT_N_JOBS
+          clf.set_params(**bestparams)
+          # print('base_estimator\t',clf.base_estimator_)
+          t0 = fc.timer_start()
+          clf.fit(X,y)
+          t0 = fc.timer_restart(t0, 'refit time')
 
-    estimate_time(param_grid, DEFAULT_N_JOBS, cv_indices)
-    # exit()
+          importances = pd.DataFrame(dict(name=columns, importance=clf.feature_importances_)).sort_values('importance', ascending=False) # .head(10)
+          print(importances)
+          plot = plotGiniImportance(importances)
 
-    
+          fc.save_plt(plot, outputDir, 'best_GiniImportance_RF_' + saveTime, 'png')
+          fc.save_df(importances, outputDir, 'best_GiniImportance_RF_' + saveTime, 'csv')
+          # plot.show()
+          # plot.close()
+        
 
-    # param_grid = {'max_samples': [0.1,0.2,0.3], 'n_estimators': [60,80,100,120,140,160,180], 'min_samples_leaf': [1,2,3,4]} # , 'max_depth':[None]
-
-
-    gs = GridSearchCV(clf, param_grid=param_grid, refit=False, cv=cv_indices, scoring=scoring, verbose=2, n_jobs=DEFAULT_N_JOBS) # refit=scoringParam, 
-    gs.fit(X, y)
-    t0 = fc.timer_restart(t0, 'fit GridSearchCV')
-    results = pd.DataFrame.from_dict(gs.cv_results_)
-    results = results.drop([i for i in results.keys() if i.startswith('split')], axis=1) #  or i == 'params'
-    print(results)
-    saveTime = fc.utc_time_filename()
-    fc.save_df(results, outputDir, 'GridSearchCV_RF_' + saveTime, 'csv')
-
-    # print(results.loc[results['rank_test_'+scoringParam]==1, :])
-    bestparams = next(iter(dict(results.loc[results['rank_test_'+scoringParam]==1, ['params']]['params'] ).items()))[1]
-    print('best_params_\t',bestparams)
-
-    if refit:
-      bestparams['n_jobs'] = DEFAULT_N_JOBS
-      clf.set_params(**bestparams)
-      # print('base_estimator\t',clf.base_estimator_)
-      t0 = fc.timer_restart(t0)
-      clf.fit(X,y)
-      t0 = fc.timer_restart(t0, 'refit time')
-
-      for item in vars(clf):
-        if item == 'estimators_':
-          print('\t','num',item,'\t', len(vars(clf)[item]))
-        else:
-          print('\t',item,'\t', vars(clf)[item])
-
-      importances = pd.DataFrame(dict(name=columns, importance=clf.feature_importances_)).sort_values('importance', ascending=False) # .head(10)
-      print(importances)
-      plot = plotGiniImportance(importances)
-
-      fc.save_plt(plot, outputDir, 'best_GiniImportance_RF_' + saveTime, 'png')
-      fc.save_df(importances, outputDir, 'best_GiniImportance_RF_' + saveTime, 'csv')
-
-      # plot.show()
-      # plot.close()
-    
-    # for item in vars(gs):
-    #   print('\t',item,'\t', vars(gs)[item])
-
-  else:
-    print('crossvalidate', crossvalidate)
-    clf = RandomForestRegressor(random_state=0, n_jobs=DEFAULT_N_JOBS)
-
-    # bestparams =  {'max_samples': 0.1, 'min_samples_leaf': 2, 'min_samples_split': 4, 'n_estimators': 50}  
-    bestparams =  { 'max_samples': 0.1, 'min_samples_leaf': 2, 'min_samples_split': 4, 'n_estimators': 10 }                 ############ copy of saved dict
-
-    clf.set_params(**bestparams)
-    
-    # print('base_estimator\t',clf.base_estimator_)
-    t0 = fc.timer_restart(t0)
-    clf.fit(X,y)
-    t0 = fc.timer_restart(t0, 'fit time')
-    
-    for item in vars(clf):
-      if item == 'estimators_':
-        print('\t','num',item,'\t', len(vars(clf)[item]))
       else:
-        print('\t',item,'\t', vars(clf)[item])
+        # print('crossvalidate', crossvalidate)
+        clf = RandomForestRegressor(random_state=DEFAULT_RANDOM_STATE, n_jobs=DEFAULT_N_JOBS)
+        clf.set_params(**p)
+        
+        t0 = fc.timer_start()
+        clf.fit(X,y)
+        t0 = fc.timer_restart(t0, 'fit time')
+        
+        for item in vars(clf):
+          if item == 'estimators_':
+            print('\t','num',item,'\t', len(vars(clf)[item]))
+          else:
+            print('\t',item,'\t', vars(clf)[item])
 
-    importances = pd.DataFrame(dict(name=columns, importance=clf.feature_importances_)).sort_values('importance', ascending=False) # .head(10)
-    print(importances)
-    plot = plotGiniImportance(importances)
+        importances = pd.DataFrame(dict(name=columns, importance=clf.feature_importances_)).sort_values('importance', ascending=False) # .head(10)
+        print(importances)
+        plot = plotGiniImportance(importances)
 
-    saveTime = fc.utc_time_filename()
-    fc.save_plt(plot, outputDir, 'best_GiniImportance_RF_' + saveTime, 'png')
-    fc.save_df(importances, outputDir, 'best_GiniImportance_RF_' + saveTime, 'csv')
+        saveTime = fc.utc_time_filename()
+        fc.save_plt(plot, outputDir, 'best_GiniImportance_RF_' + saveTime, 'png')
+        fc.save_df(importances, outputDir, 'best_GiniImportance_RF_' + saveTime, 'csv')
 
-    plot.show()
-    # plot.close()
+        # plot.show()
+        # plot.close()
 
+
+
+
+
+      if do_biasvariancedecomp:
+        t0 = fc.timer_start()
+        avg_expected_loss, avg_bias, avg_var = bias_variance_decomp(clf, X, y, X_test, y_test, loss='mse', random_seed=DEFAULT_RANDOM_STATE)
+        t0 = fc.timer_restart(t0, 'bias_variance_decomp')
+
+        print('Average expected loss: %f' % avg_expected_loss)
+        print('Average bias: %f' % avg_bias)
+        print('Average variance: %f' % avg_var)
+
+      t2 = fc.timer_restart(t2, 'time for this columns permutation')
+  
+
+  t3 = fc.timer_restart(t3, 'loop time')
   t1 = fc.timer_restart(t1, 'total time')
 
 
@@ -339,9 +351,9 @@ if __name__ == '__main__':
   #   n_cores = [1, 2, 3, 4, 5, 6, 7, 8]
   #   for n in n_cores:
   #     # define the model
-  #     clf = RandomForestRegressor(random_state=0, max_samples=100)
+  #     clf = RandomForestRegressor(random_state=DEFAULT_RANDOM_STATE, max_samples=100)
   #     # define the evaluation procedure
-  #     cv_indices = KFold(n_splits=10)
+  #     cv_indices = KFold(n_splits=n_splits)
   #     # record the current time
   #     start = time()
   #     # evaluate the model

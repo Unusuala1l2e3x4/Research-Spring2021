@@ -195,7 +195,7 @@ def main():
   clf = RandomForestRegressor(random_state=0, n_jobs=DEFAULT_N_JOBS)
   clf.set_params(**params)
 
-  t0 = fc.timer_restart(t0)
+  t0 = fc.timer_start()
   clf.fit(X,y)
   t0 = fc.timer_restart(t0, 'clf.fit time')
 
@@ -212,7 +212,7 @@ def main():
   for threshold in thresholds:
     
     # sfm = SelectFromModel(clf, threshold=threshold)
-    # t0 = fc.timer_restart(t0)
+    # t0 = fc.timer_start()
     # sfm.fit(X, y)
     # t0 = fc.timer_restart(t0, 'sfm.fit time')
     # columns_important = [columns[feature_list_index] for feature_list_index in sfm.get_support(indices=True)]
@@ -233,6 +233,7 @@ def main():
     
 
     gs = GridSearchCV(clf_important, param_grid=param_grid, refit=False, cv=cv_indices, scoring=scoring, verbose=2, n_jobs=DEFAULT_N_JOBS) # refit=scoringParam, 
+    t0 = fc.timer_start()
     gs.fit(X_important, y)
     t0 = fc.timer_restart(t0, 'gs.fit time')
     results_ = pd.DataFrame.from_dict(gs.cv_results_)
@@ -260,11 +261,11 @@ def main():
     bestparams['n_jobs'] = DEFAULT_N_JOBS
     clf.set_params(**bestparams)     # should be same as original params
     # print('base_estimator\t',clf.base_estimator_)
-    t0 = fc.timer_restart(t0)
+    
 
     X_important = pd.DataFrame(X, columns=columns_important)
+    t0 = fc.timer_start()
     clf.fit(X_important,y)
-
     t0 = fc.timer_restart(t0, 'refit time')
 
     # for item in vars(clf):

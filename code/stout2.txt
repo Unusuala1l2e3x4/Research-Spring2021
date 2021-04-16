@@ -1,0 +1,39 @@
+0.44848012924194336 read shapeData
+1.41029953956604 data
+8.817676767676769 hrs, or
+529.0606060606061 min, or
+31743.636363636368 sec
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+Fitting 10 folds for each of 1 candidates, totalling 10 fits
+35760.82261657715 loop time
+results	    mean_fit_time  std_fit_time  ...         1         2
+0     174.810090      1.914494  ...  0.195838  0.195786
+0     176.290549      1.735192  ...  0.195838  0.195786
+0     175.735107      1.757621  ...  0.195838  0.195786
+0     164.565435      1.895683  ...  0.195838  0.195786
+0     175.659661      1.766312  ...  0.195838  0.195786
+0     166.637251      1.406064  ...  0.195838  0.195786
+0     173.512568      2.064924  ...  0.195838  0.195786
+0     168.014099      1.824188  ...  0.195838  0.195786
+0     175.709088      1.660532  ...  0.195838  0.195786
+0     175.844515      2.061098  ...  0.195838  0.195786
+0     160.816904      1.573852  ...  0.195838  0.195786
+0     163.628015      1.891919  ...  0.195838  0.195786
+0     175.887441      1.963487  ...  0.195838  0.195786
+
+[13 rows x 33 columns]
+save c:\Users\Alex\Documents\GitHub\Research-Spring2021\code\random_forest-outfiles\GridSearchCV_RF_2021.04.14-19.28.09.csv
+best_params_	 {'max_samples': 0.1, 'min_samples_leaf': 2, 'min_samples_split': 4, 'n_estimators': 170}
+features important	 ['temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2']
+35762.7338578701 total time

@@ -9,6 +9,7 @@ CDC data/500 Cities & Places
 CDC data/U.S. Chronic Disease Indicators (CDI)
 Data Analytics
 EO4HEALTH — GEO Health CoP.url
+EPA AQ data
 GFED4s/GFED4.1s_1997.hdf5
 GFED4s/GFED4.1s_1998.hdf5
 GFED4s/GFED4.1s_1999.hdf5
@@ -37,6 +38,7 @@ GFED4s_timesArea
 Global Annual PM2.5 Grids/data_0.01
 Global Annual PM2.5 Grids/points_in_region
 Gridded Population of the World
+NASA GES DISC
 Natural Disasters - Our World in Data.url
 code/area_test.py
 code/random_forest-outfiles/manually created/~$nEstimators_vs_R2.xlsx
