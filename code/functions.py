@@ -205,12 +205,6 @@ def boundary_to_mask(boundary, x, y):  # https://stackoverflow.com/questions/345
   return mask
   
 
-def rasterize_geoids_df(bounds, transform, shapeData, lats_1d, lons_1d):
-  df = pd.DataFrame()
-  df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, bounds, transform)
-  df['GEOID'] = np.ravel(get_geoidMat(bounds, transform, shapeData, lats_1d, lons_1d))
-  return df[df['GEOID'] != '']
-
 
 def get_bound_indices(bounds, transform):
   rc = rasterio.transform.rowcol(transform, [bounds[0], bounds[2]], [bounds[1], bounds[3]], op=round, precision=4)
@@ -264,6 +258,14 @@ def get_geoidMat(bounds, transform, shapeData, lats_1d, lons_1d):
           geoidMat[minLat:maxLat,minLon:maxLon] = np.char.add(geoidMat[minLat:maxLat,minLon:maxLon], mask)
   return geoidMat[minLat0:maxLat0,minLon0:maxLon0]
 
+
+
+
+def rasterize_geoids_df(bounds, transform, shapeData, lats_1d, lons_1d):
+  df = pd.DataFrame()
+  df['lat'], df['lon'] = bound_ravel(lats_1d, lons_1d, bounds, transform)
+  df['GEOID'] = np.ravel(get_geoidMat(bounds, transform, shapeData, lats_1d, lons_1d))
+  return df[df['GEOID'] != '']
 
 
   

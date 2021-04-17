@@ -98,7 +98,7 @@ if __name__ == "__main__":
   t0 = fc.timer_start()
   t1 = t0
 
-  df, mat, tf, geoidMat, areaMat, latAreas = None, None, None, None, None, None
+  latlonGEOID, mat, tf, geoidMat, areaMat, latAreas = None, None, None, None, None, None
 
   fdGFED = None
 
@@ -111,17 +111,17 @@ if __name__ == "__main__":
   regionFile = regionFile.split('.')[0]
 
   if regionFile + '_rounded.hdf5' not in os.listdir(os.path.join(pmDir, 'points_in_region_rounded')):
-    df = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
-    df.lat = [round(i, 3) for i in df.lat]
-    df.lon = [round(i, 3) for i in df.lon]
-    fc.save_df(df, os.path.join(pmDir, 'points_in_region_rounded'), regionFile + '_rounded', 'hdf5')
+    latlonGEOID = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
+    latlonGEOID.lat = [round(i, 3) for i in latlonGEOID.lat]
+    latlonGEOID.lon = [round(i, 3) for i in latlonGEOID.lon]
+    fc.save_df(latlonGEOID, os.path.join(pmDir, 'points_in_region_rounded'), regionFile + '_rounded', 'hdf5')
   else:
-    df = pd.DataFrame(fc.read_df(os.path.join(pmDir, 'points_in_region_rounded'), regionFile + '_rounded', 'hdf5'))
+    latlonGEOID = pd.DataFrame(fc.read_df(os.path.join(pmDir, 'points_in_region_rounded'), regionFile + '_rounded', 'hdf5'))
 
-  t0 = fc.timer_restart(t0, 'get df')
+  t0 = fc.timer_restart(t0, 'get latlonGEOID')
 
-  # df2 = df.sort_values(by='lat', ascending=False).reset_index(drop=True)
-  # print(list(df.lat) == list(df2.lat)) # True
+  # df2 = latlonGEOID.sort_values(by='lat', ascending=False).reset_index(drop=True)
+  # print(list(latlonGEOID.lat) == list(df2.lat)) # True
   
   countyMapFile = 'cb_2019_us_county_500k'
   shapeData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp'))
@@ -154,16 +154,16 @@ if __name__ == "__main__":
 
   bounded_mat = mat[minLat:maxLat,minLon:maxLon]
   # print(bounded_mat.shape)
-  df = df.reindex(pd.Index(np.arange(0,bounded_mat.shape[0]*bounded_mat.shape[1])))
-  df['lat'], df['lon'] = fc.bound_ravel(lats_1d, lons_1d, basisregion.bounds, tf)
-  # df[unit] = np.ravel(bounded_mat)
-  df['GEOID'] = df['GEOID'].replace(NaN,'')
-  # df = df[df.GEOID != '']
-  temp = np.reshape(list(df['GEOID']), bounded_mat.shape)
-  # print(df[df.GEOID != ''])
+  latlonGEOID = latlonGEOID.reindex(pd.Index(np.arange(0,bounded_mat.shape[0]*bounded_mat.shape[1])))
+  latlonGEOID['lat'], latlonGEOID['lon'] = fc.bound_ravel(lats_1d, lons_1d, basisregion.bounds, tf)
+  # latlonGEOID[unit] = np.ravel(bounded_mat)
+  latlonGEOID['GEOID'] = latlonGEOID['GEOID'].replace(NaN,'')
+  # latlonGEOID = latlonGEOID[latlonGEOID.GEOID != '']
+  temp = np.reshape(list(latlonGEOID['GEOID']), bounded_mat.shape)
+  # print(latlonGEOID[latlonGEOID.GEOID != ''])
   geoidMat = np.empty(mat.shape, dtype='<U5')
   geoidMat[minLat:maxLat,minLon:maxLon] = temp
-  latAreas = pd.DataFrame(np.reshape(list(df['lat']), bounded_mat.shape)[:,0], columns=['lat'])
+  latAreas = pd.DataFrame(np.reshape(list(latlonGEOID['lat']), bounded_mat.shape)[:,0], columns=['lat'])
   latAreas['area'] = [quad_area(templon, lat, deg) for lat in latAreas.lat]
   # print(latAreas)
   temp = np.matrix([np.repeat(a, bounded_mat.shape[1]) for a in latAreas.area])

@@ -73,7 +73,7 @@ def main():
   shapefilesDir = os.path.join(pPath, 'shapefiles')
   usaDir = os.path.join(shapefilesDir, 'USA_states_counties')
   cdcWonderDir = os.path.join(ppPath, 'CDC data', 'CDC WONDER datasets')
-  usCensusDir = os.path.join(ppPath, 'US Census Bureau', 'population')
+  usCensusDir = os.path.join(ppPath, 'US Census Bureau')
   nClimDivDir = os.path.join(ppPath, 'nClimDiv data')
   pmDir = os.path.join(ppPath, 'Atmospheric Composition Analysis Group')
   gfedCountyDir = os.path.join(ppPath, 'GFED4s_county')
@@ -97,10 +97,13 @@ def main():
   # startYYYYMM, endYYYYMM = '200001', '201812'
   startYYYYMM, endYYYYMM = '200001', '201612'
 
-  fileArgs = [('deaths', cdcWonderDir, countySupEstTitle), 
-  ('popu', usCensusDir, 'TENA_county_pop_1999_2019'),
+  fileArgs = [('deaths', os.path.join(cdcWonderDir, 'Chronic lower respiratory diseases'), countySupEstTitle), 
+  ('popu', os.path.join(usCensusDir, 'population'), 'TENA_county_pop_1999_2019'),
+  ('median_inc', os.path.join(usCensusDir, 'SAIPE State and County Estimates'), 'TENA_county_median_income_2000_2019'),
   ('precip_in', nClimDivDir, 'climdiv-pcpncy-v1.0'),
   ('temp_F', nClimDivDir, 'climdiv-tmpccy-v1.0'),
+  ('PDSI', nClimDivDir, 'climdiv-pdsidv-v1.0'),
+  ('SP01', nClimDivDir, 'climdiv-sp01dv-v1.0'),
   ('pm25_ug_m-3', pmDir, 'TENA_county_PM25_200001_201812'),
   ('C_g_m-2', gfedCountyDir, 'TENA_C_200001_201812'),
   ('DM_kg_m-2', gfedCountyDir, 'TENA_DM_200001_201812'),
@@ -153,8 +156,8 @@ def main():
   t0 = fc.timer_restart(t0, 'load data')
 
   # print(list(data.keys()))
-  # print(data)
-  # exit()
+  print(data)
+  exit()
 
 
   # https://scikit-learn.org/stable/modules/ensemble.html#forests-of-randomized-trees

@@ -96,9 +96,12 @@ def main():
   startYYYYMM, endYYYYMM = '200001', '201612'
 
   fileArgs = [('deaths', cdcWonderDir, countySupEstTitle), 
-  ('popu', usCensusDir, 'TENA_county_pop_1999_2019'),
+  ('popu', os.path.join(usCensusDir, 'population'), 'TENA_county_pop_1999_2019'),
+  ('median_inc', os.path.join(usCensusDir, 'SAIPE State and County Estimates'), 'TENA_county_median_income_2000_2019'),
   ('precip_in', nClimDivDir, 'climdiv-pcpncy-v1.0'),
   ('temp_F', nClimDivDir, 'climdiv-tmpccy-v1.0'),
+  ('PDSI', nClimDivDir, 'climdiv-pdsidv-v1.0'),
+  ('SP01', nClimDivDir, 'climdiv-sp01dv-v1.0'),
   ('pm25_ug_m-3', pmDir, 'TENA_county_PM25_200001_201812'),
   ('C_g_m-2', gfedCountyDir, 'TENA_C_200001_201812'),
   ('DM_kg_m-2', gfedCountyDir, 'TENA_DM_200001_201812'),

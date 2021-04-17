@@ -1,25 +1,65 @@
 
 import numpy as np
-
+from numpy import cos, sin, arctan2, arccos
 import geopandas as gpd
+from numpy.core.numeric import NaN
 import pandas as pd
 
-import os, pathlib, io, sys, copy
+import os, pathlib, io, sys, copy, re, json
+from shapely.geometry import shape, GeometryCollection
+from shapely.ops import unary_union
+import rasterio, rasterio.features, rasterio.warp
+
+
 
 import importlib
 fc = importlib.import_module('functions')
 
-climStateCodes = {'01':'Alabama','02':'Arizona','03':'Arkansas','04':'California','05':'Colorado','06':'Connecticut','07':'Delaware','08':'Florida','09':'Georgia', 
-'10':'Idaho','11':'Illinois','12':'Indiana','13':'Iowa','14':'Kansas','15':'Kentucky','16':'Louisiana','17':'Maine','18':'Maryland','19':'Massachusetts','20':'Michigan', 
-'21':'Minnesota','22':'Mississippi','23':'Missouri','24':'Montana','25':'Nebraska','26':'Nevada','27':'New Hampshire','28':'New Jersey','29':'New Mexico','30':'New York', 
-'31':'North Carolina','32':'North Dakota','33':'Ohio','34':'Oklahoma','35':'Oregon','36':'Pennsylvania','37':'Rhode Island','38':'South Carolina','39':'South Dakota', 
-'40':'Tennessee','41':'Texas','42':'Utah','43':'Vermont','44':'Virginia','45':'Washington','46':'West Virginia','47':'Wisconsin','48':'Wyoming','50':'Alaska'}
+
+WGS84_RADIUS = 6366113.579189922 # from area_test_for_earth_radius.py
+WGS84_RADIUS_SQUARED = WGS84_RADIUS**2
+d2r = np.pi/180
+
+def greatCircleBearing(lon1, lat1, lon2, lat2):
+    dLong = lon1 - lon2
+    s = cos(d2r*lat2)*sin(d2r*dLong)
+    c = cos(d2r*lat1)*sin(d2r*lat2) - sin(lat1*d2r)*cos(d2r*lat2)*cos(d2r*dLong)
+    return arctan2(s, c)
+
+def quad_area(lon, lat, deg):
+  deg = deg / 2
+  lons = [lon+deg,lon+deg,lon-deg,lon-deg]
+  lats = [lat+deg,lat-deg,lat-deg,lat+deg]
+  N = 4 # len(lons)
+  angles = np.empty(N)
+  for i in range(N):
+      phiB1, phiA, phiB2 = np.roll(lats, i)[:3]
+      lB1, lA, lB2 = np.roll(lons, i)[:3]
+      # calculate angle with north (eastward)
+      beta1 = greatCircleBearing(lA, phiA, lB1, phiB1)
+      beta2 = greatCircleBearing(lA, phiA, lB2, phiB2)
+      # calculate angle between the polygons and add to angle array
+      angles[i] = arccos(cos(-beta1)*cos(-beta2) + sin(-beta1)*sin(-beta2))
+  return (np.sum(angles) - (N-2)*np.pi)*WGS84_RADIUS_SQUARED
 
 
+def combineBorders(*geoms):
+  polys = [GeometryCollection(g) for g in geoms]
+  bufs = [p.buffer(0) for p in polys]
+  newShape = unary_union([b for b in bufs])
+  return newShape
 
-def tempstring(temp):
+
+def tempstring11(temp):
   temp = str(temp)
   while len(temp) != 11:
+    temp = '0' + temp
+  return temp
+
+
+def tempstring10(temp):
+  temp = str(temp)
+  while len(temp) != 10:
     temp = '0' + temp
   return temp
 
@@ -36,6 +76,9 @@ if __name__ == "__main__":
   usaDir = os.path.join(shapefilesDir, 'USA_states_counties')
   nClimDivDir = os.path.join(ppPath, 'nClimDiv data')
 
+  pmDir = os.path.join(ppPath, 'Atmospheric Composition Analysis Group')
+  pm_fnames = [re.split('.nc',l)[0] for l in sorted(os.listdir(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25')))]
+
   # PARAMS
   title = 'Underlying Cause of Death - Chronic lower respiratory diseases, 1999-2019'
   countyTitle = 'By county - ' + title
@@ -45,15 +88,17 @@ if __name__ == "__main__":
   origDataMonth = '07'
   suppValString = '-1'
   # END PARAMS
+  deg = 0.01
+  templon = 0
 
 
   t0 = fc.timer_start()
   t1 = t0
 
 
-  startYYYYMM, endYYYYMM = '200001', '201812'
+  startDate, endDate = '200001', '201812'
   months = ['01','02','03','04','05','06','07','08','09','10','11','12']
-  dates = [i for i in dates if i >= startYYYYMM and i <= endYYYYMM]
+  dates = [i for i in dates if i >= startDate and i <= endDate]
 
   stateMapFile = 'cb_2019_us_state_500k'
   stateMapData = gpd.read_file(os.path.join(usaDir, stateMapFile, stateMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
@@ -62,43 +107,171 @@ if __name__ == "__main__":
   countyMapData = fc.clean_states_reset_index(countyMapData)
   countyMapData = fc.county_changes_deaths_reset_index(countyMapData)
 
+
+  climdivMapData = gpd.read_file(os.path.join(nClimDivDir, 'CONUS_CLIMATE_DIVISIONS', 'GIS.OFFICIAL_CLIM_DIVISIONS' + '.shp')).sort_values(by=['CLIMDIV']).reset_index(drop=True)
+  climdivMapData = climdivMapData.replace('Massachusettes' , 'Massachusetts') # fix typo
+  # t0 = fc.timer_restart(t0, 'read shp')
+  # print(climdivMapData)
+
   t0 = fc.timer_restart(t0, 'read map data')
 
   climToStateCodes = dict()
-
-  # print(stateMapData)
-  # print(climStateCodes)
-
-  # print(fc.clean_states_reset_index(stateMapData))
-
-  for code in climStateCodes.keys():
-    climToStateCodes[code] = fc.stateGEOIDstring(int(stateMapData.loc[stateMapData.NAME==climStateCodes[code],'GEOID']))
-
+  prev = ''
+  for i in range(len(climdivMapData)):
+    statecode = '{:02d}'.format(int(climdivMapData.STATE_CODE[i]))
+    name = climdivMapData.STATE_FIPS[i]
+    if statecode > '48':
+      break
+    if name != prev:
+      climToStateCodes[statecode] = name
+      prev = name
   t0 = fc.timer_restart(t0, 'climToStateCodes')
-  
-  # print(climToStateCodes)
 
+
+  latlonGEOID, pmMat, tf, geoidMat, areaMat, latAreas = None, None, None, None, None, None
+
+
+
+  # print(climToStateCodes)
+  regionDir, regionFile = 'basisregions', 'TENA.geo.json'
+  with open(os.path.join(shapefilesDir, regionDir, regionFile), 'r') as f:
+    contents = json.load(f)
+    basisregion = shape(contents['features'][0]['geometry'])
+  t0 = fc.timer_restart(t0, 'read basisregion')
+
+  if regionFile.split('.')[0] + '_rounded.hdf5' not in os.listdir(os.path.join(pmDir, 'points_in_region_rounded')):
+    latlonGEOID = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile.split('.')[0], 'hdf5')
+    latlonGEOID.lat = [round(i, 3) for i in latlonGEOID.lat]
+    latlonGEOID.lon = [round(i, 3) for i in latlonGEOID.lon]
+    fc.save_df(latlonGEOID, os.path.join(pmDir, 'points_in_region_rounded'), regionFile.split('.')[0] + '_rounded', 'hdf5')
+  else:
+    latlonGEOID = pd.DataFrame(fc.read_df(os.path.join(pmDir, 'points_in_region_rounded'), regionFile.split('.')[0] + '_rounded', 'hdf5'))
+
+  t0 = fc.timer_restart(t0, 'get latlonGEOID')
   # exit()
+  fd = fc.read_df(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25'), pm_fnames[0], 'nc') # for checking
+  pmMat = fd.variables['PM25'][:] # for checking
+
+  tf = rasterio.transform.from_origin(np.round(np.min(fd.variables['LON'][:]), 2), np.round(np.max(fd.variables['LAT'][:]), 2), deg,deg)
+
+  minLat, maxLat, minLon, maxLon = fc.get_bound_indices(basisregion.bounds, tf)
+  # print(minLat, maxLat, minLon, maxLon)
+  xy = rasterio.transform.xy(tf, range(fd.dimensions['LAT'].size), range(fd.dimensions['LAT'].size))
+  lats_1d = np.array(xy[1])
+  xy = rasterio.transform.xy(tf, range(fd.dimensions['LON'].size), range(fd.dimensions['LON'].size))
+  lons_1d = np.array(xy[0])
+
+  bounded_mat = pmMat[minLat:maxLat,minLon:maxLon]
+  # print(bounded_mat.shape)
+  latlonGEOID = latlonGEOID.reindex(pd.Index(np.arange(0,bounded_mat.shape[0]*bounded_mat.shape[1])))
+  latlonGEOID['lat'], latlonGEOID['lon'] = fc.bound_ravel(lats_1d, lons_1d, basisregion.bounds, tf)
+  # latlonGEOID[unit] = np.ravel(bounded_mat)
+  latlonGEOID['GEOID'] = latlonGEOID['GEOID'].replace(NaN,'')
+  # latlonGEOID = latlonGEOID[latlonGEOID.GEOID != '']
+  temp = np.reshape(list(latlonGEOID['GEOID']), bounded_mat.shape)
+  # print(latlonGEOID[latlonGEOID.GEOID != ''])
+  geoidMat = np.empty(pmMat.shape, dtype='<U5')
+  geoidMat[minLat:maxLat,minLon:maxLon] = temp
+  latAreas = pd.DataFrame(np.reshape(list(latlonGEOID['lat']), bounded_mat.shape)[:,0], columns=['lat'])
+  latAreas['area'] = [quad_area(templon, lat, deg) for lat in latAreas.lat]
+  # print(latAreas)
+  temp = np.matrix([np.repeat(a, bounded_mat.shape[1]) for a in latAreas.area])
+  areaMat = np.empty(pmMat.shape)
+  areaMat[minLat:maxLat,minLon:maxLon] = temp
+  t0 = fc.timer_restart(t0, 'initialize (areaMat, geoidMat; pm25, lats/lons for checking)')
+
+
+  dfClimDiv = None
+
+  # rst_fn = 'temp_raster.tif'
+  # out_fn
+
+
+  # drought PDSI file
+  filenames = [name for name in os.listdir(nClimDivDir) if name.startswith('climdiv') and name.endswith('.0-20210406')]
+  # print(filenames)
+  for filename in filenames:
+    # continue
+    print(filename)
+    outFileName = '.'.join(filename.split('.')[:-1])
+
+    if 'by_climdiv_'+outFileName + '.hdf5' in os.listdir(nClimDivDir):
+      dfClimDiv = fc.read_df(nClimDivDir, 'by_climdiv_'+outFileName, 'hdf5' )
+      t0 = fc.timer_restart(t0, 'load by_climdiv_'+outFileName)
+    else:
+      df = open(os.path.join(nClimDivDir, filename), 'r').read()
+      df = pd.read_csv(io.StringIO(df), names=['temp']+months, sep='\s+')
+      df['year'] = [str(i)[-4:] for i in df.temp]
+      df = df[df.year >= startDate[:4]]
+      df = df[df.year <= endDate[:4]]
+      df.temp = [tempstring10(i) for i in df.temp]
+      df = df[df.temp.str[:2] <= '48']
+      df['STATEFP'] = [climToStateCodes[i[:2]] for i in df.temp]
+      df['CD'] = [i[2:4] for i in df.temp]
+      df['FIPS_CD'] = [s+t for s,t in zip(df.STATEFP, df.CD)]
+      df = df.drop(columns=['temp']).reset_index(drop=True)
+      dfClimDiv = pd.DataFrame()
+      dfClimDiv['FIPS_CD'] = sorted(set(df.FIPS_CD))
+      dfClimDiv['STATEFP'] = [item[:2] for item in dfClimDiv.FIPS_CD]
+      dfClimDiv[dates] = None
+      for geoid in dfClimDiv['FIPS_CD']:
+        temp = df[df['FIPS_CD'] == geoid]
+        dfClimDiv.loc[dfClimDiv.FIPS_CD == geoid, dates] = np.ravel(temp.loc[:,months])
+      fc.save_df(dfClimDiv, nClimDivDir, 'by_climdiv_'+outFileName, 'hdf5')
+      fc.save_df(dfClimDiv, nClimDivDir, 'by_climdiv_'+outFileName, 'csv')
+      t0 = fc.timer_restart(t0, 'write by_climdiv_'+outFileName)
+
+    # map values to 0.01 deg grid (matrix)             # https://gis.stackexchange.com/questions/151339/rasterize-a-shapefile-with-geopandas-or-fiona-python
+    assert list(dfClimDiv.FIPS_CD) == list(climdivMapData.FIPS_CD)
+
+
+    dfOut = pd.DataFrame()
+    dfOut['GEOID'] = countyMapData.GEOID
+    # dfOut = dfOut.drop(columns=['STATEFP'])
+
+    for date in dates:
+      print(date)
+      shapes = ((geom,value) for geom, value in zip(climdivMapData.geometry, dfClimDiv[date]))
+      mat = rasterio.features.rasterize(shapes=shapes, fill=NaN, out_shape=pmMat.shape, transform=tf)
+      dfOut[date] = fc.aggregate_by_geoid(areaMat, mat, geoidMat, tf, countyMapData)
+
+    t0 = fc.timer_restart(t0, 'write '+outFileName)
+    print(dfOut)
+
+    # print(df)
+    # break
+
+    # # dfOut = fc.clean_states_reset_index(dfOut) # does nothing
+    # # dfOut = fc.county_changes_deaths_reset_index(dfOut) # does nothing
+
+    # t0 = fc.timer_restart(t0, 'convert '+outFileName)
+
+    fc.save_df(dfOut, nClimDivDir, outFileName, 'hdf5')
+    t0 = fc.timer_restart(t0, 'save hdf5 '+outFileName)
+    fc.save_df(dfOut, nClimDivDir, outFileName, 'csv')
+    t0 = fc.timer_restart(t0, 'save csv '+outFileName)
+
+
+
+
 
 
   # temp/precip files
   filenames = [name for name in os.listdir(nClimDivDir) if name.startswith('climdiv') and name.endswith('.0-20210304')]
-  print(filenames)
-  # exit()
   for filename in filenames:
+    continue
     print(filename)
     outFileName = '.'.join(filename.split('.')[:-1])
-
 
     df = open(os.path.join(nClimDivDir, filename), 'r').read()
     df = pd.read_csv(io.StringIO(df), names=['temp']+months, sep='\s+')
 
     df['year'] = [str(i)[-4:] for i in df.temp]
 
-    df = df[df.year >= startYYYYMM[:4]]
-    df = df[df.year <= endYYYYMM[:4]]
+    df = df[df.year >= startDate[:4]]
+    df = df[df.year <= endDate[:4]]
 
-    df.temp = [tempstring(i) for i in df.temp]
+    df.temp = [tempstring11(i) for i in df.temp]
 
     df['STATEFP'] = [climToStateCodes[i[:2]] for i in df.temp]
 
@@ -151,6 +324,7 @@ if __name__ == "__main__":
     t0 = fc.timer_restart(t0, 'save hdf5 '+outFileName)
     fc.save_df(dfOut, nClimDivDir, outFileName, 'csv')
     t0 = fc.timer_restart(t0, 'save csv '+outFileName)
+
 
 
 
