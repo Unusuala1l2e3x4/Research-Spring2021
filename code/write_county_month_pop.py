@@ -2,9 +2,12 @@
 import numpy as np
 
 import geopandas as gpd
+from numpy.core.numeric import NaN
 import pandas as pd
 
-import os, pathlib, io, sys
+import os, pathlib, io, sys, copy
+
+from scipy import interpolate # pandas provides functions using interpolate base class
 
 import importlib
 fc = importlib.import_module('functions')
@@ -182,7 +185,7 @@ if __name__ == "__main__":
 
 
   # orig pop numbers are for July 1; write other months based on avg monthly net change
-
+  # 4/17 EDIT - use interpolation library function
   countyPop = pd.DataFrame(all_dfs[0])
   for i in range(1, len(all_dfs)):
     dates = [i for i in all_dfs[i] if i != 'GEOID' and i != 'STATEFP']
@@ -202,14 +205,30 @@ if __name__ == "__main__":
       if month == '01':
         year = dates[i + 1][:4]
       yyyymm = year + month
-      countyPop[yyyymm] = countyPop[prev] + monthlyChange[0]
+      # countyPop[yyyymm] = countyPop[prev] + monthlyChange[0]
+      countyPop[yyyymm] = NaN
       prev = yyyymm
 
   countyPop = countyPop.sort_index(axis=1)
   countyPop = countyPop[ ['GEOID'] + [i for i in countyPop.columns if i != 'GEOID' and i != 'STATEFP'] ]
 
+  dates = sorted(i for i in countyPop if i != 'GEOID' and i != 'STATEFP')
+  # print(dates)
   countyPop.loc[:, dates] = countyPop.loc[:, dates].astype(float)
+
+  # print(countyPop)
+  temp = copy.deepcopy(countyPop.loc[:, dates])
+  temp.columns = pd.to_datetime(dates, format='%Y%m', errors='coerce')
+  temp = temp.T
+  temp = temp.interpolate(method='linear') # method='polynomial', order=int(order), limit_direction='both'
+  temp = temp.T
+  temp.columns = dates
+
+  countyPop.loc[:, dates] = temp
+
+
   fc.save_df(countyPop, usCensusDir, countyPopName, ext)
+  fc.save_df(countyPop, usCensusDir, countyPopName, 'csv')
   t0 = fc.timer_restart(t0, 'write county data')
 
 
@@ -219,13 +238,12 @@ if __name__ == "__main__":
   statePop.GEOID = [item[0:2] for item in sorted(set(statefps))]
   countyPop['STATEFP'] = statefps
 
-  dates = sorted(i for i in countyPop if i != 'GEOID' and i != 'STATEFP')
-  # print(dates)
 
   for date in dates:
     statePop.loc[:, date] = np.ravel([np.sum(countyPop.loc[countyPop.STATEFP == statefp, date]) for statefp in statePop.GEOID])
 
   fc.save_df(statePop, usCensusDir, statePopName, ext)
+  fc.save_df(statePop, usCensusDir, statePopName, 'csv')
   t0 = fc.timer_restart(t0, 'write state data')
 
 

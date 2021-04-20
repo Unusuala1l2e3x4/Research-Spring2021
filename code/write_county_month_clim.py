@@ -5,42 +5,14 @@ import geopandas as gpd
 from numpy.core.numeric import NaN
 import pandas as pd
 
-import os, pathlib, io, sys, copy, re, json
+import os, pathlib, io, copy, re, json
 from shapely.geometry import shape, GeometryCollection
 from shapely.ops import unary_union
 import rasterio, rasterio.features, rasterio.warp
 
 
-
 import importlib
 fc = importlib.import_module('functions')
-
-
-WGS84_RADIUS = 6366113.579189922 # from area_test_for_earth_radius.py
-WGS84_RADIUS_SQUARED = WGS84_RADIUS**2
-d2r = np.pi/180
-
-def greatCircleBearing(lon1, lat1, lon2, lat2):
-    dLong = lon1 - lon2
-    s = cos(d2r*lat2)*sin(d2r*dLong)
-    c = cos(d2r*lat1)*sin(d2r*lat2) - sin(lat1*d2r)*cos(d2r*lat2)*cos(d2r*dLong)
-    return arctan2(s, c)
-
-def quad_area(lon, lat, deg):
-  deg = deg / 2
-  lons = [lon+deg,lon+deg,lon-deg,lon-deg]
-  lats = [lat+deg,lat-deg,lat-deg,lat+deg]
-  N = 4 # len(lons)
-  angles = np.empty(N)
-  for i in range(N):
-      phiB1, phiA, phiB2 = np.roll(lats, i)[:3]
-      lB1, lA, lB2 = np.roll(lons, i)[:3]
-      # calculate angle with north (eastward)
-      beta1 = greatCircleBearing(lA, phiA, lB1, phiB1)
-      beta2 = greatCircleBearing(lA, phiA, lB2, phiB2)
-      # calculate angle between the polygons and add to angle array
-      angles[i] = arccos(cos(-beta1)*cos(-beta2) + sin(-beta1)*sin(-beta2))
-  return (np.sum(angles) - (N-2)*np.pi)*WGS84_RADIUS_SQUARED
 
 
 def combineBorders(*geoms):
@@ -88,8 +60,7 @@ if __name__ == "__main__":
   origDataMonth = '07'
   suppValString = '-1'
   # END PARAMS
-  deg = 0.01
-  templon = 0
+
 
 
   t0 = fc.timer_start()
@@ -129,16 +100,12 @@ if __name__ == "__main__":
 
 
   latlonGEOID, pmMat, tf, geoidMat, areaMat, latAreas = None, None, None, None, None, None
-
-
-
-  # print(climToStateCodes)
+  deg, templon = 0.01, 0
   regionDir, regionFile = 'basisregions', 'TENA.geo.json'
   with open(os.path.join(shapefilesDir, regionDir, regionFile), 'r') as f:
     contents = json.load(f)
     basisregion = shape(contents['features'][0]['geometry'])
   t0 = fc.timer_restart(t0, 'read basisregion')
-
   if regionFile.split('.')[0] + '_rounded.hdf5' not in os.listdir(os.path.join(pmDir, 'points_in_region_rounded')):
     latlonGEOID = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile.split('.')[0], 'hdf5')
     latlonGEOID.lat = [round(i, 3) for i in latlonGEOID.lat]
@@ -146,39 +113,33 @@ if __name__ == "__main__":
     fc.save_df(latlonGEOID, os.path.join(pmDir, 'points_in_region_rounded'), regionFile.split('.')[0] + '_rounded', 'hdf5')
   else:
     latlonGEOID = pd.DataFrame(fc.read_df(os.path.join(pmDir, 'points_in_region_rounded'), regionFile.split('.')[0] + '_rounded', 'hdf5'))
-
   t0 = fc.timer_restart(t0, 'get latlonGEOID')
-  # exit()
   fd = fc.read_df(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25'), pm_fnames[0], 'nc') # for checking
   pmMat = fd.variables['PM25'][:] # for checking
-
   tf = rasterio.transform.from_origin(np.round(np.min(fd.variables['LON'][:]), 2), np.round(np.max(fd.variables['LAT'][:]), 2), deg,deg)
-
   minLat, maxLat, minLon, maxLon = fc.get_bound_indices(basisregion.bounds, tf)
-  # print(minLat, maxLat, minLon, maxLon)
   xy = rasterio.transform.xy(tf, range(fd.dimensions['LAT'].size), range(fd.dimensions['LAT'].size))
   lats_1d = np.array(xy[1])
   xy = rasterio.transform.xy(tf, range(fd.dimensions['LON'].size), range(fd.dimensions['LON'].size))
   lons_1d = np.array(xy[0])
-
   bounded_mat = pmMat[minLat:maxLat,minLon:maxLon]
-  # print(bounded_mat.shape)
   latlonGEOID = latlonGEOID.reindex(pd.Index(np.arange(0,bounded_mat.shape[0]*bounded_mat.shape[1])))
   latlonGEOID['lat'], latlonGEOID['lon'] = fc.bound_ravel(lats_1d, lons_1d, basisregion.bounds, tf)
-  # latlonGEOID[unit] = np.ravel(bounded_mat)
   latlonGEOID['GEOID'] = latlonGEOID['GEOID'].replace(NaN,'')
-  # latlonGEOID = latlonGEOID[latlonGEOID.GEOID != '']
   temp = np.reshape(list(latlonGEOID['GEOID']), bounded_mat.shape)
-  # print(latlonGEOID[latlonGEOID.GEOID != ''])
   geoidMat = np.empty(pmMat.shape, dtype='<U5')
   geoidMat[minLat:maxLat,minLon:maxLon] = temp
   latAreas = pd.DataFrame(np.reshape(list(latlonGEOID['lat']), bounded_mat.shape)[:,0], columns=['lat'])
-  latAreas['area'] = [quad_area(templon, lat, deg) for lat in latAreas.lat]
-  # print(latAreas)
+  latAreas['area'] = [fc.quad_area(templon, lat, deg) for lat in latAreas.lat]
   temp = np.matrix([np.repeat(a, bounded_mat.shape[1]) for a in latAreas.area])
   areaMat = np.empty(pmMat.shape)
   areaMat[minLat:maxLat,minLon:maxLon] = temp
   t0 = fc.timer_restart(t0, 'initialize (areaMat, geoidMat; pm25, lats/lons for checking)')
+
+
+
+
+
 
 
   dfClimDiv = None
@@ -186,11 +147,11 @@ if __name__ == "__main__":
   # rst_fn = 'temp_raster.tif'
   # out_fn
 
-
+  # by clim div, need to aggregate by county
   # drought PDSI file
   filenames = [name for name in os.listdir(nClimDivDir) if name.startswith('climdiv') and name.endswith('.0-20210406')]
   # print(filenames)
-  for filename in filenames:
+  for filename in filenames: # ~14 min each
     # continue
     print(filename)
     outFileName = '.'.join(filename.split('.')[:-1])
@@ -255,11 +216,11 @@ if __name__ == "__main__":
 
 
 
-
+  # already by county
   # temp/precip files
   filenames = [name for name in os.listdir(nClimDivDir) if name.startswith('climdiv') and name.endswith('.0-20210304')]
   for filename in filenames:
-    continue
+    # continue
     print(filename)
     outFileName = '.'.join(filename.split('.')[:-1])
 
@@ -311,7 +272,6 @@ if __name__ == "__main__":
     for geoid in dfOut['GEOID']:
       temp = df[df['GEOID'] == geoid]
       dfOut.loc[dfOut.GEOID == geoid, dates] = np.ravel(temp.loc[:,months])
-    print(dfOut)
 
     dfOut = dfOut.drop(columns=['STATEFP'])
 

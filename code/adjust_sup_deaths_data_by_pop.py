@@ -28,11 +28,7 @@ if __name__ == "__main__":
   t1 = t0
 
   run(dir, 'write_county_month_pop.py', ['r','hdf5'])
-  run(dir, 'write_county_month_pop.py', ['r','csv'])
-
   run(dir, 'write_county_month_deaths.py', ['w','hdf5'])
-  run(dir, 'write_county_month_deaths.py', ['w','csv'])
-  
 
 
   t1 = fc.timer_restart(t1, 'adjust_sup_deaths_data_by_pop total time')

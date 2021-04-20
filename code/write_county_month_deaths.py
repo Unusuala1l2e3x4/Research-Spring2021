@@ -43,12 +43,15 @@ if __name__ == "__main__":
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
   # pmDir = os.path.join(ppPath, 'Global Annual PM2.5 Grids')
-  outputDir = os.path.join(pPath, 'plot_usa-outfiles')
+  
 
   shapefilesDir = os.path.join(pPath, 'shapefiles')
   usaDir = os.path.join(shapefilesDir, 'USA_states_counties')
 
   cdcWonderDir = os.path.join(ppPath, 'CDC data', 'CDC WONDER datasets')
+
+  outputDir = os.path.join(cdcWonderDir, 'Chronic lower respiratory diseases')
+
   usCensusDir = os.path.join(ppPath, 'US Census Bureau', 'population')
 
   # PARAMS
@@ -75,21 +78,23 @@ if __name__ == "__main__":
   statePop = pd.read_hdf(os.path.join(usCensusDir, 'TENA_state_pop_1999_2019.hdf5'))
   statePop = fc.makeStateFileGEOIDs(statePop)
   
-  if fc.is_in_dir(cdcWonderDir, countyTitle, ext) and mode != 'w':
-    countyData = fc.read_df(cdcWonderDir, countyTitle, ext)
+  if fc.is_in_dir(outputDir, countyTitle, ext) and mode != 'w':
+    countyData = fc.read_df(outputDir, countyTitle, ext)
   else:
     countyData = make_geoid_dates_df(fc.deaths_by_date_geoid(os.path.join(cdcWonderDir, countyTitle), suppValString)) # has missing rows
     countyData = fc.clean_states_reset_index(countyData)
     countyData = fc.county_changes_deaths_reset_index(countyData)
-    fc.save_df(countyData, cdcWonderDir, countyTitle, ext)
+    fc.save_df(countyData, outputDir, countyTitle, ext)
+    fc.save_df(countyData, outputDir, countyTitle, 'csv')
   countyData = fc.makeCountyFileGEOIDs_STATEFPs(countyData)
 
-  if fc.is_in_dir(cdcWonderDir, stateTitle, ext) and mode != 'w':
-    stateData = fc.read_df(cdcWonderDir, stateTitle, ext)
+  if fc.is_in_dir(outputDir, stateTitle, ext) and mode != 'w':
+    stateData = fc.read_df(outputDir, stateTitle, ext)
   else:
     stateData = make_geoid_dates_df(fc.deaths_by_date_geoid(os.path.join(cdcWonderDir, stateTitle), suppValString)) # no missing rows  
     stateData = fc.clean_states_reset_index(stateData)
-    fc.save_df(stateData, cdcWonderDir, stateTitle, ext)
+    fc.save_df(stateData, outputDir, stateTitle, ext)
+    fc.save_df(stateData, outputDir, stateTitle, 'csv')
   stateData = fc.makeStateFileGEOIDs(stateData)
 
   if testing:
@@ -114,13 +119,14 @@ if __name__ == "__main__":
   dates = sorted(set(deathsDates) & set(popDates))
   
 
-  if fc.is_in_dir(cdcWonderDir, 'stateDataUnsup', ext) and mode != 'w':
-    stateDataUnsup = fc.read_df(cdcWonderDir, 'stateDataUnsup', ext)
+  if fc.is_in_dir(outputDir, 'stateDataUnsup', ext) and mode != 'w':
+    stateDataUnsup = fc.read_df(outputDir, 'stateDataUnsup', ext)
   else:
     stateDataUnsup = copy.deepcopy(stateData)
     for date in deathsDates:
       stateDataUnsup.loc[:, date] = np.ravel([np.nansum(countyData.loc[countyData.STATEFP == statefp, date]) for statefp in stateData.GEOID])
-    fc.save_df(stateDataUnsup, cdcWonderDir, 'stateDataUnsup', ext)
+    fc.save_df(stateDataUnsup, outputDir, 'stateDataUnsup', ext)
+    fc.save_df(stateDataUnsup, outputDir, 'stateDataUnsup', 'csv')
   stateDataUnsup = fc.makeStateFileGEOIDs(stateDataUnsup)
 
   # print(stateData)
@@ -145,13 +151,14 @@ if __name__ == "__main__":
 
   # print(countyPop)
 
-  if fc.is_in_dir(cdcWonderDir, 'statePopUnsup', ext) and mode != 'w':
-    statePopUnsup = fc.read_df(cdcWonderDir, 'statePopUnsup', ext)
+  if fc.is_in_dir(outputDir, 'statePopUnsup', ext) and mode != 'w':
+    statePopUnsup = fc.read_df(outputDir, 'statePopUnsup', ext)
   else:
     statePopUnsup = copy.deepcopy(statePop)
     for date in dates:
       statePopUnsup.loc[:, date] = np.ravel([np.nansum(countyPopUnsup.loc[countyPopUnsup.STATEFP == statefp, date]) for statefp in statePop.GEOID])
-    fc.save_df(statePopUnsup, cdcWonderDir, 'statePopUnsup', ext)
+    fc.save_df(statePopUnsup, outputDir, 'statePopUnsup', ext)
+    fc.save_df(statePopUnsup, outputDir, 'statePopUnsup','csv')
   statePopUnsup = fc.makeStateFileGEOIDs(statePopUnsup)
 
   t0 = fc.timer_restart(t0, 'get unsuppressed data')
@@ -198,7 +205,8 @@ if __name__ == "__main__":
   
 
   del countyDataNew['STATEFP']
-  fc.save_df(countyDataNew, cdcWonderDir, countySupEstTitle, ext)
+  fc.save_df(countyDataNew, outputDir, countySupEstTitle, ext)
+  fc.save_df(countyDataNew, outputDir, countySupEstTitle, 'csv')
 
   t1 = fc.timer_restart(t1, 'total time')
 

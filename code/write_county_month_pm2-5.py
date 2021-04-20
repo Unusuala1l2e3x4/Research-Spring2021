@@ -1,6 +1,6 @@
 
 import numpy as np
-from numpy import cos, sin, arctan2, arccos
+
 import geopandas as gpd
 from numpy.core.numeric import NaN
 import pandas as pd
@@ -11,36 +11,6 @@ import rasterio, rasterio.features, rasterio.warp
 
 import importlib
 fc = importlib.import_module('functions')
-
-
-# WGS84_RADIUS = 6378137
-WGS84_RADIUS = 6366113.579189922 # from area_test_for_earth_radius.py
-WGS84_RADIUS_SQUARED = WGS84_RADIUS**2
-d2r = np.pi/180
-
-def greatCircleBearing(lon1, lat1, lon2, lat2):
-    dLong = lon1 - lon2
-    s = cos(d2r*lat2)*sin(d2r*dLong)
-    c = cos(d2r*lat1)*sin(d2r*lat2) - sin(lat1*d2r)*cos(d2r*lat2)*cos(d2r*dLong)
-    return arctan2(s, c)
-
-def quad_area(lon, lat, deg):
-  deg = deg / 2
-  lons = [lon+deg,lon+deg,lon-deg,lon-deg]
-  lats = [lat+deg,lat-deg,lat-deg,lat+deg]
-  N = 4 # len(lons)
-  angles = np.empty(N)
-  for i in range(N):
-      phiB1, phiA, phiB2 = np.roll(lats, i)[:3]
-      lB1, lA, lB2 = np.roll(lons, i)[:3]
-      # calculate angle with north (eastward)
-      beta1 = greatCircleBearing(lA, phiA, lB1, phiB1)
-      beta2 = greatCircleBearing(lA, phiA, lB2, phiB2)
-      # calculate angle between the polygons and add to angle array
-      angles[i] = arccos(cos(-beta1)*cos(-beta2) + sin(-beta1)*sin(-beta2))
-  return (np.sum(angles) - (N-2)*np.pi)*WGS84_RADIUS_SQUARED
-
-
 
 
 if __name__ == "__main__":
@@ -67,7 +37,7 @@ if __name__ == "__main__":
   t0 = fc.timer_start()
   t1 = t0
 
-  df, tf, geoidMat, areaMat, latAreas = None, None, None, None, None
+  latlonGEOID, tf, geoidMat, areaMat, latAreas = None, None, None, None, None
 
   
   with open(os.path.join(shapefilesDir, regionDir, regionFile), 'r') as f:
@@ -78,17 +48,15 @@ if __name__ == "__main__":
   regionFile = regionFile.split('.')[0]
 
   if regionFile + '_rounded.hdf5' not in os.listdir(os.path.join(pmDir, 'points_in_region_rounded')):
-    df = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
-    df.lat = [round(i, 3) for i in df.lat]
-    df.lon = [round(i, 3) for i in df.lon]
-    fc.save_df(df, os.path.join(pmDir, 'points_in_region_rounded'), regionFile + '_rounded', 'hdf5')
+    latlonGEOID = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile, 'hdf5')
+    latlonGEOID.lat = [round(i, 3) for i in latlonGEOID.lat]
+    latlonGEOID.lon = [round(i, 3) for i in latlonGEOID.lon]
+    fc.save_df(latlonGEOID, os.path.join(pmDir, 'points_in_region_rounded'), regionFile + '_rounded', 'hdf5')
   else:
-    df = pd.DataFrame(fc.read_df(os.path.join(pmDir, 'points_in_region_rounded'), regionFile + '_rounded', 'hdf5'))
+    latlonGEOID = pd.DataFrame(fc.read_df(os.path.join(pmDir, 'points_in_region_rounded'), regionFile + '_rounded', 'hdf5'))
 
-  t0 = fc.timer_restart(t0, 'get df')
+  t0 = fc.timer_restart(t0, 'get latlonGEOID')
 
-  # df2 = df.sort_values(by='lat', ascending=False).reset_index(drop=True)
-  # print(list(df.lat) == list(df2.lat)) # True
   
   countyMapFile = 'cb_2019_us_county_500k'
   shapeData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp'))
@@ -129,18 +97,18 @@ if __name__ == "__main__":
 
       bounded_mat = mat[minLat:maxLat,minLon:maxLon]
       # print(bounded_mat.shape)
-      df = df.reindex(pd.Index(np.arange(0,bounded_mat.shape[0]*bounded_mat.shape[1])))
-      df['lat'], df['lon'] = fc.bound_ravel(lats_1d, lons_1d, basisregion.bounds, tf)
-      # df[unit] = np.ravel(bounded_mat)
-      df['GEOID'] = df['GEOID'].replace(NaN,'')
-      # df = df[df.GEOID != '']
-      temp = np.reshape(list(df['GEOID']), bounded_mat.shape)
-      # print(df[df.GEOID != ''])
+      latlonGEOID = latlonGEOID.reindex(pd.Index(np.arange(0,bounded_mat.shape[0]*bounded_mat.shape[1])))
+      latlonGEOID['lat'], latlonGEOID['lon'] = fc.bound_ravel(lats_1d, lons_1d, basisregion.bounds, tf)
+      # latlonGEOID[unit] = np.ravel(bounded_mat)
+      latlonGEOID['GEOID'] = latlonGEOID['GEOID'].replace(NaN,'')
+      # latlonGEOID = latlonGEOID[latlonGEOID.GEOID != '']
+      temp = np.reshape(list(latlonGEOID['GEOID']), bounded_mat.shape)
+      # print(latlonGEOID[latlonGEOID.GEOID != ''])
       geoidMat = np.empty(mat.shape, dtype='<U5')
       geoidMat[minLat:maxLat,minLon:maxLon] = temp
 
-      latAreas = pd.DataFrame(np.reshape(list(df['lat']), bounded_mat.shape)[:,0], columns=['lat'])
-      latAreas['area'] = [quad_area(templon, lat, deg) for lat in latAreas.lat]
+      latAreas = pd.DataFrame(np.reshape(list(latlonGEOID['lat']), bounded_mat.shape)[:,0], columns=['lat'])
+      latAreas['area'] = [fc.quad_area(templon, lat, deg) for lat in latAreas.lat]
       # print(latAreas)
 
       temp = np.matrix([np.repeat(a, bounded_mat.shape[1]) for a in latAreas.area])

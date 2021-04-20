@@ -18,27 +18,6 @@ fc = importlib.import_module('functions')
 
 
 
-def ravel_by_dates(unit, arr, dates):
-  ret = pd.DataFrame()
-  X, Y = np.meshgrid(arr, dates)
-  ret[unit] = np.ravel(X)
-  ret['YYYYMM'] = np.ravel(Y)
-  return ret
-
-
-def n_estimators_given_max_samples(X, n_estimators_base, max_samples_base, max_samples):
-  if type(max_samples_base) is float:
-    max_samples_base = int(np.ceil(max_samples_base*X.shape[0]))
-  
-  total_samples = max_samples_base*n_estimators_base
-
-  if type(max_samples) is float:
-    max_samples = int(np.ceil(max_samples*X.shape[0]))
-  
-  return int(np.ceil( total_samples / max_samples ))
-
-
-
 
 def estimate_time(multiplier, params, n_jobs, cv_indices): # assuming n_jobs = DEFAULT_N_JOBS = 5
   assert [type(i) == float for i in params['max_samples']]
@@ -66,98 +45,31 @@ def plotGiniImportance(importances):
 
 
 def main():
-  pPath = str(pathlib.Path(__file__).parent.absolute())
-  ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
-
-  outputDir = os.path.join(pPath, 'random_forest-outfiles')
-  shapefilesDir = os.path.join(pPath, 'shapefiles')
-  usaDir = os.path.join(shapefilesDir, 'USA_states_counties')
-  cdcWonderDir = os.path.join(ppPath, 'CDC data', 'CDC WONDER datasets')
-  usCensusDir = os.path.join(ppPath, 'US Census Bureau')
-  nClimDivDir = os.path.join(ppPath, 'nClimDiv data')
-  pmDir = os.path.join(ppPath, 'Atmospheric Composition Analysis Group')
-  gfedCountyDir = os.path.join(ppPath, 'GFED4s_county')
-
-  # PARAMS
-  countyMapFile = 'cb_2019_us_county_500k'
-
-  title = 'Underlying Cause of Death - Chronic lower respiratory diseases, 1999-2019'
-  countyTitle = 'By county - ' + title
-  stateTitle = 'By state - ' + title
-  countySupEstTitle = countyTitle + ', suppressed estimates'
-
-  ext = 'hdf5'
 
   crossvalidate = True
   DEFAULT_N_JOBS = 5 # 4-6; avoid 7, 8
   DEFAULT_RANDOM_STATE = 0
+
+  t0 = fc.timer_start()
+  t1 = t0
+  
+  pPath = str(pathlib.Path(__file__).parent.absolute())
+  ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
+
+  outputDir = os.path.join(pPath, 'random_forest-outfiles')
 
   # startYYYYMM, endYYYYMM = sys.argv[1], sys.argv[2]
 
   # startYYYYMM, endYYYYMM = '200001', '201812'
   startYYYYMM, endYYYYMM = '200001', '201612'
 
-  fileArgs = [('deaths', os.path.join(cdcWonderDir, 'Chronic lower respiratory diseases'), countySupEstTitle), 
-  ('popu', os.path.join(usCensusDir, 'population'), 'TENA_county_pop_1999_2019'),
-  ('median_inc', os.path.join(usCensusDir, 'SAIPE State and County Estimates'), 'TENA_county_median_income_2000_2019'),
-  ('precip_in', nClimDivDir, 'climdiv-pcpncy-v1.0'),
-  ('temp_F', nClimDivDir, 'climdiv-tmpccy-v1.0'),
-  ('PDSI', nClimDivDir, 'climdiv-pdsidv-v1.0'),
-  ('SP01', nClimDivDir, 'climdiv-sp01dv-v1.0'),
-  ('pm25_ug_m-3', pmDir, 'TENA_county_PM25_200001_201812'),
-  ('C_g_m-2', gfedCountyDir, 'TENA_C_200001_201812'),
-  ('DM_kg_m-2', gfedCountyDir, 'TENA_DM_200001_201812'),
-  ('BB_g_m-2', gfedCountyDir, 'TENA_BB_200001_201812'), # 2016 and before
-  ('NPP_g_m-2', gfedCountyDir, 'TENA_NPP_200001_201812'), # 2016 and before
-  ('Rh_g_m-2', gfedCountyDir, 'TENA_Rh_200001_201812'), # 2016 and before
-  ('burned_frac', gfedCountyDir, 'TENA_burned_fraction_200001_201812'), # 2016 and before
-  ('smallf_frac', gfedCountyDir, 'TENA_small_fire_fraction_200001_201812')] # 2016 and before
-
-
-  # END PARAMS
-
-  t0 = fc.timer_start()
-  t1 = t0
-
-  shapeData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
-  shapeData = fc.clean_states_reset_index(shapeData)
-  shapeData = fc.county_changes_deaths_reset_index(shapeData)
-  shapeData['ATOTAL'] = shapeData.ALAND + shapeData.AWATER
-  # print(shapeData)
-
-  t0 = fc.timer_restart(t0, 'read shapeData')
-
-  dates, data = None, None
-
-  for args in fileArgs:
-    df = fc.read_df(args[1], args[2], ext)
-    if dates is None:
-      dates = sorted(i for i in df if i != 'GEOID' and i >= startYYYYMM and i <= endYYYYMM)
-    df = df.loc[:,['GEOID']+dates]
-    if data is None:
-      data = ravel_by_dates('GEOID', [fc.countyGEOIDstring(i) for i in df.GEOID], dates)
-    data[args[0]] = np.ravel(df.loc[:,dates], order='F')
-
-  data['deathRate'] = 100000 * data.deaths / data.popu
-
-  data['ALAND_km2'] = ravel_by_dates('a', shapeData.ALAND, dates).a / 1000**2
-  data['popuDensity_ALAND_km2'] = data.popu / data.ALAND_km2
-
-  # data['AWATER_km2'] = ravel_by_dates('a', shapeData.AWATER, dates).a / 1000**2
-  # data['AWATER_km2'] = data['AWATER_km2'].replace(NaN, 0)
-  
-  data['ATOTAL_km2'] = ravel_by_dates('a', shapeData.ATOTAL, dates).a / 1000**2
-  data['popuDensity_ATOTAL_km2'] = data.popu / data.ATOTAL_km2
-
-  data['ALAND_ATOTAL_ratio'] = data.ALAND_km2 / data.ATOTAL_km2
-
-  data['month'] = [int(i[-2:]) for i in data.YYYYMM]
+  data = fc.get_all_data(startYYYYMM, endYYYYMM)
 
   t0 = fc.timer_restart(t0, 'load data')
 
-  # print(list(data.keys()))
+  print(list(data.keys()))
   print(data)
-  exit()
+  # exit()
 
 
   # https://scikit-learn.org/stable/modules/ensemble.html#forests-of-randomized-trees
@@ -205,7 +117,9 @@ def main():
   columns_list = [] 
   # columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2'])
   # columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'ALAND_ATOTAL_ratio'])
-  columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2', 'ALAND_ATOTAL_ratio'])
+  # columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2', 'ALAND_ATOTAL_ratio'])
+  columns_list.append(fc.get_all_X_columns())
+
 
   scoring=['neg_mean_absolute_error','neg_mean_squared_error','explained_variance','r2']
   scoringParam = 'r2'
