@@ -68,7 +68,7 @@ def main():
   t0 = fc.timer_restart(t0, 'load data')
 
   print(list(data.keys()))
-  print(data)
+  # print(data)
   # exit()
 
 
@@ -112,20 +112,25 @@ def main():
   refit = True
   do_biasvariancedecomp = False
   n_splits = 10
+  train_size = 0.7
 
 
   columns_list = [] 
   # columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2'])
   # columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'ALAND_ATOTAL_ratio'])
   # columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2', 'ALAND_ATOTAL_ratio'])
+  # columns_list.append(['BB_g_m-2', 'YYYYMM', 'precip_in', 'burned_frac', 'temp_F', 'SP01', 'Rh_g_m-2', 'median_inc', 'popuDensity_ALAND_km2'])
   columns_list.append(fc.get_all_X_columns())
+
+
+  # 
+
+
+  
 
 
   scoring=['neg_mean_absolute_error','neg_mean_squared_error','explained_variance','r2']
   scoringParam = 'r2'
-
-
-
   param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [170] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
   # print(param_grid)
   # 70,90,110,130,150,170
@@ -154,9 +159,10 @@ def main():
       t2 = fc.timer_start()
       # continue
 
-      X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=0.7, random_state=2)
+      X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=train_size, random_state=2)
       # print(X)
       # print(y)
+      # exit()
 
       if crossvalidate: 
         clf = RandomForestRegressor(random_state=DEFAULT_RANDOM_STATE)
@@ -164,7 +170,7 @@ def main():
         p2 = dict()
         for i in p.keys():
           p2[i] = [p[i]]
-        gs = GridSearchCV(clf, param_grid=p2, refit=False, cv=cv_indices, scoring=scoring, verbose=2, n_jobs=DEFAULT_N_JOBS) # refit=scoringParam, 
+        gs = GridSearchCV(clf, param_grid=p2, refit=False, cv=cv_indices, scoring=scoring, verbose=1, n_jobs=DEFAULT_N_JOBS) # refit=scoringParam, 
         t0 = fc.timer_start()
         gs.fit(X, y)
         t0 = fc.timer_restart(t0, 'fit GridSearchCV')
@@ -211,11 +217,11 @@ def main():
         clf.fit(X,y)
         t0 = fc.timer_restart(t0, 'fit time')
         
-        for item in vars(clf):
-          if item == 'estimators_':
-            print('\t','num',item,'\t', len(vars(clf)[item]))
-          else:
-            print('\t',item,'\t', vars(clf)[item])
+        # for item in vars(clf):
+        #   if item == 'estimators_':
+        #     print('\t','num',item,'\t', len(vars(clf)[item]))
+        #   else:
+        #     print('\t',item,'\t', vars(clf)[item])
 
         importances = pd.DataFrame(dict(name=columns, importance=clf.feature_importances_)).sort_values('importance', ascending=False) # .head(10)
         print(importances)
@@ -233,6 +239,7 @@ def main():
 
 
       if do_biasvariancedecomp:
+        assert not crossvalidate or refit
         t0 = fc.timer_start()
         avg_expected_loss, avg_bias, avg_var = bias_variance_decomp(clf, X, y, X_test, y_test, loss='mse', random_seed=DEFAULT_RANDOM_STATE)
         t0 = fc.timer_restart(t0, 'bias_variance_decomp')

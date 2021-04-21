@@ -39,14 +39,14 @@ def endOfMonth(yyyymm):
 def aggregate_fully_interpolated_months(df):
   # row.date: number of rows aggregated for that month -> equal to days in month
   # row.Index: date as yyyymm
-  t1 = df.groupby(df.date.dt.strftime('%Y%m'))
-  t = t1.count()
+  grouped = df.groupby(df.date.dt.strftime('%Y%m'))
+  t = grouped.count()
   # print(t)
   monthdays = pd.DataFrame(np.rot90([list(t.date)]*len(df.columns), k=-1))
   monthdays.index, monthdays.columns = t.index, t.columns
   # print(monthdays)
   mask = monthdays == t
-  ret = t1.mean()*mask.replace(False, NaN)
+  ret = grouped.mean()*mask.replace(False, NaN)
   return ret.loc[:, ret.columns != 'date']
 
 
@@ -291,7 +291,10 @@ if __name__ == "__main__":
   # interpolate each date's value for each county individually by temporal
 
   temp, prevlimit, counts = None, None, []
-  
+
+
+  # methods = ['linear','cubic'] # test
+  # limit_tests = [16] # test
   print(limit_tests)
   print(methods)
 
@@ -313,75 +316,50 @@ if __name__ == "__main__":
     # continue
 
 
+
     for method in methods:
       outName = outFileName + '_limit-' + str(limit) + '_' + method
-      if outName+'.'+ext in os.listdir(epaAqDir):
+      if outName+'.'+ext in os.listdir(epaAqDir):  # test (comment out)
         continue
       print('\t',outName)
 
       outData = pd.DataFrame(countyMapData.GEOID, columns=['GEOID'])
 
       assert allsitesList == list(monthMean.columns)
-      for date in dates:
+      for date in dates:  # dates[6:]     # test
         # print(date)
         pointval = np.array([ [sitesLonLat[site], i] for site,i in zip(allsitesList, monthMean.loc[date, :]) if not np.isnan(i)] , dtype=object)
         mat = griddata(list(pointval[:,0]), list(pointval[:,1]), meshes, method=method)
 
-        # print(mat, mat.shape)
+        # # print(mat, mat.shape) # test
         # plt.imshow(mat)
+        # plttitle = date+'_'+str(limit)+'_'+method
+        # plt.title(plttitle)
+        # print(plttitle)
         # plt.show()
+        # plt.close()
+        # break # test
         outData[date] = fc.aggregate_by_geoid(areaMat, mat, geoidMat, tf, countyMapData)
 
+      # continue # test
       fc.save_df(outData, epaAqDir, outName, ext)
-      # fc.save_df(outData, epaAqDir, outName, 'csv')
+      fc.save_df(outData, epaAqDir, outName, 'csv')
       print(fc.timer_elapsed(t0))
 
 
+
   t0 = fc.timer_restart(t0, 'save limit files')
+
+  # exit()
 
 
   print(list(limit_tests))
   print(counts)
   limit_counts = pd.DataFrame(np.rot90([counts,limit_tests], k=-1), columns=['full month count','limit'])
-  fc.save_df(limit_counts, epaAqDir, 'limit arg test for interpolate function', 'csv')
+  fc.save_df(limit_counts, epaAqDir, 'limit arg test for interpolate function '+fc.utc_time_filename(), 'csv')
 
 
-  exit()
-
-
-
-  
-
-  # print(temp)
-
-
-  
-
-
-
-  # for each day
-  #   for each county without data
-  #     use site to interpolate values
-
-  # for each county
-  #   interpolate missing daily values for the entire year
-
-
-
-
-  # for each county
-  #   average daily values for each month
-
-
-
-
-  
-
-
-  exit()
-
-
-
+  t1 = fc.timer_restart(t1, 'write_county_month_AQI total time')
 
 
 

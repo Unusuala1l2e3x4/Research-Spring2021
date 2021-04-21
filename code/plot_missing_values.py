@@ -38,7 +38,21 @@ def estimate_time(multiplier, params, n_jobs, cv_indices): # assuming n_jobs = D
 
 def get_scores_for_imputer(name, imputer, X_missing, y_missing):
   estimator = make_pipeline(imputer, regressor)
-  gs = GridSearchCV(estimator, param_grid=param_grid, refit=False, cv=cv_indices, scoring=scoring, verbose=2, n_jobs=DEFAULT_N_JOBS)
+
+  # p = sorted(regressor.get_params().keys())
+  # for i in p:
+  #   print(i,'\t',regressor.get_params()[i])
+  # print()
+  # p = sorted(estimator.get_params().keys())
+  # for i in p:
+  #   print(i,'\t',estimator.get_params()[i])
+
+  param_grid2 = dict()
+  for key in param_grid.keys():
+    param_grid2['randomforestregressor__'+key] = param_grid[key]
+  print(param_grid2)
+
+  gs = GridSearchCV(estimator, param_grid=param_grid2, refit=False, cv=cv_indices, scoring=scoring, verbose=2, n_jobs=DEFAULT_N_JOBS)
   t = fc.timer_start()
   gs.fit(X_missing, y_missing)
   t = fc.timer_restart(t, 'fit GridSearchCV '+name)
@@ -48,12 +62,11 @@ def get_scores_for_imputer(name, imputer, X_missing, y_missing):
   results['n_features'] = len(columns)
   results['features'] = "['"+ "', '".join(columns)+"']"
   
-
   print(results)
-
-
   # impute_scores = cross_val_score(estimator, X_missing, y_missing,scoring=scoringParam,cv=cv_indices, n_jobs=DEFAULT_N_JOBS)
   return results
+
+
 def get_impute_zero_score(X_missing, y_missing):
   imputer = SimpleImputer(missing_values=np.nan, add_indicator=True,strategy='constant', fill_value=0)
   zero_impute_scores = get_scores_for_imputer('zero', imputer, X_missing, y_missing)
@@ -96,19 +109,29 @@ if __name__ == "__main__":
   ext = 'hdf5'
 
   n_splits = 10
+  train_size = 0.7
   crossvalidate = True
   DEFAULT_N_JOBS = 5 # 4-6; avoid 7, 8
   DEFAULT_RANDOM_STATE = 0
 
-
-  
-
   startYYYYMM, endYYYYMM = '200001', '201612'
+
+
+  crossvalidate = True
+  refit = True
+  do_biasvariancedecomp = False
+
+  scoring=['neg_mean_absolute_error','neg_mean_squared_error','explained_variance','r2']
+  scoringParam = 'r2'
+
+  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [170] } 
+  param_grid_list = ParameterGrid(param_grid)
+  # print(list(param_grid_list))
+  # END PARAMS
 
 
   t0 = fc.timer_start()
   t1 = t0
-  # END PARAMS
 
   cv_indices = KFold(n_splits=n_splits, shuffle=True, random_state=1) # DEFAULT_N_JOBS*2
 
@@ -116,29 +139,14 @@ if __name__ == "__main__":
   t0 = fc.timer_restart(t0, 'load data')
   print(sorted(data.keys()))
   print(data)
-
-
   columns = fc.get_all_X_columns()
-
   print(sorted(columns))
-
   print('not included:\t',set(data.keys()) - set(columns))
+  assert set(columns).issubset(data.keys())
+
+  X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=train_size, random_state=2)
 
 
-  X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=0.7, random_state=2)
-
-  # PARAMS
-  crossvalidate = True
-  refit = True
-  do_biasvariancedecomp = False
-
-  scoring=['neg_mean_absolute_error','neg_mean_squared_error','r2'] # 'explained_variance',
-  scoringParam = 'r2'
-
-  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [170] } 
-  param_grid_list = ParameterGrid(param_grid)
-  # print(list(param_grid_list))
-  # END PARAMS
 
   X_miss, y_miss = X, y
   params = list(param_grid_list)[0]
@@ -168,10 +176,6 @@ if __name__ == "__main__":
       dates = sorted(i for i in df if i != 'GEOID' and i >= startYYYYMM and i <= endYYYYMM)
     df = df.loc[:,['GEOID']+dates]
     data[fileArgs[0]] = np.ravel(df.loc[:,dates], order='F')
-
-    # print()
-
-    # continue
 
 
     gridcv_results = pd.DataFrame()

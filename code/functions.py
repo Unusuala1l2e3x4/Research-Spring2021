@@ -325,7 +325,10 @@ def ravel_by_dates(unit, arr, dates):
 
 
 def get_all_X_columns():
-  return ['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2', 'ALAND_ATOTAL_ratio', 'median_inc']
+  return ['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 
+  'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'BB_g_m-2', 'ALAND_ATOTAL_ratio', 'median_inc', 'PDSI','SP01', 'DM_kg_m-2','YYYYMM'] # 
+  
+  # 
 
 def get_all_data(startYYYYMM, endYYYYMM):
   pPath = str(pathlib.Path(__file__).parent.absolute())
@@ -383,6 +386,12 @@ def get_all_data(startYYYYMM, endYYYYMM):
   data['popuDensity_ATOTAL_km2'] = data.popu / data.ATOTAL_km2
   data['ALAND_ATOTAL_ratio'] = data.ALAND_km2 / data.ATOTAL_km2
   data['month'] = [int(i[-2:]) for i in data.YYYYMM]
+
+  data = data.dropna(axis=0, how='any') # drop rows than contain NaN - only ~200 rows dropped
+  # # shift SP01, PDSI values to remove negatives -> negatives cause strange behavior in sklearn's RFECV
+  # data.PDSI = data.PDSI - np.min(data.PDSI)
+  # data.SP01 = data.SP01 - np.min(data.SP01)
+
   return data
 
 
