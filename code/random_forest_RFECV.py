@@ -6,8 +6,6 @@ from sklearn.metrics import r2_score
 from mlxtend.evaluate import bias_variance_decomp
 
 import pandas as pd
-import geopandas as gpd
-import matplotlib.pyplot as plt
 import numpy as np
 
 import ast, copy
@@ -38,14 +36,6 @@ def estimate_time(multiplier, params, n_jobs, cv_indices): # assuming n_jobs = D
   print(hrs*3600, 'sec')
 
 
-def plotGiniImportance(importances):
-  plt.bar(importances['name'], importances['importance'])
-  plt.xticks(rotation=10)
-  plt.xlabel("Dataset, Unit")
-  plt.ylabel("Gini Importance")
-  plt.yticks(list(np.arange(0,max(importances['importance'])+0.02,0.02)))
-  plt.grid(color='#95a5a6', linestyle='--', linewidth=1, axis='y', alpha=0.7)
-  return plt
 
 
 def main():
@@ -68,6 +58,8 @@ def main():
 
 
   data = fc.get_all_data(startYYYYMM, endYYYYMM)
+  data = fc.clean_data_before_train_test_split(data)
+
   t0 = fc.timer_restart(t0, 'load data')
   # print(list(data.keys()))
   # print(data)
@@ -83,16 +75,16 @@ def main():
 
   # print(data)
   columns = fc.get_all_X_columns()
-  print(sorted(columns))
-  print('not included:\t',set(data.keys()) - set(columns))
-  assert set(columns).issubset(data.keys())
+  assert set(columns).issubset(fc.get_all_X_columns())
+  print('included:\t',columns)
+  print('not included:\t',set(fc.get_all_X_columns()) - set(columns))
 
 
 
   refit = True
   do_biasvariancedecomp = False
   n_splits = 10
-  min_features_to_select = 8
+  min_features_to_select = 9
   train_size = 0.7
 
 
@@ -103,10 +95,10 @@ def main():
 
   scoring=['neg_mean_absolute_error','neg_mean_squared_error','explained_variance','r2']
   scoringParam = 'r2'
-  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [120] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
+  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [140] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
   # print('params\t', params)
   
-  numberShuffles = 13 # max: 18 choose 15 = 816
+  numberShuffles = 2 # max: 18 choose 15 = 816
 
   # END PARAMS
 
@@ -116,10 +108,10 @@ def main():
   # print(X)
   
   # print(y)
-  # exit()
+  # exit()  
 
   estimate_time( numberShuffles * (X.shape[1]-min_features_to_select), param_grid, DEFAULT_N_JOBS, cv_indices)
-  # exit()
+  exit()
 
   param_grid_list = ParameterGrid(param_grid)
   results = pd.DataFrame()
@@ -130,13 +122,13 @@ def main():
   random.shuffle(columns)
   while len(columns_list) != numberShuffles:
     i = 0
-    while set(columns[:15]) in columns_list_sets or columns[:15] in columns_list:  # RFECV can only handle 15 without weird behavior
+    while (set(columns[:15]) in columns_list_sets and len(columns) > 15) or columns[:15] in columns_list:  # RFECV can only handle 15 max without weird behavior
       random.shuffle(columns)
       i += 1
       if i == 10000:
         print('intervene loop')
         break
-    if 'GEOID' not in copy.deepcopy(columns[:15]):
+    if 'GEOID' not in copy.deepcopy(columns[:15]) and len(columns) > 15: # best performing feature
       random.shuffle(columns)
       continue
     columns_list.append(copy.deepcopy(columns[:15]))
@@ -144,7 +136,7 @@ def main():
     # print(columns)
 
   for i in columns_list:
-    print('\t',i)
+    print(len(i),i)
   print()
   # for i in columns_list_sets:
   #   print(len(i), i)
@@ -189,10 +181,8 @@ def main():
       results_ = pd.DataFrame.from_dict(gs.cv_results_)
       results_ = results_.drop([i for i in results_.keys() if i.startswith('split')], axis=1)
 
-      t0 = fc.timer_start()
-      results_['test_set_r2_score'] = rfe.estimator_.score(X_test[columns_important], y_test)
-      t0 = fc.timer_restart(t0, 'test set scoring time')
-
+      if refit:
+        results_['test_set_r2_score'] = rfe.estimator_.score(X_test[columns_important], y_test)
 
       results_['n_features'] = len(columns_important)
       results_['features'] = "['"+ "', '".join(columns_important)+"']"
@@ -226,7 +216,7 @@ def main():
   columns_important = ast.literal_eval(list(results.loc[results['rank_test_'+scoringParam]==1, ['features']]['features'])[0])
   print('features important\t',columns_important)
 
-  if refit:
+  if refit: # test set r2 score already calculated from rfe
     print('refit')
     clf = RandomForestRegressor(random_state=DEFAULT_RANDOM_STATE, n_jobs=DEFAULT_N_JOBS)
     clf.set_params(**bestparams)     # should be same as original params
@@ -239,7 +229,7 @@ def main():
 
     importances = pd.DataFrame(dict(name=columns_important, importance=clf.feature_importances_)).sort_values('importance', ascending=False) # .head(10)
     print(importances)
-    plot = plotGiniImportance(importances)
+    plot = fc.plotGiniImportance(importances)
 
     fc.save_plt(plot, outputDir, 'best_GiniImportance_RF_' + saveTime, 'png')
     fc.save_df(importances, outputDir, 'best_GiniImportance_RF_' + saveTime, 'csv')

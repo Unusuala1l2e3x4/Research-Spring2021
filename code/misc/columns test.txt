@@ -1,15 +1,34 @@
-['GEOID', 'month', 'temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2', 'ALAND_ATOTAL_ratio', 'median_inc', 'PDSI', 'SP01', 'YYYYMM']
-['Rh_g_m-2', 'YYYYMM', 'precip_in', 'smallf_frac', 'NPP_g_m-2', 'BB_g_m-2', 'median_inc', 'SP01', 'temp_F', 'popuDensity_ALAND_km2', 'DM_kg_m-2', 'pm25_ug_m-3', 'burned_frac', 'GEOID', 'C_g_m-2', 'PDSI', 'ALAND_ATOTAL_ratio', 'month']
-['C_g_m-2', 'Rh_g_m-2', 'smallf_frac', 'month', 'pm25_ug_m-3', 'temp_F', 'ALAND_ATOTAL_ratio', 'precip_in', 'SP01', 'DM_kg_m-2', 'PDSI', 'burned_frac', 'median_inc', 'BB_g_m-2', 'popuDensity_ALAND_km2', 'NPP_g_m-2', 'GEOID', 'YYYYMM']
-['BB_g_m-2', 'YYYYMM', 'precip_in', 'PDSI', 'burned_frac', 'NPP_g_m-2', 'ALAND_ATOTAL_ratio', 'temp_F', 'SP01', 'pm25_ug_m-3', 'GEOID', 'smallf_frac', 'month', 'C_g_m-2', 'DM_kg_m-2', 'Rh_g_m-2', 'median_inc', 'popuDensity_ALAND_km2']
-['popuDensity_ALAND_km2', 'YYYYMM', 'smallf_frac', 'Rh_g_m-2', 'pm25_ug_m-3', 'SP01', 'month', 'burned_frac', 'temp_F', 'median_inc', 'BB_g_m-2', 'DM_kg_m-2', 'ALAND_ATOTAL_ratio', 'PDSI', 'C_g_m-2', 'NPP_g_m-2', 'GEOID', 'precip_in']
-['GEOID', 'temp_F', 'popuDensity_ALAND_km2', 'BB_g_m-2', 'PDSI', 'precip_in', 'median_inc', 'month', 'SP01', 'NPP_g_m-2', 'smallf_frac', 'burned_frac', 'YYYYMM', 'C_g_m-2', 'ALAND_ATOTAL_ratio', 'Rh_g_m-2', 'pm25_ug_m-3', 'DM_kg_m-2']
-['Rh_g_m-2', 'pm25_ug_m-3', 'median_inc', 'GEOID', 'temp_F', 'DM_kg_m-2', 'NPP_g_m-2', 'precip_in', 'month', 'burned_frac', 'C_g_m-2', 'YYYYMM', 'smallf_frac', 'popuDensity_ALAND_km2', 'PDSI', 'ALAND_ATOTAL_ratio', 'SP01', 'BB_g_m-2']
+['NPP_g_m-2', 'BB_g_m-2', 'precip_in', 'ALAND_ATOTAL_ratio', 'popuDensity_ALAND_km2', 'DM_kg_m-2', 'pm25_ug_m-3', 'C_g_m-2', 'month', 'SP01', 'Rh_g_m-2', 'temp_F', 'PDSI', 'smallf_frac', 'GEOID']     
+['temp_F', 'PDSI', 'SP01', 'precip_in', 'burned_frac', 'median_inc', 'GEOID', 'NPP_g_m-2', 'popuDensity_ALAND_km2', 'BB_g_m-2', 'Rh_g_m-2', 'ALAND_ATOTAL_ratio', 'month', 'smallf_frac', 'DM_kg_m-2']  
+['C_g_m-2', 'smallf_frac', 'Rh_g_m-2', 'NPP_g_m-2', 'DM_kg_m-2', 'GEOID', 'month', 'BB_g_m-2', 'ALAND_ATOTAL_ratio', 'precip_in', 'temp_F', 'median_inc', 'burned_frac', 'pm25_ug_m-3', 'YYYYMM']       
+['PDSI', 'pm25_ug_m-3', 'median_inc', 'BB_g_m-2', 'SP01', 'DM_kg_m-2', 'burned_frac', 'GEOID', 'temp_F', 'popuDensity_ALAND_km2', 'precip_in', 'C_g_m-2', 'NPP_g_m-2', 'ALAND_ATOTAL_ratio', 'YYYYMM']  
+['burned_frac', 'ALAND_ATOTAL_ratio', 'Rh_g_m-2', 'C_g_m-2', 'median_inc', 'smallf_frac', 'PDSI', 'month', 'temp_F', 'GEOID', 'SP01', 'pm25_ug_m-3', 'NPP_g_m-2', 'popuDensity_ALAND_km2', 'BB_g_m-2']  
+['GEOID', 'DM_kg_m-2', 'NPP_g_m-2', 'popuDensity_ALAND_km2', 'precip_in', 'pm25_ug_m-3', 'ALAND_ATOTAL_ratio', 'SP01', 'BB_g_m-2', 'burned_frac', 'Rh_g_m-2', 'C_g_m-2', 'PDSI', 'month', 'median_inc'] 
+['month', 'YYYYMM', 'burned_frac', 'temp_F', 'median_inc', 'smallf_frac', 'BB_g_m-2', 'pm25_ug_m-3', 'DM_kg_m-2', 'GEOID', 'C_g_m-2', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'NPP_g_m-2']    
+['DM_kg_m-2', 'popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'burned_frac', 'YYYYMM', 'PDSI', 'ALAND_ATOTAL_ratio', 'precip_in', 'GEOID', 'Rh_g_m-2', 'BB_g_m-2', 'SP01', 'smallf_frac']     
+['popuDensity_ALAND_km2', 'precip_in', 'YYYYMM', 'SP01', 'C_g_m-2', 'GEOID', 'month', 'PDSI', 'pm25_ug_m-3', 'NPP_g_m-2', 'burned_frac', 'BB_g_m-2', 'temp_F', 'smallf_frac', 'ALAND_ATOTAL_ratio']     
+['DM_kg_m-2', 'precip_in', 'PDSI', 'temp_F', 'median_inc', 'SP01', 'burned_frac', 'NPP_g_m-2', 'Rh_g_m-2', 'smallf_frac', 'BB_g_m-2', 'GEOID', 'ALAND_ATOTAL_ratio', 'C_g_m-2', 'popuDensity_ALAND_km2']
+['DM_kg_m-2', 'SP01', 'NPP_g_m-2', 'pm25_ug_m-3', 'BB_g_m-2', 'burned_frac', 'PDSI', 'C_g_m-2', 'YYYYMM', 'smallf_frac', 'median_inc', 'Rh_g_m-2', 'month', 'ALAND_ATOTAL_ratio', 'GEOID']
+['NPP_g_m-2', 'pm25_ug_m-3', 'temp_F', 'month', 'C_g_m-2', 'YYYYMM', 'BB_g_m-2', 'Rh_g_m-2', 'burned_frac', 'SP01', 'median_inc', 'PDSI', 'ALAND_ATOTAL_ratio', 'DM_kg_m-2', 'GEOID']
+['GEOID', 'median_inc', 'ALAND_ATOTAL_ratio', 'Rh_g_m-2', 'smallf_frac', 'PDSI', 'YYYYMM', 'C_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'burned_frac', 'SP01', 'temp_F', 'precip_in', 'DM_kg_m-2']
 
-['BB_g_m-2', 'YYYYMM', 'precip_in', 'PDSI', 'burned_frac', 'NPP_g_m-2', 'ALAND_ATOTAL_ratio', 'temp_F', 'SP01', 'pm25_ug_m-3', 'GEOID', 'smallf_frac', 'month', 'C_g_m-2', 'DM_kg_m-2', 'Rh_g_m-2', 'median_inc', 'popuDensity_ALAND_km2']
-['GEOID', 'temp_F', 'popuDensity_ALAND_km2', 'BB_g_m-2', 'PDSI', 'precip_in', 'median_inc', 'month', 'SP01', 'NPP_g_m-2', 'smallf_frac', 'burned_frac', 'YYYYMM', 'C_g_m-2', 'ALAND_ATOTAL_ratio', 'Rh_g_m-2', 'pm25_ug_m-3', 'DM_kg_m-2']
-['popuDensity_ALAND_km2', 'YYYYMM', 'smallf_frac', 'Rh_g_m-2', 'pm25_ug_m-3', 'SP01', 'month', 'burned_frac', 'temp_F', 'median_inc', 'BB_g_m-2', 'DM_kg_m-2', 'ALAND_ATOTAL_ratio', 'PDSI', 'C_g_m-2', 'NPP_g_m-2', 'GEOID', 'precip_in']
-['GEOID', 'month', 'temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2', 'ALAND_ATOTAL_ratio', 'median_inc', 'PDSI', 'SP01', 'YYYYMM']
-['Rh_g_m-2', 'YYYYMM', 'precip_in', 'smallf_frac', 'NPP_g_m-2', 'BB_g_m-2', 'median_inc', 'SP01', 'temp_F', 'popuDensity_ALAND_km2', 'DM_kg_m-2', 'pm25_ug_m-3', 'burned_frac', 'GEOID', 'C_g_m-2', 'PDSI', 'ALAND_ATOTAL_ratio', 'month']
-['Rh_g_m-2', 'pm25_ug_m-3', 'median_inc', 'GEOID', 'temp_F', 'DM_kg_m-2', 'NPP_g_m-2', 'precip_in', 'month', 'burned_frac', 'C_g_m-2', 'YYYYMM', 'smallf_frac', 'popuDensity_ALAND_km2', 'PDSI', 'ALAND_ATOTAL_ratio', 'SP01', 'BB_g_m-2']
-['C_g_m-2', 'Rh_g_m-2', 'smallf_frac', 'month', 'pm25_ug_m-3', 'temp_F', 'ALAND_ATOTAL_ratio', 'precip_in', 'SP01', 'DM_kg_m-2', 'PDSI', 'burned_frac', 'median_inc', 'BB_g_m-2', 'popuDensity_ALAND_km2', 'NPP_g_m-2', 'GEOID', 'YYYYMM']
+
+
+
+
+['NPP_g_m-2', 'BB_g_m-2', 'precip_in', 'ALAND_ATOTAL_ratio', 'popuDensity_ALAND_km2', 'DM_kg_m-2', 'pm25_ug_m-3', 'C_g_m-2', 'month', 'SP01', 'Rh_g_m-2', 'temp_F', 'PDSI', 'smallf_frac', 'GEOID']
+['temp_F', 'PDSI', 'SP01', 'precip_in', 'burned_frac', 'median_inc', 'GEOID', 'NPP_g_m-2', 'popuDensity_ALAND_km2', 'BB_g_m-2', 'Rh_g_m-2', 'ALAND_ATOTAL_ratio', 'month', 'smallf_frac', 'DM_kg_m-2']
+['C_g_m-2', 'smallf_frac', 'Rh_g_m-2', 'NPP_g_m-2', 'DM_kg_m-2', 'GEOID', 'month', 'BB_g_m-2', 'ALAND_ATOTAL_ratio', 'precip_in', 'temp_F', 'median_inc', 'burned_frac', 'pm25_ug_m-3', 'year']
+['PDSI', 'pm25_ug_m-3', 'median_inc', 'BB_g_m-2', 'SP01', 'DM_kg_m-2', 'burned_frac', 'GEOID', 'temp_F', 'popuDensity_ALAND_km2', 'precip_in', 'C_g_m-2', 'NPP_g_m-2', 'ALAND_ATOTAL_ratio', 'year']
+['burned_frac', 'ALAND_ATOTAL_ratio', 'Rh_g_m-2', 'C_g_m-2', 'median_inc', 'smallf_frac', 'PDSI', 'month', 'temp_F', 'GEOID', 'SP01', 'pm25_ug_m-3', 'NPP_g_m-2', 'popuDensity_ALAND_km2', 'BB_g_m-2']
+['GEOID', 'DM_kg_m-2', 'NPP_g_m-2', 'popuDensity_ALAND_km2', 'precip_in', 'pm25_ug_m-3', 'ALAND_ATOTAL_ratio', 'SP01', 'BB_g_m-2', 'burned_frac', 'Rh_g_m-2', 'C_g_m-2', 'PDSI', 'month', 'median_inc']
+['month', 'year', 'burned_frac', 'temp_F', 'median_inc', 'smallf_frac', 'BB_g_m-2', 'pm25_ug_m-3', 'DM_kg_m-2', 'GEOID', 'C_g_m-2', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'NPP_g_m-2']
+['DM_kg_m-2', 'popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'burned_frac', 'year', 'PDSI', 'ALAND_ATOTAL_ratio', 'precip_in', 'GEOID', 'Rh_g_m-2', 'BB_g_m-2', 'SP01', 'smallf_frac']
+['popuDensity_ALAND_km2', 'precip_in', 'year', 'SP01', 'C_g_m-2', 'GEOID', 'month', 'PDSI', 'pm25_ug_m-3', 'NPP_g_m-2', 'burned_frac', 'BB_g_m-2', 'temp_F', 'smallf_frac', 'ALAND_ATOTAL_ratio']
+['DM_kg_m-2', 'precip_in', 'PDSI', 'temp_F', 'median_inc', 'SP01', 'burned_frac', 'NPP_g_m-2', 'Rh_g_m-2', 'smallf_frac', 'BB_g_m-2', 'GEOID', 'ALAND_ATOTAL_ratio', 'C_g_m-2', 'popuDensity_ALAND_km2']
+['DM_kg_m-2', 'SP01', 'NPP_g_m-2', 'pm25_ug_m-3', 'BB_g_m-2', 'burned_frac', 'PDSI', 'C_g_m-2', 'year', 'smallf_frac', 'median_inc', 'Rh_g_m-2', 'month', 'ALAND_ATOTAL_ratio', 'GEOID']
+['NPP_g_m-2', 'pm25_ug_m-3', 'temp_F', 'month', 'C_g_m-2', 'year', 'BB_g_m-2', 'Rh_g_m-2', 'burned_frac', 'SP01', 'median_inc', 'PDSI', 'ALAND_ATOTAL_ratio', 'DM_kg_m-2', 'GEOID']
+['GEOID', 'median_inc', 'ALAND_ATOTAL_ratio', 'Rh_g_m-2', 'smallf_frac', 'PDSI', 'year', 'C_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'burned_frac', 'SP01', 'temp_F', 'precip_in', 'DM_kg_m-2']
+
+
+

@@ -31,20 +31,45 @@ def main():
   t1 = t0
 
 
-  limit_tests = [16, 20, 24]
-  methods = ['linear', 'nearest', 'cubic']
+  # limit_tests_all = [16, 20, 24]
 
+  # limit_tests_all = list(range(0,25,4))
 
+  limit_tests_all = []
+  limit_tests_all.append([0, 3, 6])
+  limit_tests_all.append([9, 12, 15])
+  limit_tests_all.append([18, 21, 24])
+  # limit_tests_all.append([12])
   
+  methods = ['linear', 'nearest', 'cubic']
+  # methods = ['cubic']
+
+  # print(limit_tests_all)
+  # print(methods)
+
+  # exit()
+
+
+
   for method in methods:
+  
+    # for limit in limit_tests:
     proc = []
-    for limit in limit_tests:
-      p = Process(target=run, args=(dir, 'write_county_month_AQI.py', [limit, method] ))
+    for limit_tests in limit_tests_all:
+      p = Process(target=run, args=(dir, 'write_county_month_AQI.py', [method] + limit_tests ))
       proc.append(p)
+      # print('\t\t\t',[method] + limit_tests)
+      
+    # print('\t\t\t'+str(proc))
+    
+  
     for p in proc:
       p.start()
     for p in proc:
       p.join()
+
+    t0 = fc.timer_restart(t0, 'time for multiprocess')
+      
 
 
   

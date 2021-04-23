@@ -6,16 +6,18 @@ import geopandas as gpd
 from numpy.core.numeric import NaN
 import pandas as pd
 
-from collections import Counter
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.colors as cl
+import matplotlib.cm as cm
+import matplotlib.font_manager as fm
 
 import os, pathlib, re, copy, json, sys
 
 from scipy.interpolate import interp1d, griddata
 import zipfile
 
-from shapely.geometry import shape, GeometryCollection
+from shapely.geometry import shape
 import rasterio, rasterio.features, rasterio.warp
 
 import importlib
@@ -78,8 +80,48 @@ def plot_percent_nan(df, title):
   plt.show()
 
 
+tickSpacings = [0.1,0.2,0.5,1,2,5,10]
 
+maxMappedValue = 400
+def plot_interpolation(m, plttitle):
+  res = 3
+  maxUnit = np.nanmax(m)
+  minUnit = np.nanmin(m)
 
+  cmap = copy.copy(cm.get_cmap('gist_stern'))
+  norm = cl.Normalize(vmin=0, vmax=maxMappedValue, clip=False) # clip=False is default; see https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize
+  mapper = cm.ScalarMappable(norm=norm, cmap=cmap)  # cmap color range
+
+  tickSpacing = fc.closest(tickSpacings, maxMappedValue/15)
+  with plt.style.context(("seaborn", "ggplot")):
+    shapeData.boundary.plot(figsize=(18*res,10*res), edgecolor='black', color="white", linewidth=0.3*res)
+
+    plt.xlabel("Longitude", fontsize=7*res)
+    plt.ylabel("Latitude", fontsize=7*res)
+    plt.xticks(fontsize=7*res)
+    plt.yticks(fontsize=7*res)
+    plt.title(plttitle, fontsize=7*res)
+
+    plt.xlim((lons_1d[minLon] - deg, lons_1d[maxLon] + deg))
+    plt.ylim((lats_1d[maxLat] - deg, lats_1d[minLat] + deg))
+
+    ## contour lines
+    levelsDiscrete = np.arange(0,maxMappedValue + tickSpacing,tickSpacing)
+    img = plt.imshow(m, vmin=minUnit, vmax=maxMappedValue, cmap=cmap, origin='lower', extent=[lons_1d[minLon], lons_1d[maxLon], lats_1d[minLat], lats_1d[maxLat]])
+    img.cmap.set_over('black')
+    img.cmap.set_under('white')
+    img.changed()
+
+    ticks = sorted(list(set([maxMappedValue] + list(levelsDiscrete) ))) # [minUnit, maxUnit] + 
+    cb = plt.colorbar(mapper, ticks=ticks, drawedges=True, label='AQI', pad=0.001)
+    cb.ax.yaxis.label.set_font_properties(fm.FontProperties(size=7*res))
+    cb.ax.tick_params(labelsize=5*res)
+    plt.grid(False)
+
+    fc.save_plt(plt, os.path.join(epaAqDir, 'images'), plttitle+'_' + "{:.3f}".format(maxUnit) + '_' + "{:.3f}".format(maxMappedValue) + '_' + fc.utc_time_filename(), 'png')
+
+    # plt.show()
+    plt.close()
 
 
 
@@ -88,11 +130,12 @@ if __name__ == "__main__":
 
   numArgs = len(sys.argv)
   if numArgs > 1:
-    limit_tests = [int(sys.argv[1])]
-    methods = [sys.argv[2]]
+    methods = [sys.argv[1]]
+    limit_tests = [int(i) for i in sys.argv[2:]]
+    
 
-  # print(limit_tests)
-  # print(methods)
+  print(limit_tests, methods)
+  # exit()
 
 
 
@@ -144,6 +187,11 @@ if __name__ == "__main__":
   t0 = fc.timer_start()
   t1 = t0
 
+
+  USAstates = os.path.join('USA_states_counties', 'cb_2019_us_state_500k', 'cb_2019_us_state_500k.shp')
+  shapeData = gpd.read_file(os.path.join(shapefilesDir, USAstates)).sort_values(by=['GEOID']).reset_index(drop=True)
+  shapeData = fc.clean_states_reset_index(shapeData)
+  shapeData = fc.county_changes_deaths_reset_index(shapeData)
 
   with open(os.path.join(shapefilesDir, regionDir, regionFile), 'r') as f:
     contents = json.load(f)
@@ -293,15 +341,8 @@ if __name__ == "__main__":
   temp, prevlimit, counts = None, None, []
 
 
-  # methods = ['linear','cubic'] # test
-  # limit_tests = [16] # test
-  print(limit_tests)
-  print(methods)
-
-
-
   for limit in limit_tests:
-    # print(limit)
+    print(limit)
     if temp is None:
       temp = copy.deepcopy(dailyDefiningSite)
       temp['date'] = temp['date'].astype(np.datetime64)
@@ -319,32 +360,27 @@ if __name__ == "__main__":
 
     for method in methods:
       outName = outFileName + '_limit-' + str(limit) + '_' + method
-      if outName+'.'+ext in os.listdir(epaAqDir):  # test (comment out)
-        continue
+                  # if outName+'.'+ext in os.listdir(epaAqDir):  # test (comment out)
+                  #   continue
       print('\t',outName)
 
       outData = pd.DataFrame(countyMapData.GEOID, columns=['GEOID'])
 
       assert allsitesList == list(monthMean.columns)
-      for date in dates:  # dates[6:]     # test
+      for date in dates: #  [7:8]   # test
         # print(date)
         pointval = np.array([ [sitesLonLat[site], i] for site,i in zip(allsitesList, monthMean.loc[date, :]) if not np.isnan(i)] , dtype=object)
         mat = griddata(list(pointval[:,0]), list(pointval[:,1]), meshes, method=method)
+        
+        if date.endswith('08') and limit in [6,12,18]:   # test
+          plttitle = 'limit-' + str(limit) + '_' + method + '_' + date
+          plot_interpolation(mat[minLat:maxLat,minLon:maxLon], plttitle)
+          
+        outData[date] = fc.aggregate_by_geoid_remove_incomplete(areaMat, mat, geoidMat, tf, countyMapData)
 
-        # # print(mat, mat.shape) # test
-        # plt.imshow(mat)
-        # plttitle = date+'_'+str(limit)+'_'+method
-        # plt.title(plttitle)
-        # print(plttitle)
-        # plt.show()
-        # plt.close()
-        # break # test
-        outData[date] = fc.aggregate_by_geoid(areaMat, mat, geoidMat, tf, countyMapData)
-
-      # continue # test
-      fc.save_df(outData, epaAqDir, outName, ext)
-      fc.save_df(outData, epaAqDir, outName, 'csv')
-      print(fc.timer_elapsed(t0))
+      # continue 
+      fc.save_df(outData, epaAqDir, outName, ext) # test
+      fc.save_df(outData, os.path.join(epaAqDir, 'csv'), outName, 'csv') # test
 
 
 
@@ -356,7 +392,7 @@ if __name__ == "__main__":
   print(list(limit_tests))
   print(counts)
   limit_counts = pd.DataFrame(np.rot90([counts,limit_tests], k=-1), columns=['full month count','limit'])
-  fc.save_df(limit_counts, epaAqDir, 'limit arg test for interpolate function '+fc.utc_time_filename(), 'csv')
+  fc.save_df(limit_counts, os.path.join(epaAqDir, 'limit arg test for interpolate function'), 'limit arg test for interpolate function '+fc.utc_time_filename(), 'csv')
 
 
   t1 = fc.timer_restart(t1, 'write_county_month_AQI total time')

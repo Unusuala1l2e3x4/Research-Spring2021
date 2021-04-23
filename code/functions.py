@@ -4,6 +4,7 @@ from numpy import cos, sin, arctan2, arccos
 
 import pandas as pd
 import geopandas as gpd
+import matplotlib.pyplot as plt
 import zipfile
 
 import os, re, netCDF4, pathlib
@@ -287,6 +288,33 @@ def aggregate_by_geoid(areaMat, mat, geoidMat, transform, shapeData):
   return ret
 
 
+def aggregate_by_geoid_remove_incomplete(areaMat, mat, geoidMat, transform, shapeData):
+  ret = []
+  for row in shapeData.itertuples():
+    minLat, maxLat, minLon, maxLon = get_bound_indices(row.geometry.boundary.bounds, transform)
+
+    maskG = np.where(geoidMat[minLat:maxLat,minLon:maxLon] == row.GEOID, 1, 0) # inside GEOID
+    maskD = np.where(np.isnan(mat[minLat:maxLat,minLon:maxLon]), 0, 1) # not NaN/missing
+    mask = np.multiply(maskG, maskD) # inside GEOID, not NaN/missing
+
+    fracNotMissing = np.count_nonzero(mask) / np.count_nonzero(maskG)
+
+    if fracNotMissing > 0.99:  # fracNotMissing > 0.9 -> 90% available ->  good
+      dataMask = np.multiply(mask, mat[minLat:maxLat,minLon:maxLon])
+      areaMask = np.multiply(mask, areaMat[minLat:maxLat,minLon:maxLon])
+      data_area = np.nansum(np.multiply(dataMask, areaMask))
+      area = np.sum(areaMask)
+      data = np.divide(data_area, area)
+      ret.append(data)
+    else:
+      ret.append(NaN)
+    # print(row.GEOID, row.ATOTAL, area, data)
+  return ret
+
+
+
+
+
 ############################################### for cell area calculation
 # WGS84_RADIUS = 6378137
 WGS84_RADIUS = 6366113.579189922 # from area_test_for_earth_radius.py
@@ -324,11 +352,32 @@ def ravel_by_dates(unit, arr, dates):
   return ret
 
 
+
+def plotGiniImportance(importances):
+  plt.bar(importances['name'], importances['importance'])
+  plt.xticks(rotation=10)
+  plt.xlabel("Dataset, Unit")
+  plt.ylabel("Gini Importance")
+  plt.yticks(list(np.arange(0,max(importances['importance'])+0.02,0.02)))
+  plt.grid(color='#95a5a6', linestyle='--', linewidth=1, axis='y', alpha=0.7)
+  return plt
+
+
 def get_all_X_columns():
-  return ['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 
-  'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'BB_g_m-2', 'ALAND_ATOTAL_ratio', 'median_inc', 'PDSI','SP01', 'DM_kg_m-2','YYYYMM'] # 
-  
-  # 
+  return ['GEOID','popuDensity_ALAND_km2','ALAND_ATOTAL_ratio', 'median_inc','temp_F','precip_in',  'PDSI','SP01','pm25_ug_m-3', 
+  'Rh_g_m-2','NPP_g_m-2', 'month','year','months_from_start']
+  # removed:          'BB_g_m-2', 'C_g_m-2', 'DM_kg_m-2', 'burned_frac', 'smallf_frac'
+  # needs testing:    'NPP_g_m-2', 'ALAND_ATOTAL_ratio', 'pm25_ug_m-3', 'precip_in'
+
+  # add AQI first
+
+  # RFECV test: choose 8 out of 14
+
+ 
+
+
+
+
 
 def get_all_data(startYYYYMM, endYYYYMM):
   pPath = str(pathlib.Path(__file__).parent.absolute())
@@ -359,7 +408,6 @@ def get_all_data(startYYYYMM, endYYYYMM):
   ('burned_frac', gfedCountyDir, 'TENA_burned_fraction_200001_201812'), # 2016 and before
   ('smallf_frac', gfedCountyDir, 'TENA_small_fire_fraction_200001_201812')] # 2016 and before
   
-
   shapeData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
   shapeData = clean_states_reset_index(shapeData)
   shapeData = county_changes_deaths_reset_index(shapeData)
@@ -380,18 +428,19 @@ def get_all_data(startYYYYMM, endYYYYMM):
   data['deathRate'] = 100000 * data.deaths / data.popu
   data['ALAND_km2'] = ravel_by_dates('a', shapeData.ALAND, dates).a / 1000**2
   data['popuDensity_ALAND_km2'] = data.popu / data.ALAND_km2
-  # data['AWATER_km2'] = ravel_by_dates('a', shapeData.AWATER, dates).a / 1000**2
-  # data['AWATER_km2'] = data['AWATER_km2'].replace(NaN, 0)
   data['ATOTAL_km2'] = ravel_by_dates('a', shapeData.ATOTAL, dates).a / 1000**2
   data['popuDensity_ATOTAL_km2'] = data.popu / data.ATOTAL_km2
   data['ALAND_ATOTAL_ratio'] = data.ALAND_km2 / data.ATOTAL_km2
-  data['month'] = [int(i[-2:]) for i in data.YYYYMM]
+  data['month'] = [int(i[-2:]) - 1 for i in data.YYYYMM]
+  startyearint = int(startYYYYMM[:4])
+  data['year'] = [int(i[:4]) - startyearint for i in data.YYYYMM]
+  data['months_from_start'] = [y*12 + m for y, m in zip(data.year, data.month)]
 
-  data = data.dropna(axis=0, how='any') # drop rows than contain NaN - only ~200 rows dropped
-  # # shift SP01, PDSI values to remove negatives -> negatives cause strange behavior in sklearn's RFECV
-  # data.PDSI = data.PDSI - np.min(data.PDSI)
-  # data.SP01 = data.SP01 - np.min(data.SP01)
+  # data = data[(data.deathRate.notna()) & (data.deathRate >= 0)]
 
   return data
 
+
+def clean_data_before_train_test_split(data): # mainly to test AQI datasets
+  return data[(data.deathRate.notna()) & (data.deathRate >= 0)]
 

@@ -1,3 +1,4 @@
+from numpy.core.numeric import NaN
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import KFold, GridSearchCV, ParameterGrid, train_test_split
 from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, mean_squared_error
@@ -5,13 +6,11 @@ from sklearn.inspection import permutation_importance
 from mlxtend.evaluate import bias_variance_decomp
 
 import pandas as pd
-import geopandas as gpd
-import matplotlib.pyplot as plt
 import numpy as np
 
 # from time import time
 
-import os, pathlib
+import os, pathlib, ast
 
 import importlib
 fc = importlib.import_module('functions')
@@ -27,21 +26,11 @@ def estimate_time(multiplier, params, n_jobs, cv_indices): # assuming n_jobs = D
   m = np.prod([len(params[i]) for i in params.keys() if i not in ['max_samples', 'n_estimators']]) # all lengths (int)
 
   # hrs =  (5/n_jobs)*(folds*s*n*m)/(2010.952902) # multiplier*3600*(folds*s*n*m)/prev_time    # 3600*(10*0.1*170*1)/prev_time
-  hrs = multiplier * (5/n_jobs)*(folds*s*n*m)/(1503.79746835443)    # 11440 sesc
+  hrs = multiplier * (5/n_jobs)*(folds*s*n*m)/(2000.79746835443)    # 11440 sesc
 
   print(hrs, 'hrs, or')
   print(hrs*60, 'min, or')
   print(hrs*3600, 'sec')
-
-
-def plotGiniImportance(importances):
-  plt.bar(importances['name'], importances['importance'])
-  plt.xticks(rotation=10)
-  plt.xlabel("Dataset, Unit")
-  plt.ylabel("Gini Importance")
-  plt.yticks(list(np.arange(0,max(importances['importance'])+0.02,0.02)))
-  plt.grid(color='#95a5a6', linestyle='--', linewidth=1, axis='y', alpha=0.7)
-  return plt
 
 
 def main():
@@ -49,6 +38,7 @@ def main():
   crossvalidate = True
   DEFAULT_N_JOBS = 5 # 4-6; avoid 7, 8
   DEFAULT_RANDOM_STATE = 0
+  DEFAULT_TRAIN_TEST_SPLIT_RANDOM_STATE = 2
 
   t0 = fc.timer_start()
   t1 = t0
@@ -64,8 +54,11 @@ def main():
   startYYYYMM, endYYYYMM = '200001', '201612'
 
   data = fc.get_all_data(startYYYYMM, endYYYYMM)
+  data = fc.clean_data_before_train_test_split(data)
 
   t0 = fc.timer_restart(t0, 'load data')
+
+  
 
   print(list(data.keys()))
   # print(data)
@@ -109,29 +102,25 @@ def main():
 
   # PARAMS
   crossvalidate = True
-  refit = True
+  refit = True  # needed for test set score
   do_biasvariancedecomp = False
+  save_best_refit = True
   n_splits = 10
   train_size = 0.7
 
 
   columns_list = [] 
-  # columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2'])
-  # columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'ALAND_ATOTAL_ratio'])
-  # columns_list.append(['GEOID','month','temp_F', 'burned_frac', 'popuDensity_ALAND_km2', 'precip_in', 'Rh_g_m-2', 'pm25_ug_m-3', 'NPP_g_m-2', 'C_g_m-2', 'smallf_frac', 'DM_kg_m-2', 'BB_g_m-2', 'ALAND_ATOTAL_ratio'])
-  # columns_list.append(['BB_g_m-2', 'YYYYMM', 'precip_in', 'burned_frac', 'temp_F', 'SP01', 'Rh_g_m-2', 'median_inc', 'popuDensity_ALAND_km2'])
-  columns_list.append(fc.get_all_X_columns())
-
-
-  # 
-
-
+  # columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'precip_in', 'pm25_ug_m-3', 'NPP_g_m-2', 'ALAND_ATOTAL_ratio' ])
+  # columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'precip_in', 'pm25_ug_m-3'])
+  columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start'])
   
+  # columns_list.append(fc.get_all_X_columns())
+  # 'precip_in', 'pm25_ug_m-3', 'NPP_g_m-2', 'ALAND_ATOTAL_ratio' ----> NEEDS TESTING WITH RFECV ----> try different column orderings
 
 
   scoring=['neg_mean_absolute_error','neg_mean_squared_error','explained_variance','r2']
   scoringParam = 'r2'
-  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [170] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
+  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [40,60,80,100,140,160,180] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
   # print(param_grid)
   # 70,90,110,130,150,170
   # param_grid = {'max_samples': [0.1,0.2,0.3], 'n_estimators': [60,80,100,120,140,160,180], 'min_samples_leaf': [1,2,3,4]} # , 'max_depth':[None]
@@ -148,71 +137,110 @@ def main():
 
   estimate_time(len(columns_list), param_grid, DEFAULT_N_JOBS, cv_indices)
   # exit()
+  results = pd.DataFrame()
+  importances_list = []
 
   t3 = fc.timer_start()
-  for p in param_grid_list:
-    print(p)
+  # for p in param_grid_list:
+  #   print(p)
+
+
+  if crossvalidate: 
     for columns in columns_list:
-      assert set(columns).issubset(data.keys())
+      assert set(columns).issubset(fc.get_all_X_columns())
       print('included:\t',columns)
-      print('not included:\t',set(data.keys()) - set(columns_list[0]))
+      print('not included:\t',set(fc.get_all_X_columns()) - set(columns))
+      # print('not included (from all of data):\t',set(data.keys()) - set(columns_list[0]))
+    
       t2 = fc.timer_start()
       # continue
 
-      X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=train_size, random_state=2)
+      X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=train_size, random_state=DEFAULT_TRAIN_TEST_SPLIT_RANDOM_STATE)
       # print(X)
       # print(y)
       # exit()
+      clf = RandomForestRegressor(random_state=DEFAULT_RANDOM_STATE)
+      gs = GridSearchCV(clf, param_grid=param_grid, refit=False, cv=cv_indices, scoring=scoring, verbose=1, n_jobs=DEFAULT_N_JOBS)
+      t0 = fc.timer_start()
+      gs.fit(X, y)
+      t0 = fc.timer_restart(t0, 'fit GridSearchCV')
+      results_ = pd.DataFrame.from_dict(gs.cv_results_)
+      results_ = results_.drop([i for i in results_.keys() if i.startswith('split')], axis=1) #  or i == 'params'
+      if refit:
+        results_['test_set_r2'] = NaN
+        results_['rank_test_set_r2'] = NaN
 
-      if crossvalidate: 
-        clf = RandomForestRegressor(random_state=DEFAULT_RANDOM_STATE)
-
-        p2 = dict()
-        for i in p.keys():
-          p2[i] = [p[i]]
-        gs = GridSearchCV(clf, param_grid=p2, refit=False, cv=cv_indices, scoring=scoring, verbose=1, n_jobs=DEFAULT_N_JOBS) # refit=scoringParam, 
-        t0 = fc.timer_start()
-        gs.fit(X, y)
-        t0 = fc.timer_restart(t0, 'fit GridSearchCV')
-        results = pd.DataFrame.from_dict(gs.cv_results_)
-        results = results.drop([i for i in results.keys() if i.startswith('split')], axis=1) #  or i == 'params'
-        results['n_features'] = len(columns)
-        results['features'] = "['"+ "', '".join(columns)+"']"
-
-        print(results)
-
-
-        saveTime = fc.utc_time_filename()
-        fc.save_df(results, outputDir, 'GridSearchCV_RF_' + saveTime, 'csv')
-
-        # print(results.loc[results['rank_test_'+scoringParam]==1, :])
-        bestparams = next(iter(dict(results.loc[results['rank_test_'+scoringParam]==1, ['params']]['params'] ).items()))[1]
-        print('best_params_\t',bestparams)
-
+      for i in results_.index:
         if refit:
-          print('refit')
-          bestparams['n_jobs'] = DEFAULT_N_JOBS
-          clf.set_params(**bestparams)
-          # print('base_estimator\t',clf.base_estimator_)
           t0 = fc.timer_start()
+
+          params_i = dict(results_.loc[i,'params'])
+          
+          clf = RandomForestRegressor(random_state=DEFAULT_RANDOM_STATE, n_jobs=DEFAULT_N_JOBS)
+          clf.set_params(**params_i)
           clf.fit(X,y)
-          t0 = fc.timer_restart(t0, 'refit time')
 
           importances = pd.DataFrame(dict(name=columns, importance=clf.feature_importances_)).sort_values('importance', ascending=False) # .head(10)
-          print(importances)
-          plot = plotGiniImportance(importances)
-
-          fc.save_plt(plot, outputDir, 'best_GiniImportance_RF_' + saveTime, 'png')
-          fc.save_df(importances, outputDir, 'best_GiniImportance_RF_' + saveTime, 'csv')
-          # plot.show()
-          # plot.close()
+          importances_list.append(importances)
+          # print(importances)
         
+          results_.loc[i,'test_set_r2'] = clf.score(X_test, y_test)
 
-      else:
-        # print('crossvalidate', crossvalidate)
+          t0 = fc.timer_restart(t0, 'refit params for this column set')
+
+        results_.loc[i,'n_features'] = len(columns)
+        results_.loc[i,'features'] = "['"+ "', '".join(columns)+"']"
+
+      # print(results_)
+      results = pd.concat([results, results_], ignore_index=True)
+      t2 = fc.timer_restart(t2, 'time for this set of columns')
+
+
+
+    t3 = fc.timer_restart(t3, 'loop time')
+    
+
+    for s in scoring:
+      results['rank_test_'+s] = fc.rank_decreasing(results['mean_test_'+s])
+    if refit:
+      results['rank_test_set_r2'] = fc.rank_decreasing(results['test_set_r2'])
+
+
+    saveTime = fc.utc_time_filename()
+    if save_best_refit:
+      # get index
+      i = int(results.loc[results['rank_test_'+scoringParam] == 1,:].index[0])
+
+      print(i)
+      # print(ast.literal_eval(results_.loc[i,'features']))
+
+      importances = importances_list[i]
+      print(importances)
+      plot = fc.plotGiniImportance(importances)
+      fc.save_plt(plot, outputDir, 'best_GiniImportance_RF_' + saveTime, 'png')
+      fc.save_df(importances, outputDir, 'best_GiniImportance_RF_' + saveTime, 'csv')
+    
+    
+
+    fc.save_df(results, outputDir, 'GridSearchCV_RF_' + saveTime, 'csv')
+    
+
+
+
+
+
+
+
+  else:
+    # print('crossvalidate', crossvalidate)
+  
+    for columns in columns_list:
+      for p in param_grid_list:
         clf = RandomForestRegressor(random_state=DEFAULT_RANDOM_STATE, n_jobs=DEFAULT_N_JOBS)
         clf.set_params(**p)
         
+        X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=train_size, random_state=DEFAULT_TRAIN_TEST_SPLIT_RANDOM_STATE)
+
         t0 = fc.timer_start()
         clf.fit(X,y)
         t0 = fc.timer_restart(t0, 'fit time')
@@ -225,35 +253,23 @@ def main():
 
         importances = pd.DataFrame(dict(name=columns, importance=clf.feature_importances_)).sort_values('importance', ascending=False) # .head(10)
         print(importances)
-        plot = plotGiniImportance(importances)
+        plot = fc.plotGiniImportance(importances)
 
         saveTime = fc.utc_time_filename()
-        fc.save_plt(plot, outputDir, 'best_GiniImportance_RF_' + saveTime, 'png')
-        fc.save_df(importances, outputDir, 'best_GiniImportance_RF_' + saveTime, 'csv')
+        fc.save_plt(plot, outputDir, 'GiniImportance_RF_' + saveTime, 'png')
+        fc.save_df(importances, outputDir, 'GiniImportance_RF_' + saveTime, 'csv')
 
-        # plot.show()
-        # plot.close()
+        if do_biasvariancedecomp:
+          assert not crossvalidate or refit
+          t0 = fc.timer_start()
+          avg_expected_loss, avg_bias, avg_var = bias_variance_decomp(clf, X, y, X_test, y_test, loss='mse', random_seed=DEFAULT_RANDOM_STATE)
+          t0 = fc.timer_restart(t0, 'bias_variance_decomp')
 
+          print('Average expected loss: %f' % avg_expected_loss)
+          print('Average bias: %f' % avg_bias)
+          print('Average variance: %f' % avg_var)
 
-
-
-
-      if do_biasvariancedecomp:
-        assert not crossvalidate or refit
-        t0 = fc.timer_start()
-        avg_expected_loss, avg_bias, avg_var = bias_variance_decomp(clf, X, y, X_test, y_test, loss='mse', random_seed=DEFAULT_RANDOM_STATE)
-        t0 = fc.timer_restart(t0, 'bias_variance_decomp')
-
-        print('Average expected loss: %f' % avg_expected_loss)
-        print('Average bias: %f' % avg_bias)
-        print('Average variance: %f' % avg_var)
-
-      t2 = fc.timer_restart(t2, 'time for this columns permutation')
-  
-
-  t3 = fc.timer_restart(t3, 'loop time')
   t1 = fc.timer_restart(t1, 'total time')
-
 
 
 if __name__ == '__main__':
