@@ -112,7 +112,7 @@ def main():
   columns_list = [] 
   # columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'precip_in', 'pm25_ug_m-3', 'NPP_g_m-2', 'ALAND_ATOTAL_ratio' ])
   # columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'precip_in', 'pm25_ug_m-3'])
-  columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start'])
+  columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'AQI'])
   
   # columns_list.append(fc.get_all_X_columns())
   # 'precip_in', 'pm25_ug_m-3', 'NPP_g_m-2', 'ALAND_ATOTAL_ratio' ----> NEEDS TESTING WITH RFECV ----> try different column orderings
@@ -120,7 +120,7 @@ def main():
 
   scoring=['neg_mean_absolute_error','neg_mean_squared_error','explained_variance','r2']
   scoringParam = 'r2'
-  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [40,60,80,100,140,160,180] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
+  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [140] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
   # print(param_grid)
   # 70,90,110,130,150,170
   # param_grid = {'max_samples': [0.1,0.2,0.3], 'n_estimators': [60,80,100,120,140,160,180], 'min_samples_leaf': [1,2,3,4]} # , 'max_depth':[None]
@@ -156,7 +156,7 @@ def main():
       # continue
 
       X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=train_size, random_state=DEFAULT_TRAIN_TEST_SPLIT_RANDOM_STATE)
-      # print(X)
+      print(X)
       # print(y)
       # exit()
       clf = RandomForestRegressor(random_state=DEFAULT_RANDOM_STATE)

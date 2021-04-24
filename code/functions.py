@@ -364,14 +364,14 @@ def plotGiniImportance(importances):
 
 
 def get_all_X_columns():
-  return ['GEOID','popuDensity_ALAND_km2','ALAND_ATOTAL_ratio', 'median_inc','temp_F','precip_in',  'PDSI','SP01','pm25_ug_m-3', 
-  'Rh_g_m-2','NPP_g_m-2', 'month','year','months_from_start']
+  return ['GEOID','STATEFP',  'popuDensity_ALAND_km2','ALAND_ATOTAL_ratio', 'median_inc','temp_F','precip_in',  'PDSI','SP01','pm25_ug_m-3', 
+  'Rh_g_m-2','NPP_g_m-2',   'month','year','months_from_start',   'AQI']
   # removed:          'BB_g_m-2', 'C_g_m-2', 'DM_kg_m-2', 'burned_frac', 'smallf_frac'
   # needs testing:    'NPP_g_m-2', 'ALAND_ATOTAL_ratio', 'pm25_ug_m-3', 'precip_in'
 
-  # add AQI first
+  # leave for end: 'STATEFP', lag values; MAYBE 'year'    ----> but include 'STATEFP', 'year' for now
 
-  # RFECV test: choose 8 out of 14
+  # RFECV test: choose 8 out of 15
 
  
 
@@ -389,6 +389,7 @@ def get_all_data(startYYYYMM, endYYYYMM):
   nClimDivDir = os.path.join(ppPath, 'nClimDiv data')
   pmDir = os.path.join(ppPath, 'Atmospheric Composition Analysis Group')
   gfedCountyDir = os.path.join(ppPath, 'GFED4s_county')
+  epaAqDir = os.path.join(ppPath, 'EPA AQ data')
   countyMapFile = 'cb_2019_us_county_500k'
   ext = 'hdf5'
 
@@ -406,7 +407,8 @@ def get_all_data(startYYYYMM, endYYYYMM):
   ('NPP_g_m-2', gfedCountyDir, 'TENA_NPP_200001_201812'), # 2016 and before
   ('Rh_g_m-2', gfedCountyDir, 'TENA_Rh_200001_201812'), # 2016 and before
   ('burned_frac', gfedCountyDir, 'TENA_burned_fraction_200001_201812'), # 2016 and before
-  ('smallf_frac', gfedCountyDir, 'TENA_small_fire_fraction_200001_201812')] # 2016 and before
+  ('smallf_frac', gfedCountyDir, 'TENA_small_fire_fraction_200001_201812'), # 2016 and before
+  ('AQI', epaAqDir, 'TENA_county_AQI_200001_201812_limit-0_linear')] # apply zero to NaN's
   
   shapeData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
   shapeData = clean_states_reset_index(shapeData)
@@ -435,6 +437,10 @@ def get_all_data(startYYYYMM, endYYYYMM):
   startyearint = int(startYYYYMM[:4])
   data['year'] = [int(i[:4]) - startyearint for i in data.YYYYMM]
   data['months_from_start'] = [y*12 + m for y, m in zip(data.year, data.month)]
+  
+  data['STATEFP'] = [i[:2] for i in data.GEOID]
+
+  data.AQI = data.AQI.replace(NaN, 0) # as suggested by results from impute_county_month_AQI.py
 
   # data = data[(data.deathRate.notna()) & (data.deathRate >= 0)]
 

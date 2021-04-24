@@ -236,11 +236,6 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-
   countyMapFile = 'cb_2019_us_county_500k'
   countyMapData = gpd.read_file(os.path.join(usaDir, countyMapFile, countyMapFile + '.shp')).sort_values(by=['GEOID']).reset_index(drop=True)
   countyMapData = fc.clean_states_reset_index(countyMapData)
@@ -264,7 +259,7 @@ if __name__ == "__main__":
   # exit()
 
 
-  outFileName = 'TENA_county_AQI_'+startDate+'_'+endDate
+  name = 'TENA_county_AQI_'+startDate+'_'+endDate
 
 
   fd, dailydf, dailyDefiningSite = None, None, None
@@ -342,7 +337,7 @@ if __name__ == "__main__":
 
 
   for limit in limit_tests:
-    print(limit)
+    # print(limit)
     if temp is None:
       temp = copy.deepcopy(dailyDefiningSite)
       temp['date'] = temp['date'].astype(np.datetime64)
@@ -359,7 +354,7 @@ if __name__ == "__main__":
 
 
     for method in methods:
-      outName = outFileName + '_limit-' + str(limit) + '_' + method
+      outName = name + '_limit-' + str(limit) + '_' + method
                   # if outName+'.'+ext in os.listdir(epaAqDir):  # test (comment out)
                   #   continue
       print('\t',outName)
@@ -389,10 +384,13 @@ if __name__ == "__main__":
   # exit()
 
 
-  print(list(limit_tests))
-  print(counts)
-  limit_counts = pd.DataFrame(np.rot90([counts,limit_tests], k=-1), columns=['full month count','limit'])
-  fc.save_df(limit_counts, os.path.join(epaAqDir, 'limit arg test for interpolate function'), 'limit arg test for interpolate function '+fc.utc_time_filename(), 'csv')
+  # print(list(limit_tests))
+  # print(counts)
+  limit_counts_title = 'interpolate limit arg test' + '-'.join([str(i) for i in limit_tests])
+
+  if limit_counts_title+'.csv' not in os.listdir(os.path.join(epaAqDir, 'limit arg test for interpolate function')):
+    limit_counts = pd.DataFrame(np.rot90([counts,limit_tests], k=-1), columns=['limit','full month count'])
+    fc.save_df(limit_counts, os.path.join(epaAqDir, 'limit arg test for interpolate function'), limit_counts_title, 'csv')
 
 
   t1 = fc.timer_restart(t1, 'write_county_month_AQI total time')

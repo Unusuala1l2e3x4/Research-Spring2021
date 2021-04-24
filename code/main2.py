@@ -41,7 +41,7 @@ def main():
   limit_tests_all.append([18, 21, 24])
   # limit_tests_all.append([12])
   
-  methods = ['linear', 'nearest', 'cubic']
+  methods = ['linear', 'nearest', 'cubic'] # 45 min + 7.4 hrs + 93 min = 9.76 hrs
   # methods = ['cubic']
 
   # print(limit_tests_all)
@@ -52,29 +52,17 @@ def main():
 
 
   for method in methods:
-  
-    # for limit in limit_tests:
     proc = []
     for limit_tests in limit_tests_all:
       p = Process(target=run, args=(dir, 'write_county_month_AQI.py', [method] + limit_tests ))
       proc.append(p)
       # print('\t\t\t',[method] + limit_tests)
-      
     # print('\t\t\t'+str(proc))
-    
-  
     for p in proc:
       p.start()
     for p in proc:
       p.join()
-
     t0 = fc.timer_restart(t0, 'time for multiprocess')
-      
-
-
-  
-
-  # run(dir, 'write_county_month_AQI.py', [])
 
   t1 = fc.timer_restart(t1, 'main total time')
   

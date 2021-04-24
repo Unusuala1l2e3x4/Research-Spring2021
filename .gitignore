@@ -7,9 +7,18 @@ Atmospheric Composition Analysis Group/V4NA03/ArcGIS/NA/PM25
 Atmospheric Composition Analysis Group/V4NA03/NetCDF/NA/PM25
 CDC data/500 Cities & Places
 CDC data/U.S. Chronic Disease Indicators (CDI)
+code/area_test.py
+code/impute_county_month_AQI-outfiles
+code/random_forest-outfiles/manually created/~$nEstimators_vs_R2.xlsx
+code/read_pm2-5-outfiles/gwr_pm25_2016_nonnegative.tif
+code/shapefiles/USA_states_counties 
+code/test.py
 Data Analytics
 EO4HEALTH — GEO Health CoP.url
+EPA AQ data/csv
 EPA AQ data/histograms
+EPA AQ data/images
+EPA AQ data/run1
 GFED4s/GFED4.1s_1997.hdf5
 GFED4s/GFED4.1s_1998.hdf5
 GFED4s/GFED4.1s_1999.hdf5
@@ -40,11 +49,7 @@ Global Annual PM2.5 Grids/points_in_region
 Gridded Population of the World
 NASA GES DISC
 Natural Disasters - Our World in Data.url
-code/area_test.py
-code/random_forest-outfiles/manually created/~$nEstimators_vs_R2.xlsx
-code/read_pm2-5-outfiles/gwr_pm25_2016_nonnegative.tif
-code/shapefiles/USA_states_counties 
-code/test.py
+nClimDiv data/CONUS_CLIMATE_DIVISIONS/GIS.OFFICIAL_CLIM_DIVISIONS.geojson
 other/AMS presentation slides
 other/disease
 other/~$Research Brief.pptx
@@ -53,7 +58,4 @@ unused data sources
 US Census Bureau/SAIPE State and County Estimates/downloads
 US Census Bureau/TIGER-Line Shapefiles
 writeup
-nClimDiv data/CONUS_CLIMATE_DIVISIONS/GIS.OFFICIAL_CLIM_DIVISIONS.geojson
-EPA AQ data/csv
-EPA AQ data/run1
-code/plot_missing_values-outfiles
+code/random_forest-outfiles/date encoding test/~$date encoding test.xlsx

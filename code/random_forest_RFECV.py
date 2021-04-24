@@ -76,7 +76,7 @@ def main():
   # print(data)
   columns = fc.get_all_X_columns()
   assert set(columns).issubset(fc.get_all_X_columns())
-  print('included:\t',columns)
+  print('included:\t',len(columns),columns)
   print('not included:\t',set(fc.get_all_X_columns()) - set(columns))
 
 
@@ -84,7 +84,7 @@ def main():
   refit = True
   do_biasvariancedecomp = False
   n_splits = 10
-  min_features_to_select = 9
+  min_features_to_select = 8
   train_size = 0.7
 
 
@@ -98,7 +98,7 @@ def main():
   param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [140] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
   # print('params\t', params)
   
-  numberShuffles = 2 # max: 18 choose 15 = 816
+  numberShuffles = 13 # max: 18 choose 15 = 816
 
   # END PARAMS
 
@@ -111,14 +111,14 @@ def main():
   # exit()  
 
   estimate_time( numberShuffles * (X.shape[1]-min_features_to_select), param_grid, DEFAULT_N_JOBS, cv_indices)
-  exit()
+  # exit()
 
   param_grid_list = ParameterGrid(param_grid)
   results = pd.DataFrame()
 
   columns_list = []
   columns_list_sets = []
-  random.seed(678)
+  random.seed(4679)
   random.shuffle(columns)
   while len(columns_list) != numberShuffles:
     i = 0
@@ -128,16 +128,16 @@ def main():
       if i == 10000:
         print('intervene loop')
         break
-    if 'GEOID' not in copy.deepcopy(columns[:15]) and len(columns) > 15: # best performing feature
+    if not {'GEOID', 'months_from_start', 'month'}.issubset(set(columns[:15])) and len(columns) > 15: # best performing feature
       random.shuffle(columns)
       continue
     columns_list.append(copy.deepcopy(columns[:15]))
     columns_list_sets.append(set(copy.deepcopy(columns[:15])))
-    # print(columns)
+    print(columns[:15], '\t\tw/o', columns[15:])
 
-  for i in columns_list:
-    print(len(i),i)
-  print()
+  # for i in columns_list:
+  #   print(len(i),i)
+  # print()
   # for i in columns_list_sets:
   #   print(len(i), i)
   # exit()
