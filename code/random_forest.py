@@ -4,6 +4,7 @@ from sklearn.model_selection import KFold, GridSearchCV, ParameterGrid, train_te
 from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, mean_squared_error
 from sklearn.inspection import permutation_importance
 from mlxtend.evaluate import bias_variance_decomp
+from scipy import stats
 
 import pandas as pd
 import numpy as np
@@ -53,14 +54,19 @@ def main():
   # startYYYYMM, endYYYYMM = '200001', '201812'
   startYYYYMM, endYYYYMM = '200001', '201612'
 
-  data = fc.get_all_data(startYYYYMM, endYYYYMM)
+  numMonthLags = 1
+
+
+
+
+  data = fc.get_all_data(startYYYYMM, endYYYYMM, numMonthLags)
   data = fc.clean_data_before_train_test_split(data)
 
   t0 = fc.timer_restart(t0, 'load data')
 
   
 
-  print(list(data.keys()))
+  # print(list(data.keys()))
   # print(data)
   # exit()
 
@@ -108,17 +114,28 @@ def main():
   n_splits = 10
   train_size = 0.7
 
+  numMonthLags = 1
+
 
   columns_list = [] 
   # columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'precip_in', 'pm25_ug_m-3', 'NPP_g_m-2', 'ALAND_ATOTAL_ratio' ])
   # columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'precip_in', 'pm25_ug_m-3'])
-  columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'AQI'])
+  # columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'AQI'])
   
-  # columns_list.append(fc.get_all_X_columns())
+  columns_list.append(fc.get_lags_from_columns(['GEOID',  'SP01', 'STATEFP', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags)) #  'pm25_ug_m-3', 'NPP_g_m-2', 'PDSI','median_inc', 'Rh_g_m-2', 
+  columns_list.append(fc.get_lags_from_columns(['GEOID',  'SP01', 'STATEFP', 'month', 'months_from_start', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags)) # 'NPP_g_m-2', 'PDSI','median_inc', 'Rh_g_m-2', 
+  columns_list.append(fc.get_lags_from_columns(['GEOID', 'NPP_g_m-2', 'SP01', 'STATEFP', 'month', 'months_from_start', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags)) #  'PDSI','median_inc', 'Rh_g_m-2', 
+  columns_list.append(fc.get_lags_from_columns(['GEOID', 'NPP_g_m-2', 'PDSI', 'SP01', 'STATEFP', 'month', 'months_from_start', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags)) #  'median_inc', 'Rh_g_m-2',
+  columns_list.append(fc.get_lags_from_columns(['GEOID', 'NPP_g_m-2', 'PDSI', 'SP01', 'STATEFP', 'median_inc', 'month', 'months_from_start', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags)) #  'Rh_g_m-2',
+  columns_list.append(fc.get_lags_from_columns(['GEOID', 'NPP_g_m-2','Rh_g_m-2', 'PDSI', 'SP01', 'STATEFP', 'median_inc', 'month', 'months_from_start', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags))
+
+  # columns_list.append(fc.get_X_columns(numMonthLags))
+
+
   # 'precip_in', 'pm25_ug_m-3', 'NPP_g_m-2', 'ALAND_ATOTAL_ratio' ----> NEEDS TESTING WITH RFECV ----> try different column orderings
 
 
-  scoring=['neg_mean_absolute_error','neg_mean_squared_error','explained_variance','r2']
+  scoring=['max_error','neg_mean_absolute_percentage_error', 'neg_mean_absolute_error','neg_mean_squared_error','explained_variance', 'r2']
   scoringParam = 'r2'
   param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [140] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
   # print(param_grid)
@@ -147,9 +164,9 @@ def main():
 
   if crossvalidate: 
     for columns in columns_list:
-      assert set(columns).issubset(fc.get_all_X_columns())
+      # assert set(columns).issubset(fc.get_X_columns(numMonthLags))
       print('included:\t',columns)
-      print('not included:\t',set(fc.get_all_X_columns()) - set(columns))
+      # print('not included:\t',set(fc.get_X_columns(numMonthLags)) - set(columns))
       # print('not included (from all of data):\t',set(data.keys()) - set(columns_list[0]))
     
       t2 = fc.timer_start()

@@ -123,6 +123,8 @@ if __name__ == "__main__":
 
   startYYYYMM, endYYYYMM = '200001', '201612'
 
+  numMonthLags = 1
+
 
   crossvalidate = True
   refit = True #  X_test isnt transformed by imputer
@@ -144,7 +146,7 @@ if __name__ == "__main__":
 
   cv_indices = KFold(n_splits=n_splits, shuffle=True, random_state=1) # DEFAULT_N_JOBS*2
 
-  data_all = fc.get_all_data(startYYYYMM, endYYYYMM)
+  data_all = fc.get_all_data(startYYYYMM, endYYYYMM, numMonthLags)
   # data = fc.clean_data_before_train_test_split(data_all)      # call after adding AQI data
 
   t0 = fc.timer_restart(t0, 'load data')
@@ -152,7 +154,7 @@ if __name__ == "__main__":
   # print(data)
   # exit()
 
-  # columns = fc.get_all_X_columns()
+  # columns = fc.get_X_columns(numMonthLags)
   columns = ['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start']
 
 

@@ -18,7 +18,30 @@ import importlib
 fc = importlib.import_module('functions')
 
 
-
+def hasConsecP(l1, l2, n):
+  for i1 in range(len(l1) - n + 1):
+    for i2 in range(len(l2) - n + 1):
+      # print(l1[i1:i1+2], l2[i2:i2+2])
+      if l1[i1 : i1 + n] == l2[i2 : i2 + n]:
+        return True
+  return False
+def hasConsecC(l1, l2, n):
+  for i1 in range(len(l1) - n + 1):
+    for i2 in range(len(l2) - n + 1):
+      # print(l1[i1:i1+2], l2[i2:i2+2])
+      if set(l1[i1 : i1 + n]) == set(l2[i2 : i2 + n]):
+        return True
+  return False
+def hasConsecCombInExisting(ls, l1, n):
+  for l in ls:
+    if hasConsecC(l1, l, n):
+      return True
+  return False
+def hasConsecPermInExisting(ls, l1, n):
+  for l in ls:
+    if hasConsecP(l1, l, n):
+      return True
+  return False
 
 
 def estimate_time(multiplier, params, n_jobs, cv_indices): # assuming n_jobs = DEFAULT_N_JOBS = 5
@@ -51,13 +74,15 @@ def main():
 
   startYYYYMM, endYYYYMM = '200001', '201612'
 
+  numMonthLags = 2
+
   # END PARAMS
 
   t0 = fc.timer_start()
   t1 = t0
 
 
-  data = fc.get_all_data(startYYYYMM, endYYYYMM)
+  data = fc.get_all_data(startYYYYMM, endYYYYMM, numMonthLags)
   data = fc.clean_data_before_train_test_split(data)
 
   t0 = fc.timer_restart(t0, 'load data')
@@ -74,17 +99,19 @@ def main():
   
 
   # print(data)
-  columns = fc.get_all_X_columns()
-  assert set(columns).issubset(fc.get_all_X_columns())
+  columns = fc.get_X_columns(numMonthLags)
+  # assert set(columns).issubset(fc.get_X_columns(numMonthLags))
   print('included:\t',len(columns),columns)
-  print('not included:\t',set(fc.get_all_X_columns()) - set(columns))
+  # print('not included:\t',set(fc.get_X_columns(numMonthLags)) - set(columns))
+
+  # exit()
 
 
 
   refit = True
   do_biasvariancedecomp = False
   n_splits = 10
-  min_features_to_select = 8
+  min_features_to_select = 7
   train_size = 0.7
 
 
@@ -93,53 +120,58 @@ def main():
   #   print('Train: %s | test: %s' % (train_indices, test_indices))
 
 
-  scoring=['neg_mean_absolute_error','neg_mean_squared_error','explained_variance','r2']
+  scoring=['max_error','neg_mean_absolute_percentage_error', 'neg_mean_absolute_error','neg_mean_squared_error','explained_variance', 'r2']
   scoringParam = 'r2'
   param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [140] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
   # print('params\t', params)
   
-  numberShuffles = 13 # max: 18 choose 15 = 816
+  numberShuffles = 15
 
   # END PARAMS
 
 
 
   X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=train_size, random_state=2)
-  # print(X)
+  print(X)
   
   # print(y)
   # exit()  
 
-  estimate_time( numberShuffles * (X.shape[1]-min_features_to_select), param_grid, DEFAULT_N_JOBS, cv_indices)
+  estimate_time( numberShuffles * (15-min_features_to_select), param_grid, DEFAULT_N_JOBS, cv_indices)
   # exit()
 
   param_grid_list = ParameterGrid(param_grid)
   results = pd.DataFrame()
 
+  t0 = fc.timer_start()
+
   columns_list = []
-  columns_list_sets = []
-  random.seed(4679)
+  random.seed(1454)
   random.shuffle(columns)
+  
+  n = 2
+  maxitsec = 40
+  print('n =',n)
   while len(columns_list) != numberShuffles:
-    i = 0
-    while (set(columns[:15]) in columns_list_sets and len(columns) > 15) or columns[:15] in columns_list:  # RFECV can only handle 15 max without weird behavior
+    t = fc.timer_start()
+    while hasConsecCombInExisting(columns_list, columns[:15], n):  # RFECV can only handle 15 max without weird behavior
       random.shuffle(columns)
-      i += 1
-      if i == 10000:
-        print('intervene loop')
+      if fc.timer_elapsed(t) > maxitsec:
+        n += 1
+        print('n =',n)
         break
-    if not {'GEOID', 'months_from_start', 'month'}.issubset(set(columns[:15])) and len(columns) > 15: # best performing feature
-      random.shuffle(columns)
-      continue
+      if not {'GEOID','month','months_from_start'}.issubset(set(columns[:15])) or columns[:15] in columns_list: # in the unlikey chance we land on existing ordering
+        continue
     columns_list.append(copy.deepcopy(columns[:15]))
-    columns_list_sets.append(set(copy.deepcopy(columns[:15])))
-    print(columns[:15], '\t\tw/o', columns[15:])
+    print(columns[:15], '{:.3f}'.format(fc.timer_elapsed(t)))
+
+  t0 = fc.timer_restart(t0, 'create columns_list')
 
   # for i in columns_list:
   #   print(len(i),i)
-  # print()
-  # for i in columns_list_sets:
-  #   print(len(i), i)
+  print()
+  for i in columns_list:
+    print(len(i), sorted(i))
   # exit()
 
 

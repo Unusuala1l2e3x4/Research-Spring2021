@@ -363,23 +363,48 @@ def plotGiniImportance(importances):
   return plt
 
 
-def get_all_X_columns():
-  return ['GEOID','STATEFP',  'popuDensity_ALAND_km2','ALAND_ATOTAL_ratio', 'median_inc','temp_F','precip_in',  'PDSI','SP01','pm25_ug_m-3', 
-  'Rh_g_m-2','NPP_g_m-2',   'month','year','months_from_start',   'AQI']
-  # removed:          'BB_g_m-2', 'C_g_m-2', 'DM_kg_m-2', 'burned_frac', 'smallf_frac'
-  # needs testing:    'NPP_g_m-2', 'ALAND_ATOTAL_ratio', 'pm25_ug_m-3', 'precip_in'
 
-  # leave for end: 'STATEFP', lag values; MAYBE 'year'    ----> but include 'STATEFP', 'year' for now
-
-  # RFECV test: choose 8 out of 15
-
- 
+lagvars = ['precip_in', 'temp_F', 'PDSI', 'SP01', 'pm25_ug_m-3', 'C_g_m-2', 'DM_kg_m-2', 'BB_g_m-2', 'NPP_g_m-2', 'Rh_g_m-2', 'burned_frac', 'smallf_frac', 'AQI']
 
 
+def get_spearman_columns(numMonthLags=0):
+  ret = ['precip_in', 'temp_F', 'PDSI', 'SP01', 'pm25_ug_m-3', 'C_g_m-2', 'DM_kg_m-2', 'BB_g_m-2', 'NPP_g_m-2', 'Rh_g_m-2', 'burned_frac', 'smallf_frac', 'AQI', 'deathRate', 'popuDensity_ALAND_km2', 'popuDensity_ATOTAL_km2', 'ALAND_ATOTAL_ratio', 'month', 'months_from_start','median_inc']
+  if numMonthLags > 0:
+    temp = []
+    for var in ret:
+      if var in lagvars:
+        for i in range(numMonthLags):
+          s = '_' + str(i+1) + 'm_lag'
+          temp.append(var+s)
+    return ret + temp
+  return ret
+
+def get_X_columns(numMonthLags=0):
+  ret = ['GEOID', 'NPP_g_m-2', 'PDSI', 'SP01', 'STATEFP', 'median_inc', 'month', 'months_from_start', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'temp_F']
+  if numMonthLags > 0:
+    temp = []
+    for var in ret:
+      if var in lagvars:
+        for i in range(numMonthLags):
+          s = '_' + str(i+1) + 'm_lag'
+          temp.append(var+s)
+    return ret + temp
+  return ret
 
 
+def get_lags_from_columns(columns, numMonthLags=0):
+  if numMonthLags > 0:
+    temp = []
+    for var in columns:
+      if var in lagvars:
+        for i in range(numMonthLags):
+          s = '_' + str(i+1) + 'm_lag'
+          temp.append(var+s)
+    return columns + temp
+  return columns
 
-def get_all_data(startYYYYMM, endYYYYMM):
+
+def get_all_data(startYYYYMM, endYYYYMM, numMonthLags=0):
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
   shapefilesDir = os.path.join(pPath, 'shapefiles')
@@ -416,16 +441,34 @@ def get_all_data(startYYYYMM, endYYYYMM):
   shapeData['ATOTAL'] = shapeData.ALAND + shapeData.AWATER
   # print(shapeData)
 
-  dates, data = None, None
+  dates, datesWithLag, data = None, None, None
+
 
   for args in fileArgs:
     df = read_df(args[1], args[2], ext)
     if dates is None:
       dates = sorted(i for i in df if i != 'GEOID' and i >= startYYYYMM and i <= endYYYYMM)
+      datesWithLag = dates[numMonthLags:]
     df = df.loc[:,['GEOID']+dates]
     if data is None:
-      data = ravel_by_dates('GEOID', [countyGEOIDstring(i) for i in df.GEOID], dates)
-    data[args[0]] = np.ravel(df.loc[:,dates], order='F')
+      # data = ravel_by_dates('GEOID', [countyGEOIDstring(i) for i in df.GEOID], dates)
+      data = ravel_by_dates('GEOID', [countyGEOIDstring(i) for i in df.GEOID], datesWithLag)
+    # data[args[0]] = np.ravel(df.loc[:,dates], order='F')
+    data[args[0]] = np.ravel(df.loc[:,datesWithLag], order='F')
+
+    # 'pm25_ug_m-3' cannot compute lats for 2000-01; may remove anyway
+    # temporary solution: copy from existing and remove months after
+    if numMonthLags > 0 and args[0] in lagvars:
+      for i in range(numMonthLags):
+        s = '_' + str(i+1) + 'm_lag'
+        # print(args[0] + s)
+        df.loc[:,dates] = df.loc[:,dates].shift(periods=1, axis="columns") # 1 month
+        # data[args[0] + s] = np.ravel(df.loc[:,dates], order='F')
+        data[args[0] + s] = np.ravel(df.loc[:,datesWithLag], order='F')
+    # print(args[0] + s)
+  # return
+
+
 
   data['deathRate'] = 100000 * data.deaths / data.popu
   data['ALAND_km2'] = ravel_by_dates('a', shapeData.ALAND, dates).a / 1000**2
@@ -437,12 +480,10 @@ def get_all_data(startYYYYMM, endYYYYMM):
   startyearint = int(startYYYYMM[:4])
   data['year'] = [int(i[:4]) - startyearint for i in data.YYYYMM]
   data['months_from_start'] = [y*12 + m for y, m in zip(data.year, data.month)]
-  
   data['STATEFP'] = [i[:2] for i in data.GEOID]
+  for i in [i for i in data.columns if 'AQI' in i]:
+    data[i] = data[i].replace(NaN, 0) # as suggested by results from impute_county_month_AQI.py
 
-  data.AQI = data.AQI.replace(NaN, 0) # as suggested by results from impute_county_month_AQI.py
-
-  # data = data[(data.deathRate.notna()) & (data.deathRate >= 0)]
 
   return data
 
