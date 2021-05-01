@@ -99,7 +99,11 @@ def main():
   
 
   # print(data)
-  columns = fc.get_X_columns(numMonthLags)
+  # columns = fc.get_X_columns(numMonthLags)
+
+  # columns = ['temp_F', 'temp_F_1m_lag', 'temp_F_2m_lag', 'popuDensity_ALAND_km2', 'pm25_ug_m-3_1m_lag', 'months_from_start', 'month', 'median_inc', 'GEOID', 'STATEFP', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag']
+  columns = ['STATEFP', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'GEOID', 'temp_F', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2','NPP_g_m-2_1m_lag','NPP_g_m-2_2m_lag', 'Rh_g_m-2', 'Rh_g_m-2_1m_lag', 'Rh_g_m-2_2m_lag']
+
   # assert set(columns).issubset(fc.get_X_columns(numMonthLags))
   print('included:\t',len(columns),columns)
   # print('not included:\t',set(fc.get_X_columns(numMonthLags)) - set(columns))
@@ -111,9 +115,10 @@ def main():
   refit = True
   do_biasvariancedecomp = False
   n_splits = 10
-  min_features_to_select = 7
+  min_features_to_select = 6
   train_size = 0.7
-
+  shufflecolumns = False
+  numberShuffles = 6 # if shufflecolumns = True
 
   cv_indices = KFold(n_splits=n_splits, shuffle=True, random_state=1) # DEFAULT_N_JOBS*2
   # for train_indices, test_indices in cv_indices.split(data):
@@ -125,7 +130,7 @@ def main():
   param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [140] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
   # print('params\t', params)
   
-  numberShuffles = 15
+  
 
   # END PARAMS
 
@@ -135,9 +140,9 @@ def main():
   print(X)
   
   # print(y)
-  # exit()  
+  # exit()
 
-  estimate_time( numberShuffles * (15-min_features_to_select), param_grid, DEFAULT_N_JOBS, cv_indices)
+  estimate_time( (numberShuffles if shufflecolumns else 1) * (len(columns[:15])-min_features_to_select), param_grid, DEFAULT_N_JOBS, cv_indices)
   # exit()
 
   param_grid_list = ParameterGrid(param_grid)
@@ -146,33 +151,37 @@ def main():
   t0 = fc.timer_start()
 
   columns_list = []
-  random.seed(1454)
-  random.shuffle(columns)
-  
-  n = 2
-  maxitsec = 40
-  print('n =',n)
-  while len(columns_list) != numberShuffles:
-    t = fc.timer_start()
-    while hasConsecCombInExisting(columns_list, columns[:15], n):  # RFECV can only handle 15 max without weird behavior
-      random.shuffle(columns)
-      if fc.timer_elapsed(t) > maxitsec:
-        n += 1
-        print('n =',n)
-        break
-      if not {'GEOID','month','months_from_start'}.issubset(set(columns[:15])) or columns[:15] in columns_list: # in the unlikey chance we land on existing ordering
-        continue
+
+  if shufflecolumns:
+    random.seed(1454)
+    random.shuffle(columns)
+    
+    n = 2
+    maxitsec = 40
+    print('n =',n)
+    while len(columns_list) != numberShuffles:
+      t = fc.timer_start()
+      while hasConsecCombInExisting(columns_list, columns[:15], n):  # RFECV can only handle 15 max without weird behavior
+        random.shuffle(columns)
+        if fc.timer_elapsed(t) > maxitsec:
+          n += 1
+          print('n =',n)
+          break
+        if not {'GEOID','month','months_from_start'}.issubset(set(columns[:15])) or columns[:15] in columns_list: # in the unlikey chance we land on existing ordering
+          continue
+      columns_list.append(copy.deepcopy(columns[:15]))
+      print(columns[:15], '{:.3f}'.format(fc.timer_elapsed(t)))
+
+    t0 = fc.timer_restart(t0, 'create columns_list')
+
+    # for i in columns_list:
+    #   print(len(i),i)
+    # print()
+    # for i in columns_list:
+    #   print(len(i), sorted(i))
+    # exit()
+  else:
     columns_list.append(copy.deepcopy(columns[:15]))
-    print(columns[:15], '{:.3f}'.format(fc.timer_elapsed(t)))
-
-  t0 = fc.timer_restart(t0, 'create columns_list')
-
-  # for i in columns_list:
-  #   print(len(i),i)
-  print()
-  for i in columns_list:
-    print(len(i), sorted(i))
-  # exit()
 
 
   t2 = fc.timer_start()
@@ -220,9 +229,9 @@ def main():
       results_['features'] = "['"+ "', '".join(columns_important)+"']"
       if len(results) == 0:
         for c in sorted(columns):
-          results_[c+'_ranking'] = NaN
+          results_[c] = NaN
       for i in range(len(columns_i)):
-        results_[columns_i[i]+'_ranking'] = rfe.ranking_[i]
+        results_[columns_i[i]] = rfe.ranking_[i]
       maxRank = np.max(rfe.ranking_)
       for i in range(maxRank):
         results_[i+1] = rfe.grid_scores_[-maxRank+i]

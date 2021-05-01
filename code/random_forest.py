@@ -2,7 +2,6 @@ from numpy.core.numeric import NaN
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import KFold, GridSearchCV, ParameterGrid, train_test_split
 from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, mean_squared_error
-from sklearn.inspection import permutation_importance
 from mlxtend.evaluate import bias_variance_decomp
 from scipy import stats
 
@@ -54,7 +53,7 @@ def main():
   # startYYYYMM, endYYYYMM = '200001', '201812'
   startYYYYMM, endYYYYMM = '200001', '201612'
 
-  numMonthLags = 1
+  numMonthLags = 2
 
 
 
@@ -114,7 +113,7 @@ def main():
   n_splits = 10
   train_size = 0.7
 
-  numMonthLags = 1
+
 
 
   columns_list = [] 
@@ -122,12 +121,24 @@ def main():
   # columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'precip_in', 'pm25_ug_m-3'])
   # columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'AQI'])
   
-  columns_list.append(fc.get_lags_from_columns(['GEOID',  'SP01', 'STATEFP', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags)) #  'pm25_ug_m-3', 'NPP_g_m-2', 'PDSI','median_inc', 'Rh_g_m-2', 
-  columns_list.append(fc.get_lags_from_columns(['GEOID',  'SP01', 'STATEFP', 'month', 'months_from_start', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags)) # 'NPP_g_m-2', 'PDSI','median_inc', 'Rh_g_m-2', 
-  columns_list.append(fc.get_lags_from_columns(['GEOID', 'NPP_g_m-2', 'SP01', 'STATEFP', 'month', 'months_from_start', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags)) #  'PDSI','median_inc', 'Rh_g_m-2', 
-  columns_list.append(fc.get_lags_from_columns(['GEOID', 'NPP_g_m-2', 'PDSI', 'SP01', 'STATEFP', 'month', 'months_from_start', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags)) #  'median_inc', 'Rh_g_m-2',
-  columns_list.append(fc.get_lags_from_columns(['GEOID', 'NPP_g_m-2', 'PDSI', 'SP01', 'STATEFP', 'median_inc', 'month', 'months_from_start', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags)) #  'Rh_g_m-2',
-  columns_list.append(fc.get_lags_from_columns(['GEOID', 'NPP_g_m-2','Rh_g_m-2', 'PDSI', 'SP01', 'STATEFP', 'median_inc', 'month', 'months_from_start', 'pm25_ug_m-3', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags))
+  # columns_list.append(fc.get_lags_from_columns(['GEOID',  'SP01', 'STATEFP', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags))
+  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag'])
+  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag', 'pm25_ug_m-3_1m_lag', ])
+  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag', 'temp_F' ])
+  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag', 'temp_F', 'pm25_ug_m-3_1m_lag'])
+  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag', 'temp_F', 'pm25_ug_m-3_1m_lag', 'median_inc'])
+
+  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'PDSI_2m_lag'])
+  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'PDSI_2m_lag', 'pm25_ug_m-3_1m_lag', ])
+  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'PDSI_2m_lag', 'temp_F' ])
+  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'PDSI_2m_lag', 'temp_F', 'pm25_ug_m-3_1m_lag'])
+  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'PDSI_2m_lag', 'temp_F', 'pm25_ug_m-3_1m_lag', 'median_inc'])
+  
+
+
+
+
+
 
   # columns_list.append(fc.get_X_columns(numMonthLags))
 

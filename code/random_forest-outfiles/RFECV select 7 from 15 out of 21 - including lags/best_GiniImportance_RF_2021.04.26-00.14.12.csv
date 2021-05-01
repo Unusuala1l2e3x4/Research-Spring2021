@@ -1,0 +1,9 @@
+name,importance
+GEOID,0.240919984
+month,0.156655697
+months_from_start,0.148400994
+popuDensity_ALAND_km2,0.115401374
+temp_F_1m_lag,0.112917554
+STATEFP,0.100650357
+temp_F_2m_lag,0.0682072
+PDSI_2m_lag,0.056846841
