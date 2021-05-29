@@ -47,7 +47,9 @@ def hasConsecPermInExisting(ls, l1, n):
 def estimate_time(multiplier, params, n_jobs, cv_indices): # assuming n_jobs = DEFAULT_N_JOBS = 5
   assert [type(i) == float for i in params['max_samples']]
   folds = cv_indices.get_n_splits()
-  s = np.sum(params['max_samples']) # all floats
+  s = np.sum([i for i in params['max_samples'] if i is not None]) # all floats
+  if None in params['max_samples']:
+    s += 1
   n = np.sum(params['n_estimators']) # all ints
   m = np.prod([len(params[i]) for i in params.keys() if i not in ['max_samples', 'n_estimators']]) # all lengths (int)
 
@@ -102,7 +104,8 @@ def main():
   # columns = fc.get_X_columns(numMonthLags)
 
   # columns = ['temp_F', 'temp_F_1m_lag', 'temp_F_2m_lag', 'popuDensity_ALAND_km2', 'pm25_ug_m-3_1m_lag', 'months_from_start', 'month', 'median_inc', 'GEOID', 'STATEFP', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag']
-  columns = ['STATEFP', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'GEOID', 'temp_F', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2','NPP_g_m-2_1m_lag','NPP_g_m-2_2m_lag', 'Rh_g_m-2', 'Rh_g_m-2_1m_lag', 'Rh_g_m-2_2m_lag']
+  # columns = ['STATEFP', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'GEOID', 'temp_F', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2','NPP_g_m-2_1m_lag','NPP_g_m-2_2m_lag', 'Rh_g_m-2', 'Rh_g_m-2_1m_lag', 'Rh_g_m-2_2m_lag']
+  columns = ['STATEFP', 'NPP_g_m-2_1m_lag', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'GEOID', 'Rh_g_m-2', 'Rh_g_m-2_1m_lag', 'Rh_g_m-2_2m_lag'] # final
 
   # assert set(columns).issubset(fc.get_X_columns(numMonthLags))
   print('included:\t',len(columns),columns)
@@ -117,8 +120,8 @@ def main():
   n_splits = 10
   min_features_to_select = 6
   train_size = 0.7
-  shufflecolumns = False
-  numberShuffles = 6 # if shufflecolumns = True
+  shufflecolumns = True
+  numberShuffles = 9 # if shufflecolumns = True
 
   cv_indices = KFold(n_splits=n_splits, shuffle=True, random_state=1) # DEFAULT_N_JOBS*2
   # for train_indices, test_indices in cv_indices.split(data):
@@ -127,7 +130,7 @@ def main():
 
   scoring=['max_error','neg_mean_absolute_percentage_error', 'neg_mean_absolute_error','neg_mean_squared_error','explained_variance', 'r2']
   scoringParam = 'r2'
-  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [140] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
+  param_grid = { 'max_samples': [0.1], 'min_impurity_decrease': [3.68e-07], 'min_samples_leaf': [1], 'min_samples_split': [2], 'n_estimators': [140]} # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
   # print('params\t', params)
   
   
@@ -142,7 +145,7 @@ def main():
   # print(y)
   # exit()
 
-  estimate_time( (numberShuffles if shufflecolumns else 1) * (len(columns[:15])-min_features_to_select), param_grid, DEFAULT_N_JOBS, cv_indices)
+  estimate_time( (6890/9049) * (numberShuffles if shufflecolumns else 1) * (len(columns[:15])-min_features_to_select), param_grid, DEFAULT_N_JOBS, cv_indices)
   # exit()
 
   param_grid_list = ParameterGrid(param_grid)

@@ -18,15 +18,19 @@ fc = importlib.import_module('functions')
 
 
 
-def estimate_time(multiplier, params, n_jobs, cv_indices): # assuming n_jobs = DEFAULT_N_JOBS = 5
-  assert [type(i) == float for i in params['max_samples']]
-  folds = cv_indices.get_n_splits()
-  s = np.sum(params['max_samples']) # all floats
-  n = np.sum(params['n_estimators']) # all ints
-  m = np.prod([len(params[i]) for i in params.keys() if i not in ['max_samples', 'n_estimators']]) # all lengths (int)
+def estimate_time(multiplier, params_list, n_jobs, cv_indices): # assuming n_jobs = DEFAULT_N_JOBS = 5
+  hrs = 0
+  for params in params_list:
+    assert [type(i) == float for i in params['max_samples']]
+    folds = cv_indices.get_n_splits()
+    s = np.sum([i for i in params['max_samples'] if i is not None]) # all floats
+    if None in params['max_samples']:
+      s += 1
+    n = np.sum(params['n_estimators']) # all ints
+    m = np.prod([len(params[i]) for i in params.keys() if i not in ['max_samples', 'n_estimators']]) # all lengths (int)
 
-  # hrs =  (5/n_jobs)*(folds*s*n*m)/(2010.952902) # multiplier*3600*(folds*s*n*m)/prev_time    # 3600*(10*0.1*170*1)/prev_time
-  hrs = multiplier * (5/n_jobs)*(folds*s*n*m)/(2000.79746835443)    # 11440 sesc
+    # hrs =  (5/n_jobs)*(folds*s*n*m)/(2010.952902) # multiplier*3600*(folds*s*n*m)/prev_time    # 3600*(10*0.1*170*1)/prev_time
+    hrs += multiplier * (5/n_jobs)*(folds*s*n*m)/(2000.79746835443)    # 11440 sesc
 
   print(hrs, 'hrs, or')
   print(hrs*60, 'min, or')
@@ -122,17 +126,9 @@ def main():
   # columns_list.append(['popuDensity_ALAND_km2', 'month', 'temp_F', 'median_inc', 'year', 'PDSI', 'GEOID', 'Rh_g_m-2', 'SP01', 'months_from_start', 'AQI'])
   
   # columns_list.append(fc.get_lags_from_columns(['GEOID',  'SP01', 'STATEFP', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'temp_F'], numMonthLags))
-  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag'])
-  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag', 'pm25_ug_m-3_1m_lag', ])
-  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag', 'temp_F' ])
-  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag', 'temp_F', 'pm25_ug_m-3_1m_lag'])
-  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag', 'temp_F', 'pm25_ug_m-3_1m_lag', 'median_inc'])
 
-  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'PDSI_2m_lag'])
-  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'PDSI_2m_lag', 'pm25_ug_m-3_1m_lag', ])
-  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'PDSI_2m_lag', 'temp_F' ])
-  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'PDSI_2m_lag', 'temp_F', 'pm25_ug_m-3_1m_lag'])
-  columns_list.append(['GEOID', 'STATEFP', 'popuDensity_ALAND_km2', 'months_from_start', 'month', 'temp_F_1m_lag', 'temp_F_2m_lag', 'PDSI_2m_lag', 'temp_F', 'pm25_ug_m-3_1m_lag', 'median_inc'])
+
+  columns_list.append(['STATEFP', 'NPP_g_m-2_1m_lag', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'GEOID'])
   
 
 
@@ -148,12 +144,21 @@ def main():
 
   scoring=['max_error','neg_mean_absolute_percentage_error', 'neg_mean_absolute_error','neg_mean_squared_error','explained_variance', 'r2']
   scoringParam = 'r2'
-  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [140] } # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
-  # print(param_grid)
+
   # 70,90,110,130,150,170
-  # param_grid = {'max_samples': [0.1,0.2,0.3], 'n_estimators': [60,80,100,120,140,160,180], 'min_samples_leaf': [1,2,3,4]} # , 'max_depth':[None]
+  
+  param_grid = []
+  # param_grid.append({ 'max_samples': [np.round(i, 2) for i in np.arange(0.7,0.8,0.01)], 'min_samples_leaf': [2], 'min_samples_split': [2,5], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
+  # param_grid.append({ 'max_samples': [np.round(i, 2) for i in np.arange(0.1,0.7,0.01)], 'min_samples_leaf': [1], 'min_samples_split': [2], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
+  
+  param_grid.append({ 'max_samples':[0.1, 0.3], 'min_samples_leaf': [1,3,5,7], 'min_samples_split': [2,4,6,8], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
+  # param_grid.append({ 'max_samples':[0.5, 0.7, 0.9], 'min_samples_leaf': [1,3,5,7], 'min_samples_split': [2,4,6,8], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
+
+  print(param_grid)
 
   param_grid_list = ParameterGrid(param_grid)
+  # for i in param_grid_list:
+  #   print(i)
 
 
 
@@ -163,14 +168,14 @@ def main():
   # for train_indices, test_indices in cv_indices.split(data):
   #   print('Train: %s | test: %s' % (train_indices, test_indices))
 
-  estimate_time(len(columns_list), param_grid, DEFAULT_N_JOBS, cv_indices)
-  # exit()
+  estimate_time( (0.9)*(41538/43596)*(10191/22670)* len(columns_list), param_grid, DEFAULT_N_JOBS, cv_indices)
+  exit()
+
+  
   results = pd.DataFrame()
   importances_list = []
 
   t3 = fc.timer_start()
-  # for p in param_grid_list:
-  #   print(p)
 
 
   if crossvalidate: 

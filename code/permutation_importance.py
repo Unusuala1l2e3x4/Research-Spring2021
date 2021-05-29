@@ -17,7 +17,9 @@ fc = importlib.import_module('functions')
 def estimate_time(multiplier, params, n_jobs, cv_indices): # assuming n_jobs = DEFAULT_N_JOBS = 5
   assert [type(i) == float for i in params['max_samples']]
   folds = cv_indices.get_n_splits()
-  s = np.sum(params['max_samples']) # all floats
+  s = np.sum([i for i in params['max_samples'] if i is not None]) # all floats
+  if None in params['max_samples']:
+    s += 1
   n = np.sum(params['n_estimators']) # all ints
   m = np.prod([len(params[i]) for i in params.keys() if i not in ['max_samples', 'n_estimators']]) # all lengths (int)
 
