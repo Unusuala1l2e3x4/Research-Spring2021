@@ -110,7 +110,7 @@ def main():
   dates01 = dates01[:l]
   dates12 = dates12[:l]
   for i in range(0,l,4):
-    runMulti(dir, 'plot_usa.py', [dates01[i:i+4], dates12[i:i+4], 'MonthlyDeathRateByCounty', 0.000151])
+    runMulti(dir, 'plot_usa.py', [dates01[i:i+4], dates12[i:i+4], 'MonthlyMortalityRateByCounty', 0.000151])
     # runMulti(dir, 'plot_usa.py', [dates01[i:i+4], dates12[i:i+4], 'CountyDeaths', 3150])
 
 

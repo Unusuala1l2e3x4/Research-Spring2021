@@ -77,7 +77,7 @@ def main():
 
   # print(sorted(columns_list[0]))
 
-  temp = ['deathRate', 'popuDensity_ALAND_km2', 'popuDensity_ATOTAL_km2', 'ALAND_ATOTAL_ratio', 'month', 'months_from_start','median_inc']
+  temp = ['mortalityRate', 'popuDensity_ALAND_km2', 'popuDensity_ATOTAL_km2', 'ALAND_ATOTAL_ratio', 'month', 'months_from_start','median_inc']
 
 
   for columns in columns_list:
@@ -91,7 +91,7 @@ def main():
     # print('not included:\t',set(fc.get_X_columns(numMonthLags)) - set(columns))
     # print('not included (from all of data):\t',set(data.keys()) - set(columns_list[0]))
 
-    # X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=train_size, random_state=DEFAULT_TRAIN_TEST_SPLIT_RANDOM_STATE)
+    # X, X_test, y, y_test = train_test_split(data[columns], data.mortalityRate, train_size=train_size, random_state=DEFAULT_TRAIN_TEST_SPLIT_RANDOM_STATE)
     X = data[columns]
     print(X)
 

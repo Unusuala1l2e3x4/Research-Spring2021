@@ -368,7 +368,7 @@ lagvars = ['precip_in', 'temp_F', 'PDSI', 'SP01', 'pm25_ug_m-3', 'C_g_m-2', 'DM_
 
 
 def get_spearman_columns(numMonthLags=0):
-  ret = ['precip_in', 'temp_F', 'PDSI', 'SP01', 'pm25_ug_m-3', 'C_g_m-2', 'DM_kg_m-2', 'BB_g_m-2', 'NPP_g_m-2', 'Rh_g_m-2', 'burned_frac', 'smallf_frac', 'AQI', 'deathRate', 'popuDensity_ALAND_km2', 'popuDensity_ATOTAL_km2', 'ALAND_ATOTAL_ratio', 'month', 'months_from_start','median_inc']
+  ret = ['precip_in', 'temp_F', 'PDSI', 'SP01', 'pm25_ug_m-3', 'C_g_m-2', 'DM_kg_m-2', 'BB_g_m-2', 'NPP_g_m-2', 'Rh_g_m-2', 'burned_frac', 'smallf_frac', 'AQI', 'mortalityRate', 'popuDensity_ALAND_km2', 'popuDensity_ATOTAL_km2', 'ALAND_ATOTAL_ratio', 'month', 'months_from_start','median_inc']
   if numMonthLags > 0:
     temp = []
     for var in ret:
@@ -470,7 +470,7 @@ def get_all_data(startYYYYMM, endYYYYMM, numMonthLags=0):
 
 
 
-  data['deathRate'] = 100000 * data.deaths / data.popu
+  data['mortalityRate'] = 100000 * data.deaths / data.popu
   data['ALAND_km2'] = ravel_by_dates('a', shapeData.ALAND, dates).a / 1000**2
   data['popuDensity_ALAND_km2'] = data.popu / data.ALAND_km2
   data['ATOTAL_km2'] = ravel_by_dates('a', shapeData.ATOTAL, dates).a / 1000**2
@@ -489,5 +489,5 @@ def get_all_data(startYYYYMM, endYYYYMM, numMonthLags=0):
 
 
 def clean_data_before_train_test_split(data): # mainly to test AQI datasets
-  return data[(data.deathRate.notna()) & (data.deathRate >= 0)]
+  return data[(data.mortalityRate.notna()) & (data.mortalityRate >= 0)]
 

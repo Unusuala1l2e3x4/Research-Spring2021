@@ -1,7 +1,7 @@
 {'max_samples': 0.1, 'min_samples_leaf': 2, 'min_samples_split': 4, 'n_estimators': 140}
 2.4636073112487793 load data
 ['GEOID', 'PDSI', 'Rh_g_m-2', 'SP01', 'median_inc', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'temp_F', 'year']
-not included:    {'ATOTAL_km2', 'ALAND_ATOTAL_ratio', 'NPP_g_m-2', 'ALAND_km2', 'BB_g_m-2', 'YYYYMM', 'deathRate', 'DM_kg_m-2', 'popuDensity_ATOTAL_km2', 'burned_frac', 'pm25_ug_m-3', 'deaths', 'popu', 'smallf_frac', 
+not included:    {'ATOTAL_km2', 'ALAND_ATOTAL_ratio', 'NPP_g_m-2', 'ALAND_km2', 'BB_g_m-2', 'YYYYMM', 'mortalityRate', 'DM_kg_m-2', 'popuDensity_ATOTAL_km2', 'burned_frac', 'pm25_ug_m-3', 'deaths', 'popu', 'smallf_frac', 
 'C_g_m-2'}
 7.561510952765456 hrs, or
 453.69065716592735 min, or

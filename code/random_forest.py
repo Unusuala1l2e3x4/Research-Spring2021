@@ -151,8 +151,9 @@ def main():
   # param_grid.append({ 'max_samples': [np.round(i, 2) for i in np.arange(0.7,0.8,0.01)], 'min_samples_leaf': [2], 'min_samples_split': [2,5], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
   # param_grid.append({ 'max_samples': [np.round(i, 2) for i in np.arange(0.1,0.7,0.01)], 'min_samples_leaf': [1], 'min_samples_split': [2], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
   
-  param_grid.append({ 'max_samples':[0.1, 0.3], 'min_samples_leaf': [1,3,5,7], 'min_samples_split': [2,4,6,8], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
-  # param_grid.append({ 'max_samples':[0.5, 0.7, 0.9], 'min_samples_leaf': [1,3,5,7], 'min_samples_split': [2,4,6,8], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
+  param_grid.append({ 'max_samples':[0.6,0.8,None], 'min_samples_leaf': [2,3,4], 'min_samples_split': [7,8,9,10,11], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
+  # param_grid.append({ 'max_samples':[0.5, 0.7, 0.9], 'min_samples_leaf': [1,3,5,7], 'min_samples_split': [2,4,6,8], 'min_impurity_decrease':[0], 'n_estimators': [140] })
+  param_grid.append({ 'max_samples':[0.7,0.9], 'min_samples_leaf': [2,4], 'min_samples_split': [7,9,10,11], 'min_impurity_decrease':[0], 'n_estimators': [140] })
 
   print(param_grid)
 
@@ -168,8 +169,8 @@ def main():
   # for train_indices, test_indices in cv_indices.split(data):
   #   print('Train: %s | test: %s' % (train_indices, test_indices))
 
-  estimate_time( (0.9)*(41538/43596)*(10191/22670)* len(columns_list), param_grid, DEFAULT_N_JOBS, cv_indices)
-  exit()
+  estimate_time( (0.92)*(41538/43596)*(10191/22670)* len(columns_list), param_grid, DEFAULT_N_JOBS, cv_indices)
+  # exit()
 
   
   results = pd.DataFrame()
@@ -188,7 +189,7 @@ def main():
       t2 = fc.timer_start()
       # continue
 
-      X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=train_size, random_state=DEFAULT_TRAIN_TEST_SPLIT_RANDOM_STATE)
+      X, X_test, y, y_test = train_test_split(data[columns], data.mortalityRate, train_size=train_size, random_state=DEFAULT_TRAIN_TEST_SPLIT_RANDOM_STATE)
       print(X)
       # print(y)
       # exit()
@@ -272,7 +273,7 @@ def main():
         clf = RandomForestRegressor(random_state=DEFAULT_RANDOM_STATE, n_jobs=DEFAULT_N_JOBS)
         clf.set_params(**p)
         
-        X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=train_size, random_state=DEFAULT_TRAIN_TEST_SPLIT_RANDOM_STATE)
+        X, X_test, y, y_test = train_test_split(data[columns], data.mortalityRate, train_size=train_size, random_state=DEFAULT_TRAIN_TEST_SPLIT_RANDOM_STATE)
 
         t0 = fc.timer_start()
         clf.fit(X,y)

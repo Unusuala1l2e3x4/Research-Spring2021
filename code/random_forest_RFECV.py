@@ -139,7 +139,7 @@ def main():
 
 
 
-  X, X_test, y, y_test = train_test_split(data[columns], data.deathRate, train_size=train_size, random_state=2)
+  X, X_test, y, y_test = train_test_split(data[columns], data.mortalityRate, train_size=train_size, random_state=2)
   print(X)
   
   # print(y)

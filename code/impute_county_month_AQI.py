@@ -206,7 +206,7 @@ if __name__ == "__main__":
     data_all[fileArgs[0]] = np.ravel(df.loc[:,dates], order='F') 
     data = fc.clean_data_before_train_test_split(data_all) # only removes where y is NaN
 
-    X, X_test, y, y_test = train_test_split(data[columns+[fileArgs[0]]], data.deathRate, train_size=train_size, random_state=2)
+    X, X_test, y, y_test = train_test_split(data[columns+[fileArgs[0]]], data.mortalityRate, train_size=train_size, random_state=2)
 
     
     results = pd.DataFrame()

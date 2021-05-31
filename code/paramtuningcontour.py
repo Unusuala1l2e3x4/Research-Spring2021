@@ -17,13 +17,13 @@ fc = importlib.import_module('functions')
 
 
 def plotxyz(df, x, y, z):
+  fig = plt.figure()
+  ax = plt.axes(projection='3d')
+  ax.set_title(''.join(['x:',x,'  y:',y]))
   x, y, z = df[x], df[y], df[z]
 
-  fig = plt.figure()
-
-  ax = plt.axes(projection='3d')
-  ax.plot_trisurf(x, y, z, cmap='viridis', edgecolor='none')
-  # ax.scatter(x, y, z, c=z, cmap='viridis', linewidth=0.5)
+  ax.plot_trisurf(x, y, z, cmap='viridis', edgecolor='black', linewidth=0.5, alpha=0.7)
+  ax.scatter(x, y, z, c=z, cmap='viridis', linewidth=0.5, alpha=0.7)
   plt.show()
 
 
@@ -38,7 +38,7 @@ def main():
   outputDir = os.path.join(pPath, 'random_forest-outfiles')
 
   df = fc.read_df(os.path.join(outputDir, 'final param tuning'),
-                  'GridSearchCV_RF_2021.05.29-11.59.56', 'csv')
+                  'maxsamples minleaf minsplit', 'csv')
   # print(df)
 
   df = df[['param_max_samples', 'param_min_samples_leaf',
@@ -51,9 +51,11 @@ def main():
 
   plotxyz(df, 'param_max_samples', 'param_min_samples_leaf', 'mean_test_r2')
   plotxyz(df, 'param_max_samples', 'param_min_samples_split', 'mean_test_r2')
+  plotxyz(df, 'param_min_samples_leaf', 'param_min_samples_split', 'mean_test_r2')
 
   plotxyz(df, 'param_max_samples', 'param_min_samples_leaf', 'test_set_r2')
   plotxyz(df, 'param_max_samples', 'param_min_samples_split', 'test_set_r2')
+  plotxyz(df, 'param_min_samples_leaf', 'param_min_samples_split', 'test_set_r2')
 
 
 
