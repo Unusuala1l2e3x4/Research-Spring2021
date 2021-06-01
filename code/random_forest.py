@@ -146,15 +146,15 @@ def main():
   scoringParam = 'r2'
 
   # 70,90,110,130,150,170
+
+  # temp = np.arange(0, 5e-7, 5e-9)
+  interval = 5e-8
+  temp = [np.round(i,9) for i in np.arange(4e-7, 2e-6, interval)] # 0, 2e-6, 5e-8
+  # print(temp)
   
   param_grid = []
-  # param_grid.append({ 'max_samples': [np.round(i, 2) for i in np.arange(0.7,0.8,0.01)], 'min_samples_leaf': [2], 'min_samples_split': [2,5], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
-  # param_grid.append({ 'max_samples': [np.round(i, 2) for i in np.arange(0.1,0.7,0.01)], 'min_samples_leaf': [1], 'min_samples_split': [2], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
-  
-  param_grid.append({ 'max_samples':[0.6,0.8,None], 'min_samples_leaf': [2,3,4], 'min_samples_split': [7,8,9,10,11], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # list(np.arange(0, 5e-7, 1e-8))
-  # param_grid.append({ 'max_samples':[0.5, 0.7, 0.9], 'min_samples_leaf': [1,3,5,7], 'min_samples_split': [2,4,6,8], 'min_impurity_decrease':[0], 'n_estimators': [140] })
-  param_grid.append({ 'max_samples':[0.7,0.9], 'min_samples_leaf': [2,4], 'min_samples_split': [7,9,10,11], 'min_impurity_decrease':[0], 'n_estimators': [140] })
-
+  param_grid.append({ 'max_samples':[0.7], 'min_samples_leaf': [3], 'min_samples_split': [8], 'min_impurity_decrease':temp, 'n_estimators': [140] })
+  param_grid.append({ 'max_samples':[0.6], 'min_samples_leaf': [2], 'min_samples_split': [9], 'min_impurity_decrease':temp, 'n_estimators': [140] })
   print(param_grid)
 
   param_grid_list = ParameterGrid(param_grid)
@@ -169,7 +169,7 @@ def main():
   # for train_indices, test_indices in cv_indices.split(data):
   #   print('Train: %s | test: %s' % (train_indices, test_indices))
 
-  estimate_time( (0.92)*(41538/43596)*(10191/22670)* len(columns_list), param_grid, DEFAULT_N_JOBS, cv_indices)
+  estimate_time( 0.38 * len(columns_list), param_grid, DEFAULT_N_JOBS, cv_indices)
   # exit()
 
   

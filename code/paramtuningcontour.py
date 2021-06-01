@@ -16,14 +16,22 @@ import importlib
 fc = importlib.import_module('functions')
 
 
-def plotxyz(df, x, y, z):
+def plotxyz(df, x_, y_, z_):
   fig = plt.figure()
   ax = plt.axes(projection='3d')
-  ax.set_title(''.join(['x:',x,'  y:',y]))
-  x, y, z = df[x], df[y], df[z]
+  ax.set_title(''.join(['x:',x_,'  y:',y_]))
 
-  ax.plot_trisurf(x, y, z, cmap='viridis', edgecolor='black', linewidth=0.5, alpha=0.7)
-  ax.scatter(x, y, z, c=z, cmap='viridis', linewidth=0.5, alpha=0.7)
+
+  x, y, z = df[x_], df[y_], df[z_]
+  # ax.plot_trisurf(x, y, z, cmap='viridis', edgecolor='black', linewidth=0.5, alpha=0.7)
+  ax.scatter(x, y, z, c=z, cmap='viridis', linewidth=0.5, alpha=0.2)
+  
+  # max point
+  dfmax = df.loc[df[z_] == max(df[z_])]
+  x, y, z = dfmax[x_], dfmax[y_], dfmax[z_]
+  ax.scatter(x, y, z, color='red', linewidth=0.5, alpha=1)
+  
+
   plt.show()
 
 
@@ -61,4 +69,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+  main()

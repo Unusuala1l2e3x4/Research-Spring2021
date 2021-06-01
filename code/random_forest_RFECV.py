@@ -107,6 +107,9 @@ def main():
   # columns = ['STATEFP', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'GEOID', 'temp_F', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2','NPP_g_m-2_1m_lag','NPP_g_m-2_2m_lag', 'Rh_g_m-2', 'Rh_g_m-2_1m_lag', 'Rh_g_m-2_2m_lag']
   columns = ['STATEFP', 'NPP_g_m-2_1m_lag', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'GEOID', 'Rh_g_m-2', 'Rh_g_m-2_1m_lag', 'Rh_g_m-2_2m_lag'] # final
 
+   # Iter. 1
+  columns = ['GEOID','month','temp_F','burned_frac','popuDensity_ALAND_km2','precip_in','Rh_g_m-2','pm25_ug_m-3','NPP_g_m-2','C_g_m-2','smallf_frac','BB_g_m-2','ALAND_ATOTAL_ratio','median_inc','PDSI','SP01','DM_kg_m-2','months_from_start']
+
   # assert set(columns).issubset(fc.get_X_columns(numMonthLags))
   print('included:\t',len(columns),columns)
   # print('not included:\t',set(fc.get_X_columns(numMonthLags)) - set(columns))
@@ -118,10 +121,10 @@ def main():
   refit = True
   do_biasvariancedecomp = False
   n_splits = 10
-  min_features_to_select = 6
+  min_features_to_select = 9
   train_size = 0.7
   shufflecolumns = True
-  numberShuffles = 9 # if shufflecolumns = True
+  numberShuffles = 13 # if shufflecolumns = True
 
   cv_indices = KFold(n_splits=n_splits, shuffle=True, random_state=1) # DEFAULT_N_JOBS*2
   # for train_indices, test_indices in cv_indices.split(data):
@@ -130,7 +133,7 @@ def main():
 
   scoring=['max_error','neg_mean_absolute_percentage_error', 'neg_mean_absolute_error','neg_mean_squared_error','explained_variance', 'r2']
   scoringParam = 'r2'
-  param_grid = { 'max_samples': [0.1], 'min_impurity_decrease': [3.68e-07], 'min_samples_leaf': [1], 'min_samples_split': [2], 'n_estimators': [140]} # , 'max_depth':[None] , 'min_impurity_decrease':[0, 1.8e-7], , 'max_features':list(range(11,X.shape[1]+1))
+  param_grid = { 'max_samples': [0.1], 'min_samples_leaf': [2], 'min_samples_split': [4], 'n_estimators': [140]} # , 'max_depth':[None] , 'min_impurity_decrease':[0],
   # print('params\t', params)
   
   
@@ -156,7 +159,7 @@ def main():
   columns_list = []
 
   if shufflecolumns:
-    random.seed(1454)
+    random.seed(678) # 1454
     random.shuffle(columns)
     
     n = 2
@@ -186,6 +189,7 @@ def main():
   else:
     columns_list.append(copy.deepcopy(columns[:15]))
 
+  exit()
 
   t2 = fc.timer_start()
   for p in param_grid_list:
