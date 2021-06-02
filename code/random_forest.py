@@ -148,13 +148,17 @@ def main():
   # 70,90,110,130,150,170
 
   # temp = np.arange(0, 5e-7, 5e-9)
-  interval = 5e-8
-  temp = [np.round(i,9) for i in np.arange(4e-7, 2e-6, interval)] # 0, 2e-6, 5e-8
+  interval = 1e-8
+  temp = [np.round(i,9) for i in np.arange(0, 4e-7, interval)] # 0, 2e-6, 5e-8
   # print(temp)
+
+  bestCV = { 'max_samples':[0.7], 'min_samples_leaf': [3], 'min_samples_split': [8], 'min_impurity_decrease':[0], 'n_estimators': [140] }
+  bestTest = { 'max_samples':[0.6], 'min_samples_leaf': [2], 'min_samples_split': [9], 'min_impurity_decrease':[0], 'n_estimators': [140] }
   
   param_grid = []
-  param_grid.append({ 'max_samples':[0.7], 'min_samples_leaf': [3], 'min_samples_split': [8], 'min_impurity_decrease':temp, 'n_estimators': [140] })
-  param_grid.append({ 'max_samples':[0.6], 'min_samples_leaf': [2], 'min_samples_split': [9], 'min_impurity_decrease':temp, 'n_estimators': [140] })
+  param_grid.append({ 'max_samples':[0.2], 'min_samples_leaf': [3], 'min_samples_split': [8], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # bestCV
+  param_grid.append({ 'max_samples':[0.1,0.2], 'min_samples_leaf': [2], 'min_samples_split': [9], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # bestTest
+
   print(param_grid)
 
   param_grid_list = ParameterGrid(param_grid)

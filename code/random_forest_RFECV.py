@@ -189,7 +189,7 @@ def main():
   else:
     columns_list.append(copy.deepcopy(columns[:15]))
 
-  exit()
+  # exit()
 
   t2 = fc.timer_start()
   for p in param_grid_list:
