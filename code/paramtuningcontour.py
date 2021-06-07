@@ -23,8 +23,8 @@ def plotxyz(df, x_, y_, z_):
 
 
   x, y, z = df[x_], df[y_], df[z_]
-  # ax.plot_trisurf(x, y, z, cmap='viridis', edgecolor='black', linewidth=0.5, alpha=0.7)
-  ax.scatter(x, y, z, c=z, cmap='viridis', linewidth=0.5, alpha=0.2)
+  ax.plot_trisurf(x, y, z, cmap='viridis', edgecolor='black', linewidth=0.5, alpha=0.7)
+  # ax.scatter(x, y, z, c=z, cmap='viridis', linewidth=0.5, alpha=0.2)
   
   # max point
   dfmax = df.loc[df[z_] == max(df[z_])]

@@ -110,7 +110,7 @@ def main():
 
 
   # PARAMS
-  crossvalidate = True
+  crossvalidate = False
   refit = True  # needed for test set score
   do_biasvariancedecomp = False
   save_best_refit = True
@@ -148,16 +148,20 @@ def main():
   # 70,90,110,130,150,170
 
   # temp = np.arange(0, 5e-7, 5e-9)
-  interval = 1e-8
-  temp = [np.round(i,9) for i in np.arange(0, 4e-7, interval)] # 0, 2e-6, 5e-8
+  interval = 5e-9
+  temp = [np.round(i,9) for i in sorted(  set(np.arange(0, 4e-7, 5e-9)) - set(np.arange(0, 4e-7, 1e-8)) - set(np.arange(0, 2e-6, 5e-8)) )] # 
   # print(temp)
 
-  bestCV = { 'max_samples':[0.7], 'min_samples_leaf': [3], 'min_samples_split': [8], 'min_impurity_decrease':[0], 'n_estimators': [140] }
-  bestTest = { 'max_samples':[0.6], 'min_samples_leaf': [2], 'min_samples_split': [9], 'min_impurity_decrease':[0], 'n_estimators': [140] }
+  bestCV =    { 'max_samples': [0.7], 'min_samples_leaf': [3], 'min_samples_split': [8], 'min_impurity_decrease': [0], 'n_estimators': [140] }
+  bestTest =  { 'max_samples': [0.6], 'min_samples_leaf': [2], 'min_samples_split': [9], 'min_impurity_decrease': [0], 'n_estimators': [140] }
+
+  n_estimators = list(range(20, 200 + 1, 20))
   
   param_grid = []
-  param_grid.append({ 'max_samples':[0.2], 'min_samples_leaf': [3], 'min_samples_split': [8], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # bestCV
-  param_grid.append({ 'max_samples':[0.1,0.2], 'min_samples_leaf': [2], 'min_samples_split': [9], 'min_impurity_decrease':[0], 'n_estimators': [140] }) # bestTest
+  param_grid.append({ 'max_samples':[0.7], 'min_samples_leaf': [3], 'min_samples_split': [8], 'min_impurity_decrease':[5.5e-8], 'n_estimators': [140] }) # bestCV
+  # param_grid.append({ 'max_samples':[0.6], 'min_samples_leaf': [2], 'min_samples_split': [9], 'min_impurity_decrease':[3.5e-8], 'n_estimators': [140] }) # bestTest
+  # param_grid.append({ 'max_samples': [0.7], 'min_samples_leaf': [3], 'min_samples_split': [8], 'min_impurity_decrease': temp, 'n_estimators': [140] })
+  # param_grid.append({ 'max_samples': [0.6], 'min_samples_leaf': [2], 'min_samples_split': [9], 'min_impurity_decrease': temp, 'n_estimators': [140] })
 
   print(param_grid)
 

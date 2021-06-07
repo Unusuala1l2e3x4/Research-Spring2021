@@ -148,7 +148,7 @@ def main():
   # print(y)
   # exit()
 
-  estimate_time( (6890/9049) * (numberShuffles if shufflecolumns else 1) * (len(columns[:15])-min_features_to_select), param_grid, DEFAULT_N_JOBS, cv_indices)
+  estimate_time( (26088/19904)*(6890/9049) * (numberShuffles if shufflecolumns else 1) * (len(columns[:15])-min_features_to_select), param_grid, DEFAULT_N_JOBS, cv_indices)
   # exit()
 
   param_grid_list = ParameterGrid(param_grid)
