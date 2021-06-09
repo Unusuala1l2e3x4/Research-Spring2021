@@ -102,13 +102,13 @@ def main():
 
   # print(data)
   # columns = fc.get_X_columns(numMonthLags)
-
-  # columns = ['temp_F', 'temp_F_1m_lag', 'temp_F_2m_lag', 'popuDensity_ALAND_km2', 'pm25_ug_m-3_1m_lag', 'months_from_start', 'month', 'median_inc', 'GEOID', 'STATEFP', 'NPP_g_m-2_1m_lag', 'PDSI_2m_lag']
-  # columns = ['STATEFP', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'GEOID', 'temp_F', 'temp_F_1m_lag', 'temp_F_2m_lag', 'NPP_g_m-2','NPP_g_m-2_1m_lag','NPP_g_m-2_2m_lag', 'Rh_g_m-2', 'Rh_g_m-2_1m_lag', 'Rh_g_m-2_2m_lag']
   columns = ['STATEFP', 'NPP_g_m-2_1m_lag', 'month', 'months_from_start', 'popuDensity_ALAND_km2', 'GEOID', 'Rh_g_m-2', 'Rh_g_m-2_1m_lag', 'Rh_g_m-2_2m_lag'] # final
 
-   # Iter. 1
-  columns = ['GEOID','month','temp_F','burned_frac','popuDensity_ALAND_km2','precip_in','Rh_g_m-2','pm25_ug_m-3','NPP_g_m-2','C_g_m-2','smallf_frac','BB_g_m-2','ALAND_ATOTAL_ratio','median_inc','PDSI','SP01','DM_kg_m-2','months_from_start']
+  # Iter. 1
+  # columns = ['GEOID','month','temp_F','burned_frac','popuDensity_ALAND_km2','precip_in','Rh_g_m-2','pm25_ug_m-3','NPP_g_m-2','C_g_m-2','smallf_frac','BB_g_m-2','ALAND_ATOTAL_ratio','median_inc','PDSI','SP01','DM_kg_m-2','months_from_start']
+
+
+  
 
   # assert set(columns).issubset(fc.get_X_columns(numMonthLags))
   print('included:\t',len(columns),columns)

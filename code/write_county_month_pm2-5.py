@@ -16,12 +16,10 @@ fc = importlib.import_module('functions')
 if __name__ == "__main__":
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
-  # pmDir = os.path.join(ppPath, 'Global Annual PM2.5 Grids')
   # outputDir = os.path.join(pPath, 'write_county_month_pm2-5-outfiles')
   pmDir = os.path.join(ppPath, 'Atmospheric Composition Analysis Group')
   shapefilesDir = os.path.join(pPath, 'shapefiles')
   usaDir = os.path.join(shapefilesDir, 'USA_states_counties')
-  nClimDivDir = os.path.join(ppPath, 'nClimDiv data')
   
   points_in_region_fnames = os.listdir(os.path.join(pmDir, 'points_in_region'))
   pm_fnames = [re.split('.nc',l)[0] for l in sorted(os.listdir(os.path.join(pmDir, 'V4NA03/NetCDF/NA/PM25')))]

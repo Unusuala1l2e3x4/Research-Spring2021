@@ -33,7 +33,6 @@ if __name__ == "__main__":
 
   pPath = str(pathlib.Path(__file__).parent.absolute())
   ppPath = str(pathlib.Path(__file__).parent.parent.absolute())
-  # pmDir = os.path.join(ppPath, 'Global Annual PM2.5 Grids')
   outputDir = os.path.join(pPath, 'plot_usa-outfiles')
   shapefilesDir = os.path.join(pPath, 'shapefiles')
   usaDir = os.path.join(shapefilesDir, 'USA_states_counties')

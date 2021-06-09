@@ -8,8 +8,7 @@ import importlib
 fc = importlib.import_module('functions')
 
 def run(dir, file, args=None):
-  # a = "python " + dir + '/' + file
-  a = "C:/Users/Alex/anaconda3/python.exe " + dir + '/' + file
+  a = "python " + dir + '/' + file
   if type(args) is list:
     for arg in args:
       a += ' ' + str(arg)

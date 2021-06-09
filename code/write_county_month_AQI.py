@@ -197,7 +197,7 @@ if __name__ == "__main__":
     contents = json.load(f)
     basisregion = shape(contents['features'][0]['geometry'])
   t0 = fc.timer_restart(t0, 'read basisregion')
-  if regionFile.split('.')[0] + '_rounded.hdf5' not in os.listdir(os.path.join(pmDir, 'points_in_region_rounded')):
+  if regionFile.split('.')[0] + '_rounded.hdf5' not in os.listdir(os.path.join( 'points_in_region_rounded')):
     latlonGEOID = fc.read_df(os.path.join(pmDir, 'points_in_region'), regionFile.split('.')[0], 'hdf5')
     latlonGEOID.lat = [round(i, 3) for i in latlonGEOID.lat]
     latlonGEOID.lon = [round(i, 3) for i in latlonGEOID.lon]

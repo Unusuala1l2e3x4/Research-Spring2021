@@ -9,8 +9,7 @@ fc = importlib.import_module('functions')
 
 
 def run(dir, file, args=None):
-  # a = "python " + dir + '/' + file
-  a = "C:/Users/Alex/anaconda3/python.exe " + dir + '/' + file
+  a = "python " + dir + '/' + file
   if type(args) is list:
     for arg in args:
       a += ' ' + str(arg)
@@ -23,7 +22,6 @@ def run(dir, file, args=None):
 
 
 
-
 def main():
   dir = str(pathlib.Path(__file__).parent.absolute())
 
@@ -31,15 +29,10 @@ def main():
   t1 = t0
 
 
-  # limit_tests_all = [16, 20, 24]
-
-  # limit_tests_all = list(range(0,25,4))
-
   limit_tests_all = []
   limit_tests_all.append([0, 3, 6])
   limit_tests_all.append([9, 12, 15])
   limit_tests_all.append([18, 21, 24])
-  # limit_tests_all.append([12])
   
   methods = ['linear', 'nearest', 'cubic'] # 45 min + 7.4 hrs + 93 min = 9.76 hrs
   # methods = ['cubic']
@@ -48,7 +41,6 @@ def main():
   # print(methods)
 
   # exit()
-
 
 
   for method in methods:
