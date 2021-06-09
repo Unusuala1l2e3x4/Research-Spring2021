@@ -16,6 +16,9 @@ import matplotlib.path as mplp
 import rasterio, rasterio.features, rasterio.warp
 
 def save_df(df, folderPath, name, ext):
+  if not os.path.isdir(folderPath):
+    os.makedirs(folderPath)
+    print('Missing directory created:', folderPath)
   print('save', os.path.join(folderPath, name + '.' + ext))
   if ext == 'csv':
     df.to_csv(os.path.join(folderPath, name + '.csv'), index=False  )

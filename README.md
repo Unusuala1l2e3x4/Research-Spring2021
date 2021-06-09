@@ -8,10 +8,7 @@
 - Construct GFED data with appropriate datasets multiplied by cell area:
   - Copy all .hdf5 files from the original GFED data (from folder "GFED4s") into new folder "GFED4s_timesArea"
   - Run "code/multiply_by_area_gfed4s.py"
-- Get PM2.5 grid data (not used for study)
-  - Download files for each year: <https://sedac.ciesin.columbia.edu/data/set/sdei-global-annual-gwr-pm2-5-modis-misr-seawifs-aod/data-download#close>
-  - Place files into new folder "Global Annual PM2.5 Grids"
-  - Run "code/unzip_pm2-5.py 
+
 #### To get 2000-2018 Surface PM2.5 datasets (monthly, 0.01 deg resolution)
 - Corresponding article: <https://pubs.acs.org/doi/full/10.1021/acs.est.0c01764>
 - More info + instructions: <https://sites.wustl.edu/acag/datasets/surface-pm2-5/>
