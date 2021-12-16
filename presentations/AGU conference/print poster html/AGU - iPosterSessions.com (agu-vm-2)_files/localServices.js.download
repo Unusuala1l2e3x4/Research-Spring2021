@@ -1,0 +1,131 @@
+﻿//we can centralize all of requests to local server in this file
+
+async function getPermittedIframeDomainsService() {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/Templates/iPosters/iPosterService.asmx/GetPermittedIframeDomains',
+            type: 'POST',
+            data: null,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                resolve(data.d);
+            },
+            error: function (error) {
+                reject(error)
+            },
+        })
+
+    });
+}
+
+function getAllSessionSchedulesService(posterShortName) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/Templates/iPosters/iPosterService.asmx/GetAllSessionSchedules',
+            type: 'POST',
+            data: JSON.stringify({ posterId: posterShortName }),
+
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                //let jsonData = JSON.parse(data.d);
+                resolve(data);
+            },
+            error: function (error) {
+                reject(error)
+            },
+        })
+    })
+}
+function deleteSessionScheduleService(posterShortName, authorSessionScheduleId) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/Templates/iPosters/iPosterService.asmx/DeleteSessionSchedule',
+            type: 'POST',
+            data: JSON.stringify({ posterShortName: posterShortName, sessionScheduleId: authorSessionScheduleId }),
+
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                let jsonData = JSON.parse(data.d);
+                resolve(jsonData);
+            },
+            error: function (error) {
+                reject(error)
+            },
+        });
+    });
+}
+function saveSessionSettingsService(inputData) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "POST",
+            url: '/Templates/iPosters/iPosterService.asmx/SaveSessionSettings',
+            data: JSON.stringify({ indata: inputData }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                resolve(data.d.toLowerCase());
+            },
+            error: function (error) {
+                reject(error);
+            }
+        });
+    });
+}
+
+function getAllAuthorPosterBoardsService(posterShortName) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/Templates/iPosters/iPosterService.asmx/GetAllAuthorPosterBoards',
+            type: 'POST',
+            data: JSON.stringify({ posterId: posterShortName }),
+
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                resolve(data);
+            },
+            error: function (error) {
+                reject(error)
+            },
+        })
+    })
+}
+function deleteAuthorPosterBoardService(posterShortName, authorPosterBoardId) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/Templates/iPosters/iPosterService.asmx/DeleteAuthorPosterBoard',
+            type: 'POST',
+            data: JSON.stringify({ posterShortName: posterShortName, posterBoardId: authorPosterBoardId }),
+
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                let jsonData = JSON.parse(data.d);
+                resolve(jsonData);
+            },
+            error: function (error) {
+                reject(error)
+            },
+        });
+    });
+}
+function saveAuthorPosterBoardSettingsService(inputData) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "POST",
+            url: '/Templates/iPosters/iPosterService.asmx/SaveAuthorPosterBoardSettings',
+            data: JSON.stringify({ indata: inputData }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                resolve(data.d.toLowerCase());
+            },
+            error: function (error) {
+                reject(error);
+            }
+        });
+    });
+}

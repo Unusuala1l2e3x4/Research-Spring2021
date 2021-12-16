@@ -1,0 +1,43 @@
+Paste the CSS source code you want to compress here/* Document : plugin.css
+Created on : Apr 30,2014,11:22:16 AM
+Author : purab
+Description:
+Purpose of the stylesheet follows.
+*/
+root{display:block}
+#dsbrowserfullcontainer{height:378px;overflow-y:scroll}
+
+.DscommonImagesDiv{font-weight:700}
+
+.dsimgcontainerdiv{display:table-cell!important;text-align:center;vertical-align:middle;min-height:140px;height:140px;min-width:140px;border:1px solid #000;opacity:0.8;filter:alpha(opacity=80)}
+
+.dsimgcontainerdiv:hover{opacity:1;filter:alpha(opacity=100)}
+
+.dsimgandradiocontainerdiv{vertical-align:middle;text-align:center;height:165px;min-width:140px;float:left;display:inline-block;margin:2px !important;}
+
+.dsimageblock{
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    width:140px !important;height:140px !important; background-size:cover !important; background-position:center center !important;
+
+}
+
+.dsimageradio {
+    width: 139px;
+    text-align: left;
+    top: 0px !important;
+    position: relative !important;
+    background: #eee !important;
+    padding: 3px !important;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    text-indent: 5px;
+}
+.dsimageradio > input {
+    vertical-align:-3px;
+}
+#dsbrandimages{font-weight:700;clear:both;padding:10px 0}
+#dsAssetsImagesDiv, #dsCommonImagesDiv {
+    width: 100%;
+    white-space: normal;
+}

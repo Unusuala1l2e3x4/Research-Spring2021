@@ -1,0 +1,283 @@
+﻿html {
+    color: #000;
+}
+
+.poster-title {
+    line-height: 36px;
+}
+
+.pdf-only {
+    position: relative;
+    margin: auto;
+    width: 595px;
+    border: 0px solid rgba(0,0,0,0.3);
+}
+
+#loading-background,
+#loading {
+    display: none !important;
+}
+
+.poster-title {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 2em;
+    font-family: 'ITCFranklinGothicW02-Md 812972','HelveticaNeueW01-55Roma', Arial, sans-serif;
+}
+
+.poster-thumbnail img {
+    margin-bottom: 20px;
+}
+
+.authors-title {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    font-family: 'ITCFranklinGothicW02-Md 812972','HelveticaNeueW01-55Roma', Arial, sans-serif;
+}
+
+.organisations-title {
+    font-size: 0.9em;
+    margin-bottom: 25px;
+    font-family: 'ITCFranklinGothicW02-Md 812972','HelveticaNeueW01-55Roma', Arial, sans-serif;
+}
+
+.author-thumbnails {
+    display: block;
+}
+
+    .author-thumbnails img {
+        margin: 0px 5px 30px 5px;
+        opacity: 1 !important;
+        height: 120px !important;
+        display: inline !important;
+        white-space: nowrap;
+        page-break-before: avoid;
+        page-break-after: avoid;
+    }
+
+.url-to-poster {
+    width: 100%;
+    font-size: 0.5em;
+    margin-bottom: 200px;
+    display: none;
+}
+
+.presented-at {
+    font-size: 0.6em;
+    margin-bottom: 1em;
+    font-family: 'HelveticaNeueW01-55Roma', Arial, sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.conference-banner {
+    max-width: 100%;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#main {
+    border: 0px solid rgba(0,0,0,0.3);
+    text-align: left;
+    margin: auto;
+    width: 595px;
+}
+
+#box-choose {
+    display: none;
+}
+
+.column {
+}
+
+h2 {
+    font-family: 'HelveticaNeueW01-55Roma', Arial, sans-serif;
+    page-break-before: always;
+    font-size: 1.5em;
+    line-height: 1.3em;
+    padding: 1em 0.3em 0.5em;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+p, li {
+    font-family: 'Times New Roman', Times, serif;
+    padding: 0 0 0.5em 0;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+    p > p {
+        font-size: 1em;
+    }
+
+    p.compressed {
+        padding: 0;
+        margin: 0;
+    }
+
+ul {
+    padding: 0em 1.5em 0em 1.2em;
+}
+
+img {
+    max-width: 100%;
+    height: auto !important;
+}
+
+iframe {
+    margin: 0;
+    width: 60% !important;
+    height: auto !important;
+}
+
+body {
+    width: auto;
+    text-align: center;
+    background-color: #ffffff !important;
+}
+
+.logo-placeholder,
+.logo-wrapper,
+.logo,
+.slideshow-placeholder,
+.slideshow,
+.holder {
+    display: none;
+}
+
+#attendee-rating {
+    display: none;
+}
+
+.popup-holder {
+    border: 0px solid rgba(0,0,0,0.3);
+    text-align: left;
+    margin: auto;
+    width: 595px;
+    padding: 0 15px;
+}
+
+    .popup-holder h2 {
+        font-family: 'HelveticaNeueW01-55Roma', Arial, sans-serif;
+        page-break-before: always;
+        font-size: 1.5em;
+        line-height: 1.3em;
+        padding: 1em 0.3em 0.5em;
+        margin: 0;
+        text-transform: uppercase;
+    }
+
+    .popup-holder p {
+        font-family: 'Times New Roman', Times, serif;
+        padding: 0 0 0.5em 0;
+        font-size: 0.8em;
+        line-height: 1.4em;
+    }
+
+.save-alert {
+    display: none !important;
+}
+
+#Toolbar {
+    display: none !important;
+}
+
+.scrollable-area {
+    margin: auto;
+    height: auto !important;
+    overflow: visible;
+    overflow-x: inherit !important;
+    max-width: 100% !important;
+    padding: 0 0.5em;
+}
+
+.vscrollbar {
+    display: none !important;
+}
+
+.vscroll-line {
+    display: none !important;
+}
+
+#countdown, #PublishedMessage, #NoticeNoEditing, #NotPaidMessage, #TimeIsUp {
+    display: none !important;
+}
+
+#popup-externallink,
+#popup-chatsettings,
+#popup-sessionsettings,
+#popup-chat
+#popup-chat-info,
+#popup-chat-login,
+#popup-metadata,
+#popup-audio,
+#popup-colors,
+#popup-editimage,
+#popup-help,
+#popup-share,
+#popup-templateinstructions,
+#popup-reviewersurvey,
+#popup-switchtemplate,
+#noticeClose,
+#ConcurrencyIssue,
+#Maintenance,
+#popup-chat-info,
+#popup-sessionsettings-info,
+#VisitorMaintenance,
+#popup-chatSchedules,
+#popup-sessionSchedules,
+#popup-authorPosterBoardSettings,
+#authorPosterBoard,
+#popup-at-my-poster,
+#NotRegisteredMessage,
+#UnPublishedMessage,
+#popup-video-gallery {
+    display: none !important;
+}
+
+.cke_widget_element > div {
+    padding: 0 !important;
+}
+
+.qrcode {
+    display: none !important;
+}
+
+.hide-print {
+    display: none !important;
+}
+
+.back-button {
+    display: none;
+}
+
+h2#iTitleField1 {
+    padding: 2em 0.3em 0.5em;
+}
+
+#popup-my-settings {
+    display: none;
+}
+
+@media screen and (min-width: 1200px) {
+    .container {
+        width: unset;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .container {
+        width: unset;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .container {
+        width: unset;
+    }
+}
+
+div[data-oembed-url] > div {
+    padding-bottom: 0 !important;
+}

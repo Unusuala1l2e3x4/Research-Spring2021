@@ -1,0 +1,26 @@
+﻿/* IMPORTANT: Style settings in this file will affect all modes (edit, presentation, print, etc.) */
+
+/*Christer removed body background color and added overflow: hidden*/
+body {
+    /*    background-color: rgba(155,156,157,1) !important;*/
+    font-family: 'PT Sans';
+}
+/*Christer added overflow: hidden when box open*/
+.redactor-open {
+    overflow: hidden;
+}
+
+.visual strong {
+    font-family: 'PT Sans';
+}
+
+#wrapper h1,
+#wrapper h2,
+#wrapper h3,
+#wrapper h4 {
+    font-family: 'Trade Gothic LT W01 Bold';
+}
+
+#main h2 {
+    font-family: 'PT Sans';
+}

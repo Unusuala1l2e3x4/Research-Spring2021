@@ -1,0 +1,239 @@
+﻿article {
+    display:none;
+}
+
+.loading {
+    display:block;
+}
+
+.login article {
+    display:block;
+}
+
+.login .loading {
+    display:none;
+}
+
+.circle1, .circle {
+    z-index:10002;
+}
+
+.loading h3 {
+    line-height: 2.5vw;
+    font-family: sans-serif;
+    font-size: 2.3vw;
+    font-weight: normal;
+    color: #333;
+    text-align: center;
+    margin-top: 1vw;
+    text-transform: uppercase;
+}
+
+.loading h3.no-spin {
+    animation-play-state:paused;
+}
+#loading-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 900000;
+}
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 10001;
+    margin: auto;
+    height: 180px;
+    -webkit-transform: translateZ(1000px);
+    transform-style: preserve-3d;
+}
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 10001;
+    margin: auto;
+    height: 13vw;    
+    animation-name: steam;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;    
+}
+
+
+#loading-background {      
+    position:absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    z-index:10000;
+    background-color:#fff;     
+}
+
+.circle {
+    position: relative;
+    background: url(/Common/Images/iPosters/amuze-flag.png) no-repeat top center;
+    height: 12vw;
+    background-size: 12vw !important;
+}
+
+@keyframes steam {
+    0% {
+        transform: perspective(500px) rotateY(0deg);
+    }
+    100% {
+        transform: perspective(500px) rotateY(360deg);
+    }
+}
+
+.circle1 {
+    display: none;
+}
+
+@-moz-keyframes throbber-loader {
+  0% {
+    background: #def8a6;
+  }
+  10% {
+    background: #a5cd4e;
+  }
+  40% {
+    background: #def8a6;
+  }
+}
+@-webkit-keyframes throbber-loader {
+  0% {
+    background: #def8a6;
+  }
+  10% {
+    background: #a5cd4e;
+  }
+  40% {
+    background: #def8a6;
+  }
+}
+@keyframes throbber-loader {
+  0% {
+    background: #def8a6;
+  }
+  10% {
+    background: #a5cd4e;
+  }
+  40% {
+    background: #def8a6;
+  }
+}
+
+.stop {
+    -webkit-animation-play-state:paused;
+    -moz-animation-play-state:paused;
+    animation-play-state:paused;
+    border-color:yellow;
+}
+
+.tfi .circle {
+    background: url(/Common/Images/iPosters/GetFile.jpg) no-repeat top center;
+}
+
+.chole .circle {
+    background: url(/Common/Images/TFI/chole-symbol.png) no-repeat top center;
+    height: 200px;
+}
+
+.rcpsych .circle {
+    background: url(/Common/Images/RCPsych/RCPsych-loading.jpg) no-repeat top center;
+    height: 200px;
+}
+
+.ava .circle {
+    background: url(/Common/Images/iPosters/AVA2019Logo.png) no-repeat top center;
+    height: 14vw !important;
+    background-size: 14vw !important;
+}
+
+.www .circle {
+    background: url(/Common/Images/iPosters/siwi-loading.png) no-repeat top center;
+    height: 200px;
+}
+
+.apsa .circle {
+    background: url(/Common/Images/iPosters/apsa-loading.png) no-repeat top center;
+}
+
+.iucn .circle {
+    background: url(/Common/Images/iPosters/iucn-loading.png) no-repeat top center;
+    height: 200px;
+}
+
+.emaac2017 .circle {
+    background: url(/Common/Images/iPosters/EMAAC2018-loading.png) no-repeat top center;
+    height: 200px;
+}
+
+.krf .circle {
+    background: url(/Common/Images/iPosters/krf-loading-logo.png) no-repeat top center;
+    background-size: 12vw !important;
+}
+
+.evre .circle {
+    background: url(/Common/Images/iPosters/woc2018-loading.jpg) no-repeat top center;
+    height: 200px;
+    background-size: 200px;
+}
+
+.aas .circle {
+    background: url(/Common/Images/iPosters/AAS-loading-logo.jpg) no-repeat top center;
+    height: 200px;
+    background-size: 200px !important;
+}
+
+.ifm .circle {
+    background: url(/Common/Images/iPosters/IFM-logo.jpg) no-repeat top center;
+    height: 15vw;
+    background-size: 15vw !important;
+}
+
+.shock .circle {
+    background: url(/Common/Images/iPosters/ESOT-2019-loading-icon.jpg) no-repeat top center;
+    height: 18vw;
+    background-size: 21vw !important;
+}
+
+.wellassembled .circle {
+    background: url(/Common/Images/iPosters/evs-logo-blue.png) no-repeat top center;
+    height: 13vw;
+    background-size: 14vw !important;
+}
+
+.iaf .circle {
+    background: url(/Common/Images/iPosters/IP-loading.png) no-repeat top center;
+    height: 13vw;
+    background-size: 14vw !important;
+}
+
+.osm_2020.agu .circle {
+    background: url(/Common/Images/iPosters/osm-logo.png) no-repeat top center;
+}
+
+.fall_meeting_2019.agu .circle {
+    background: url(/Common/Images/iPosters/AGU100-logo.png) no-repeat top center;
+    height: 16vw;
+    background-size: 16vw !important;
+}
+
+.covid19_covenv .circle {
+    background-size: 15vw !important;
+    height: 15vw;
+}
+
+.ecnp .circle {
+    background-size: 14vw !important;
+    height: 5vw;
+}

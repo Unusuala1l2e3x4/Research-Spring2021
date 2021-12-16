@@ -1,0 +1,19 @@
+var posterHub = null;
+
+$(function () {
+    posterHub = $.connection.posterHub;
+
+    registerClientMethods(posterHub);
+
+    // Declare a proxy to reference the hub. 
+    $.connection.hub.start().done(function () {
+
+    });
+});
+
+function registerClientMethods(posterHub) {
+    posterHub.client.saveLogout = function () {
+        callSaveLogout();
+    }
+}
+

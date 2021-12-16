@@ -1,0 +1,21 @@
+﻿div#iframe-description a {
+    font-weight: bold;
+    color: blue;
+    cursor: pointer;
+}
+
+div#iframe-description li {
+    list-style: disc;
+    margin-left: 20px;
+    line-height: 25px;
+}
+
+div#iframe-description p {
+    width: 400px;
+    white-space: normal;
+    margin: 5px 0;
+}
+
+div#iframe-description ul {
+    text-indent: 5px;
+}

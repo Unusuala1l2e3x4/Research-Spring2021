@@ -1,0 +1,162 @@
+﻿.kbcontainer {
+    padding: 0.4vw;
+    display: none;
+    position: fixed;
+    top: 6vw;
+    left: 26.5vw;
+    z-index: 5;
+    width: 48vw;
+    outline: none;
+    -webkit-border-radius: 0.5vw;
+    -moz-border-radius: 0.5vw;
+    border-radius: 0.5vw;
+    border: 0.1vw solid #89B3D9;
+    background: #ffffff; /* Old browsers */
+    /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2Y3ZmNmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlZmY4ZmYiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+    background: -moz-linear-gradient(top, #ffffff 0%, #ffffff 71%, #d1eaff 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(71%,#ffffff), color-stop(100%,#d1eaff)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #ffffff 0%,#ffffff 71%,#d1eaff 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #ffffff 0%,#ffffff 71%,#d1eaff 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #ffffff 0%,#ffffff 71%,#d1eaff 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #ffffff 0%,#ffffff 71%,#d1eaff 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#d1eaff',GradientType=0 ); /* IE6-8 */
+    -webkit-box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.43);
+    -moz-box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.43);
+    box-shadow: 5px 5px 15px 5px rgba(0,0,0,0.43);
+}
+
+#virtualkeyboard {
+    position: absolute;
+    z-index: 100;
+}
+
+.key {
+    color: #333333;
+}
+
+.button_space {
+    margin-left: 0vw;
+}
+
+.emailname {
+    width: 95%;
+    margin-top: 20px;
+    padding: 5px;
+}
+
+.emailsender {
+    width: 95%;
+    margin-top: 20px;
+    padding: 5px;
+}
+
+.emailbody {
+    width: 95%;
+    margin-top: 20px;
+    padding: 5px;
+    min-height: 150px;
+}
+
+.sendemaillink {
+    text-transform: uppercase;
+    background-color: #BAA254;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 16pt;
+    padding: 10px 20px;
+    border: 5px solid #ffffff;
+    border-radius: 25px;
+}
+
+.closekeyboardlink {
+    text-transform: uppercase;
+    background-color: #BAA254;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 16pt;
+    padding: 10px 20px;
+    border: 5px solid #ffffff;
+    border-radius: 25px;
+}
+
+.centercontainer {
+    text-align: center;
+}
+
+
+/*share iposter on gallery */
+#virtualKeyboardshareposter {
+    /*position: absolute;*/
+    z-index: 100;
+}
+
+/*.key {
+    color: #333333;
+}
+
+.button_space {
+    margin-left: 0vw;
+}*/
+
+.shareemailname {
+    width: 95%;
+    margin-top: 20px;
+    padding: 5px;
+}
+
+.shareemaillink {
+    text-transform: uppercase;
+    background-color: #BAA254;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 1.5vw;
+    padding: 0.8vw 1.2vw;
+    border-width: 0.3vw;
+    border-style: solid;
+    border-color: rgb(255, 255, 255);
+    border-image: initial;
+    border-radius: 1.5vw;
+    margin: 0vw 1vw;
+}
+
+.shareclosekeyboardlink {
+    text-transform: uppercase;
+    background-color: #BAA254;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 1.5vw;
+    padding: 0.8vw 1.2vw;
+    border-width: 0.3vw;
+    border-style: solid;
+    border-color: rgb(255, 255, 255);
+    border-image: initial;
+    border-radius: 1.5vw;
+    margin: 0vw 1vw;
+}
+
+/*.centercontainer {
+    text-align: center;
+}*/
+
+.shareposter, .contact-author {
+    padding: 2vw 3vw;
+}
+
+    .shareposter .header h3,
+    .contact-author .header h3 {
+        margin-top: 0;
+        font-size: 1.8vw;
+        line-height: 2.5vw;
+    }
+
+    .shareposter .header p,
+    .contact-author .header p {
+        font-size: 1vw;
+    }
+
+    .shareposter .header h3, .contact-author .header h3,
+    .shareposter .header p.normal-text, .contact-author .header p.normal-text {
+        color: #666;
+        margin-bottom: 0.8vw;
+    }
