@@ -1,14 +1,17 @@
 
 
-
+### Citation
 A. He and T. Munasinghe,  "Chronic Respiratory Disease: Risk Modeling Potential and Limitations," in 2021 IEEE International Conference on Big Data (Big Data), Orlando, FL, USA, 2021 pp. 1045-1053.
+
 doi: 10.1109/BigData52589.2021.9672074
+
 keywords: {microorganisms;temperature;pulmonary diseases;big data;water pollution;data models;spatiotemporal phenomena}
-url:
+
+url's:
 - https://doi.ieeecomputersociety.org/10.1109/BigData52589.2021.9672074
 - https://ieeexplore.ieee.org/document/9672074
 
-
+#
 # Research-Spring2021
 ### [Undergraduate Research Project]
 ##
