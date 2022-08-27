@@ -40,7 +40,6 @@ url's:
 4. Run, in any order:
     - Run "write_county_month_gfed.py"
     - Run "write_county_month_clim.py"
-    - Run "write_county_month_gfed.py"
     - Run "write_county_month_median-income.py"
 5. To write AQI data (optional)
     - Run "impute_county_month_AQI.py"
