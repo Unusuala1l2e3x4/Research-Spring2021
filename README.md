@@ -8,8 +8,8 @@ doi: 10.1109/BigData52589.2021.9672074
 keywords: {microorganisms;temperature;pulmonary diseases;big data;water pollution;data models;spatiotemporal phenomena}
 
 url's:
-- https://doi.ieeecomputersociety.org/10.1109/BigData52589.2021.9672074
 - https://ieeexplore.ieee.org/document/9672074
+- https://doi.ieeecomputersociety.org/10.1109/BigData52589.2021.9672074
 
 #
 # Research-Spring2021
